@@ -1,0 +1,1 @@
+export const formStyles = "flex flex-col gap-y-2 items-start";
