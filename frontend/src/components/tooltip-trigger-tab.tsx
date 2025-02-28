@@ -1,10 +1,10 @@
-import { Button, PressEvent, Tab, Key, TabProps, TabsContext, TooltipTrigger, useSlottedContext } from "react-aria-components";
+import { Button, Tab, Key, TabProps, TabsContext, TooltipTrigger, useSlottedContext } from "react-aria-components";
 import { TooltipWrapper } from "./ui/wrappers/tooltip-wrapper";
 import { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 import { tabStyles } from "./ui/styles/tabs";
 
-interface TooltipTriggerTabProps extends Omit<TabProps, 'className'> {
+interface TooltipTriggerTabProps extends Omit<TabProps, "className"> {
     id: Key;
     className?: string;
     text: string;
@@ -14,7 +14,7 @@ interface TooltipTriggerTabProps extends Omit<TabProps, 'className'> {
 export function TooltipTriggerTab({ className, children,  text, ...props}: TooltipTriggerTabProps) {
     const state = useSlottedContext(TabsContext)!;
 
-    function onTooltipTriggerTabPress(_e: PressEvent) {
+    function onTooltipTriggerTabPress() {
         state.onSelectionChange!(props.id);
     }
 
@@ -25,5 +25,5 @@ export function TooltipTriggerTab({ className, children,  text, ...props}: Toolt
                 <TooltipWrapper placement="left">{text}</TooltipWrapper>
             </TooltipTrigger>
         </Tab>
-    )
+    );
 }

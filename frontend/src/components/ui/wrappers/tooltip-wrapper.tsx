@@ -1,8 +1,8 @@
-import { OverlayArrow, Tooltip, TooltipProps } from 'react-aria-components';
-import { tooltipStyles } from '@/components/ui/styles/tooltip';
-import { twMerge } from 'tailwind-merge';
+import { OverlayArrow, Tooltip, TooltipProps } from "react-aria-components";
+import { tooltipStyles } from "@/components/ui/styles/tooltip";
+import { twMerge } from "tailwind-merge";
 
-interface TooltipWrapperProps extends Omit<TooltipProps, 'children' | 'className'> {
+interface TooltipWrapperProps extends Omit<TooltipProps, "children" | "className"> {
     children: React.ReactNode;
     className?: string;
 }

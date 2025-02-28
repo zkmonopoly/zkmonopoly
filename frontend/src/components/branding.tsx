@@ -8,5 +8,5 @@ export function Branding() {
             />
             <span className="text-4xl md:text-5xl">zkMONOPOLY</span>
         </div>
-    )
+    );
 }

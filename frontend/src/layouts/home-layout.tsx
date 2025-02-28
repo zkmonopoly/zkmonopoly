@@ -1,6 +1,6 @@
-import { Branding } from "@/components/branding";
 import { Outlet } from "react-router";
 import { twMerge } from "tailwind-merge";
+import { Branding } from "@/components/branding";
 
 interface HomeLayoutProps {
     className?: string;
@@ -8,10 +8,7 @@ interface HomeLayoutProps {
 
 export default function HomeLayout(props: HomeLayoutProps) {
     return (
-        <div className={twMerge(
-            "min-h-screen flex flex-col antialiased",
-            props.className
-        )}>
+        <div className={twMerge("min-h-screen flex flex-col antialiased", props.className)}>
             <div className="my-auto">
                 <div className="flex flex-col items-center gap-y-4 rounde-md">
                     <Branding />
@@ -19,5 +16,5 @@ export default function HomeLayout(props: HomeLayoutProps) {
                 </div>
             </div>
         </div>
-    )
+    );
 }

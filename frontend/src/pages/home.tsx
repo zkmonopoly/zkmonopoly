@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { Tabs, TabList, TabPanel, Form, Button, FieldError, Input, Label, TextField, TabsContext, Key } from 'react-aria-components';
-import { twJoin } from 'tailwind-merge';
-import { LuDoorOpen, LuPlus } from 'react-icons/lu';
-import { tabListStyles, tabPanelStyles, tabsStyles } from '@/components/ui/styles/tabs';
-import { buttonStyles } from '@/components/ui/styles/button';
-import { textFieldsStyles } from '@/components/ui/styles/text-field';
-import { formStyles } from '@/components/ui/styles/form';
-import { TooltipTriggerTab } from '@/components/tooltip-trigger-tab';
+import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { Tabs, TabList, TabPanel, Form, Button, FieldError, Input, Label, TextField, TabsContext, Key } from "react-aria-components";
+import { twJoin } from "tailwind-merge";
+import { LuDoorOpen, LuPlus } from "react-icons/lu";
+import { tabListStyles, tabPanelStyles, tabsStyles } from "@/components/ui/styles/tabs";
+import { buttonStyles } from "@/components/ui/styles/button";
+import { textFieldsStyles } from "@/components/ui/styles/text-field";
+import { formStyles } from "@/components/ui/styles/form";
+import { TooltipTriggerTab } from "@/components/tooltip-trigger-tab";
 
 const tabPanelStylesExtended = twJoin(tabPanelStyles, "md:w-[370px] w-[270px] h-[210px]");
 
@@ -42,7 +42,7 @@ export default function Home() {
                         <Controller
                             control={joinForm.control}
                             name="name"
-                            rules={{ required: 'Name is required.' }}
+                            rules={{ required: "Name is required." }}
                             render={({
                                 field: { name, value, onChange, onBlur, ref },
                                 fieldState: { invalid, error }
@@ -66,7 +66,7 @@ export default function Home() {
                         <Controller
                             control={joinForm.control}
                             name="code"
-                            rules={{ required: 'Code is required.' }}
+                            rules={{ required: "Code is required." }}
                             render={({
                                 field: { name, value, onChange, onBlur, ref },
                                 fieldState: { invalid, error }
@@ -95,7 +95,7 @@ export default function Home() {
                         <Controller
                             control={createForm.control}
                             name="name"
-                            rules={{ required: 'Name is required.' }}
+                            rules={{ required: "Name is required." }}
                             render={({
                                 field: { name, value, onChange, onBlur, ref },
                                 fieldState: { invalid, error }
