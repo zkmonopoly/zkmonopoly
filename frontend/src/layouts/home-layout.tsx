@@ -1,4 +1,4 @@
-import Branding from "@/components/branding";
+import { Branding } from "@/components/branding";
 import { Outlet } from "react-router";
 import { twMerge } from "tailwind-merge";
 

@@ -1,4 +1,4 @@
-export default function Branding() {
+export function Branding() {
     return (
         <div className="flex justify-center items-center gap-x-4">
             <img
