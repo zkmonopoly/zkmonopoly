@@ -1,4 +1,7 @@
 {
+    "tailwindCSS.experimental.classRegex": [
+        ["(?:twMerge|twJoin)\\(([^;]*)[\\);]", "[`'\"`]([^'\"`;]*)[`'\"`]"]
+    ],
     "tailwindCSS.classAttributes": [
         "class",
         "className",
