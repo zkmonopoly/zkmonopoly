@@ -1,0 +1,1 @@
+export const DefaultMeshOffset = 0.01;

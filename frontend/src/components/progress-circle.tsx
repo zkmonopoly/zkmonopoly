@@ -1,11 +1,11 @@
 import { ProgressBar, ProgressBarProps } from "react-aria-components";
 
-interface CircularProgressProps extends Omit<ProgressBarProps, "children"> {
+interface ProgressCircleProps extends Omit<ProgressBarProps, "children"> {
     size?: number;
     strokeWidth?: number;
 }
 
-export function CircularProgress({ size = 48, strokeWidth = 4, ...props }: CircularProgressProps) {
+export function ProgressCircle({ size = 48, strokeWidth = 4, ...props }: ProgressCircleProps) {
     // SVG parameters
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
@@ -39,7 +39,7 @@ export function CircularProgress({ size = 48, strokeWidth = 4, ...props }: Circu
                                 cx={center}
                                 cy={center}
                                 r={radius}
-                                stroke="#3b82f6"
+                                stroke="var(--color-sky-400)"
                                 strokeWidth={strokeWidth}
                                 strokeDasharray={circumference}
                                 strokeDashoffset={circumference * 0.75}
@@ -51,7 +51,7 @@ export function CircularProgress({ size = 48, strokeWidth = 4, ...props }: Circu
                                 cx={center}
                                 cy={center}
                                 r={radius}
-                                stroke="#3b82f6"
+                                stroke="var(--color-sky-400)"
                                 strokeWidth={strokeWidth}
                                 strokeDasharray={circumference}
                                 strokeDashoffset={circumference * (1 - (percentage || 0) / 100)}
