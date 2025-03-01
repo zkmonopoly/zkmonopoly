@@ -10,4 +10,4 @@ export const MonopolyColors = {
     Blue: Color3.Blue(),
     Brown: Color3.FromHexString("#8B4513"),
     LightBlue: Color3.FromHexString("#ADD8E6")
-}
+};

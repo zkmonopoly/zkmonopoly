@@ -11,7 +11,7 @@ export function NodeMaterial({ color = NodeColor }: NodeMaterialProps) {
     const textures = useAssetManager(textureTasks, {
         useDefaultLoadingScreen: true
     });
-    const frameBorderTexture = textures.taskNameMap['frame-border'] as TextureAssetTask;
+    const frameBorderTexture = textures.taskNameMap["frame-border"] as TextureAssetTask;
     
     return (
         <standardMaterial
@@ -23,8 +23,8 @@ export function NodeMaterial({ color = NodeColor }: NodeMaterialProps) {
             <texture
                 assignTo="diffuseTexture"
                 fromInstance={frameBorderTexture.texture}
-                url={frameBorderTexture.url}
+                url="rootUrl"
             />
         </standardMaterial>
-    )
+    );
 }

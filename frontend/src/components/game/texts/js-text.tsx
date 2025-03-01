@@ -28,5 +28,5 @@ export function JsText({ fontScale = 1, ...props }: JsTextProps) {
                 <TextMaterial />
             </babylon-text>
         ))
-    )
+    );
 }

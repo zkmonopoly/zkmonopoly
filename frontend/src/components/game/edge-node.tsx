@@ -19,5 +19,5 @@ export function EdgeNode(props: EdgeNodeProps) {
             </box>
             {props.children}
         </>
-    )
+    );
 }

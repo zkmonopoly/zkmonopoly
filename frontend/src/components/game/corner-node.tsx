@@ -19,5 +19,5 @@ export function CornerNode(props: CornerNodeProps) {
             </box>
             {props.children}
         </>
-    )
+    );
 }

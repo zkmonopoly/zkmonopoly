@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Engine, Scene } from "react-babylonjs";
-import { Color3, Vector3 } from "@babylonjs/core";
+import { Vector3 } from "@babylonjs/core";
 import { PropertyNode } from "@/components/game/property-node";
 import { JailNode } from "@/components/game/jail-node";
 import { MonopolyColors } from "@/components/game/constants/colors";

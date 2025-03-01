@@ -40,5 +40,5 @@ export function PropertyNode(props: PropertyNodeProps) {
                 rotation={new Vector3(Math.PI / 2, 0, Math.PI)}
             />
         </EdgeNode>
-    )
+    );
 }

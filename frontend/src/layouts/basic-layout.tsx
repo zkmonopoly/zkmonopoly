@@ -12,5 +12,5 @@ export default function HomeLayout(props: HomeLayoutProps) {
                 <Outlet />
             </div>
         </div>
-    )
+    );
 }
