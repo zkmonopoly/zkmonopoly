@@ -2,9 +2,10 @@ import { Vector3 } from "@babylonjs/core";
 import { NodeMaterial } from "@/components/game/materials/node-material";
 import { PropsWithChildren } from "react";
 
-interface EdgeNodeProps extends PropsWithChildren {
+export interface EdgeNodeProps extends PropsWithChildren {
     name: string
     position: Vector3
+    rotation?: Vector3
 }
 
 export function EdgeNode(props: EdgeNodeProps) {
@@ -13,6 +14,7 @@ export function EdgeNode(props: EdgeNodeProps) {
             <box
                 name={props.name}
                 position={props.position}
+                rotation={props.rotation}
                 scaling={new Vector3(3, 1, 5)}
             >
                 <NodeMaterial />

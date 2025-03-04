@@ -2,9 +2,10 @@ import { Vector3 } from "@babylonjs/core";
 import { NodeMaterial } from "@/components/game/materials/node-material";
 import { PropsWithChildren } from "react";
 
-interface CornerNodeProps extends PropsWithChildren {
+export interface CornerNodeProps extends PropsWithChildren {
     name: string
     position: Vector3
+    rotation?: Vector3
 }
 
 export function CornerNode(props: CornerNodeProps) {
@@ -13,6 +14,7 @@ export function CornerNode(props: CornerNodeProps) {
             <box
                 name={props.name}
                 position={props.position}
+                rotation={props.rotation}
                 scaling={new Vector3(5, 1, 5)}
             >
                 <NodeMaterial />
