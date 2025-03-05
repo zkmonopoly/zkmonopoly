@@ -13,9 +13,9 @@ export function getTextOffset(index: number, rotationIndex: number, yOffset: num
         case 1:
             return new Vector3(0.5 * index + xzOffset, yOffset, xzInvertOffset);
         case 2:
-            return new Vector3(xzInvertOffset, yOffset, -0.5 * index + xzOffset);
+            return new Vector3(xzInvertOffset, yOffset, -0.5 * index - xzOffset);
         case 3:
-            return new Vector3(-0.5 * index + xzOffset, yOffset, xzInvertOffset);
+            return new Vector3(-0.5 * index - xzOffset, yOffset, xzInvertOffset);
         default:
             return new Vector3(xzInvertOffset, yOffset, 0.5 * index + xzOffset);
     }
@@ -26,9 +26,9 @@ export function getTextRotation(rotationIndex: number): Vector3 {
         case 1:
             return new Vector3(Math.PI / 2, Math.PI / 2, Math.PI);
         case 2:
-            return new Vector3(Math.PI / 2, 3 * Math.PI / 2, Math.PI);
+            return new Vector3(Math.PI / 2, Math.PI, Math.PI);
         case 3:
-            return new Vector3(Math.PI / 2, 2 * Math.PI, Math.PI);
+            return new Vector3(Math.PI / 2, 3 / 2 * Math.PI, Math.PI);
         default:
             return new Vector3(Math.PI / 2, 0, Math.PI);
     }
@@ -43,9 +43,9 @@ export function getSpecialPropertyOffset(rotationIndex: number): Vector3 {
         case 1:
             return new Vector3(0.25, 0, 0);
         case 2:
-            return new Vector3(-0.25, 0, 0);
-        case 3:
             return new Vector3(0, 0, -0.25);
+        case 3:
+            return new Vector3(-0.25, 0, 0);
         default:
             return new Vector3(0, 0, 0.25);
     }

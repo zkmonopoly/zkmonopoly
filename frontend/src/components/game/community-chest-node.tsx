@@ -30,7 +30,7 @@ export function CommunityChestNode({ rotationIndex = 0,  ...props}: CommunityChe
                 position={props.position.add(new Vector3(0, 0.5 + DefaultMeshOffset, 0)).add(getSpecialPropertyOffset(rotationIndex))}
                 width={RectangleDimensions[1].width}
                 height={RectangleDimensions[1].height}
-                rotation={getRotation(rotationIndex + 2 % 4)}
+                rotation={getRotation((rotationIndex + 2) % 4)}
             >
                 <CommunityChestMaterial />
             </ground> 

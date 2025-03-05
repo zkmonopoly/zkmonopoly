@@ -1,20 +1,21 @@
+import { PropsWithChildren } from "react";
 import { Vector3 } from "@babylonjs/core";
 import { EdgeNode } from "./edge-node";
 import { JsText } from "./texts/js-text";
 import { DefaultMeshOffset } from "./constants/offsets";
-import { RectangleDimensions } from "./constants/dimensions";
-import { RailroadMaterial } from "./materials/railroad-material";
 import { getRotation, getSpecialPropertyOffset } from "./constants/rotations";
 
-interface RailroadNodeProps {
+interface RailroadNodeProps extends PropsWithChildren {
     name: string
     position: Vector3
     rotationIndex?: number
     propertyName: string[]
     propertyValue: string
+    width: number
+    height: number
 }
 
-export function RailroadNode({rotationIndex = 0, ...props}: RailroadNodeProps) {
+export function SpecialPropertyNode({rotationIndex = 0, ...props}: RailroadNodeProps) {
     return (
         <EdgeNode
             name={props.name}
@@ -22,7 +23,7 @@ export function RailroadNode({rotationIndex = 0, ...props}: RailroadNodeProps) {
             rotation={getRotation(rotationIndex)}
         >
             <JsText
-                name={`${props.name}-railroad-name`}
+                name={`${props.name}-special-property-name`}
                 text={props.propertyName}
                 position={props.position}
                 yOffset={0.5}
@@ -30,16 +31,16 @@ export function RailroadNode({rotationIndex = 0, ...props}: RailroadNodeProps) {
                 rotationIndex={rotationIndex}
             />
             <ground
-                name={`${props.name}-railroad-image`}
+                name={`${props.name}-special-property-image`}
                 position={props.position.add(new Vector3(0, 0.5 + DefaultMeshOffset, 0)).add(getSpecialPropertyOffset(rotationIndex))}
-                width={RectangleDimensions[1].width}
-                height={RectangleDimensions[1].height}
-                rotation={getRotation(rotationIndex + 2 % 4)}
+                width={props.width}
+                height={props.height}
+                rotation={getRotation((rotationIndex + 2) % 4)}
             >
-                <RailroadMaterial />
+                {props.children}
             </ground> 
             <JsText
-                name={`${props.name}-property-value`}
+                name={`${props.name}-special-property-value`}
                 text={[props.propertyValue]}
                 position={props.position}
                 yOffset={0.5}
