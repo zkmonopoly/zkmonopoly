@@ -31,6 +31,9 @@ export class Player extends Schema {
   
     @type("boolean")
     ready: boolean = false;
+
+    @type("boolean")
+    isBankrupt: boolean = false;
   
   }
   
