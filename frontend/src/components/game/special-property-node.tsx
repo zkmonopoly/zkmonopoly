@@ -30,7 +30,7 @@ export function SpecialPropertyNode({rotationIndex = 0, ...props}: RailroadNodeP
                 xzOffset={-1.25}
                 rotationIndex={rotationIndex}
             />
-            <ground
+            {props.children && <ground
                 name={`${props.name}-special-property-image`}
                 position={props.position.add(new Vector3(0, 0.5 + DefaultMeshOffset, 0)).add(getSpecialPropertyOffset(rotationIndex))}
                 width={props.width}
@@ -38,7 +38,7 @@ export function SpecialPropertyNode({rotationIndex = 0, ...props}: RailroadNodeP
                 rotation={getRotation((rotationIndex + 2) % 4)}
             >
                 {props.children}
-            </ground> 
+            </ground>}
             <JsText
                 name={`${props.name}-special-property-value`}
                 text={[props.propertyValue]}
