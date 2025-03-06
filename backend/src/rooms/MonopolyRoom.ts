@@ -1,6 +1,7 @@
 import { Room, Client } from "@colyseus/core";
-import { RoomState } from "./schema/RoomState";
+import { RoomState } from "@rooms/schema/RoomState";
 import { Player } from "./state/PlayerState";
+import { Property } from "@rooms/state/PropertyState";
 import { RegisterPlayerCommand } from "./commands/RegisterPlayerCommand";
 import { Dispatcher } from "@colyseus/command";
 import monopolyJSON from "@/assets/monopoly.json";
@@ -15,6 +16,31 @@ export class MonopolyRoom extends Room<RoomState> {
 
     onCreate(options: any) {
         this.state = new RoomState();
+        monopolyJSON.properties.forEach((prop: any, index: number) => {
+            const newProp = new Property();
+            newProp.id = prop.id;
+            newProp.position = prop.position;
+            newProp.price = prop.price;
+            newProp.rent = prop.rent;
+            // newProp.multipliedrent = prop.multipliedrent;
+            console.log("Full JSON Data:", prop.multipliedrent);
+
+            if (Array.isArray(prop.multipliedrent)) {
+                prop.multipliedrent.forEach((element: any) => {
+                    newProp.multipliedrent.push(element);
+                });
+            }
+    
+            newProp.housecost = prop.housecost;
+            newProp.group = prop.group;
+            newProp.ownedby = ""; // initially unowned
+            newProp.buildings = 0;
+            newProp.mortgaged = false;
+        
+            // MapSchema uses string keys, so often "prop.id" or index as the key:
+            this.state.properties.set(String(prop.id), newProp);
+          });
+        
 
         this.onMessage("name", (client, name: string) => {
             // RegisterPlayerCommand
@@ -219,7 +245,6 @@ export class MonopolyRoom extends Room<RoomState> {
                 this.broadcast("member_updating", {
                     playerId: client.sessionId,
                     pJson: player,
-                    bankruptID: "",
                 });
             }
         });
