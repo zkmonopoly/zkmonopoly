@@ -11,6 +11,10 @@ import { GoNode } from "@/components/game/go-node";
 import { RailroadMaterial } from "@/components/game/materials/railroad-material";
 import { ElectricCompanyMaterial } from "@/components/game/materials/electric-company-material";
 import { RectangleDimensions } from "@/components/game/constants/dimensions";
+import { FreeParkingNode } from "@/components/game/free-parking-node";
+import { GoToJailNode } from "@/components/game/go-to-jail-node";
+import { WaterCompanyMaterial } from "@/components/game/materials/water-company-material";
+import { LuxuryTaxMaterial } from "@/components/game/materials/luxury-tax-material";
 
 export default function Game() {
     return (
@@ -184,6 +188,10 @@ export default function Game() {
                                 propertyName={["NEW YORK", "AVENUE"]}
                                 propertyValue="$ 200"
                             />
+                            <FreeParkingNode
+                                name="freeParking"
+                                position={new Vector3(34.5, 0.5, -34.5)}
+                            />
                             <PropertyNode
                                 name="kentuckyAvenue"
                                 position={new Vector3(30.25, 0.5, -34.5)}
@@ -239,13 +247,13 @@ export default function Game() {
                             <SpecialPropertyNode
                                 name="waterCompany"
                                 position={new Vector3(7.5, 0.5, -34.5)}
-                                width={RectangleDimensions[2].width}
-                                height={RectangleDimensions[2].height}
+                                width={RectangleDimensions[0].width}
+                                height={RectangleDimensions[0].height}
                                 rotationIndex={2}
                                 propertyName={["WATER", "COMPANY"]}
                                 propertyValue="$ 150"
                             >
-                                { /* TODO: Add water company material */ }
+                                <WaterCompanyMaterial />
                             </SpecialPropertyNode>
                             <PropertyNode
                                 name="marvinGardens"
@@ -262,6 +270,10 @@ export default function Game() {
                                 color={MonopolyColors.Green}
                                 propertyName={["PACIFIC", "AVENUE"]}
                                 propertyValue="$ 300"
+                            />
+                            <GoToJailNode
+                                name="goToJail"
+                                position={new Vector3(0, 0.5, -34.5)}
                             />
                             <PropertyNode
                                 name="northCarolinaAvenue"
@@ -318,7 +330,7 @@ export default function Game() {
                                 propertyName={["LUXURY", "TAX"]}
                                 propertyValue="PAY $ 100"
                             >
-                                { /* TODO: Add luxury tax material */ }
+                                <LuxuryTaxMaterial />
                             </SpecialPropertyNode>
                             <PropertyNode
                                 name="boardwalk"

@@ -30,5 +30,25 @@ export const textureTasks: Task[] = [
         taskType: TaskType.Texture,
         name: "go-arrow",
         url: "/assets/game/2d/go_arrow.png"
+    },
+    {
+        taskType: TaskType.Texture,
+        name: "water-company",
+        url: "/assets/game/2d/water_company.png"
+    },
+    {
+        taskType: TaskType.Texture,
+        name: "free-parking",
+        url: "/assets/game/2d/free_parking.png"
+    },
+    {
+        taskType: TaskType.Texture,
+        name: "luxury-tax",
+        url: "/assets/game/2d/luxury_tax.png"
+    },
+    {
+        taskType: TaskType.Texture,
+        name: "go-to-jail",
+        url: "/assets/game/2d/go_to_jail.png"
     }
 ];

@@ -19,5 +19,13 @@ export const RectangleDimensions: Dimension2D[] = [
     {
         width: 4,
         height: 0.76166456494
+    },
+    {
+        width: 3.16993464052,
+        height: 1
+    },
+    {
+        width: 1.431640625,
+        height: 2
     }
 ]
