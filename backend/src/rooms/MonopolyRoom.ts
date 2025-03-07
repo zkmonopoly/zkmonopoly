@@ -4,6 +4,8 @@ import { Player } from "./state/PlayerState";
 import { Property } from "@rooms/state/PropertyState";
 import { RegisterPlayerCommand } from "./commands/RegisterPlayerCommand";
 import { Dispatcher } from "@colyseus/command";
+import { RollDiceCommand } from "@rooms/commands/RollDiceCommand";
+import { MessageTypes } from "@/types/MessageTypes";
 import monopolyJSON from "@/assets/monopoly.json";
 
 // Reference from: https://github.com/itaylayzer/Monopoly/blob/main/src/assets/server.ts
@@ -40,7 +42,7 @@ export class MonopolyRoom extends Room<RoomState> {
             this.state.properties.set(String(prop.id), newProp);
         });
 
-        this.onMessage("name", (client, name: string) => {
+        this.onMessage(MessageTypes.REGISTER, (client, name: string) => {
             // RegisterPlayerCommand
             this.dispatcher.dispatch(new RegisterPlayerCommand(), {
                 client: client,
@@ -73,7 +75,7 @@ export class MonopolyRoom extends Room<RoomState> {
             this.broadcast("new-player", player, { except: client });
         });
 
-        this.onMessage("ready", (client) => {
+        this.onMessage(MessageTypes.READY, (client) => {
             const player = this.state.players.get(client.sessionId);
             if (player) {
                 player.ready = true;
@@ -106,36 +108,11 @@ export class MonopolyRoom extends Room<RoomState> {
 
         // Message: "roll_dice" – roll dice, update player position, and broadcast the result.
         // Temporary random dice roll implementation, will be replaced with ZK-Shuffle.
-        this.onMessage("roll_dice", (client) => {
-            const player = this.state.players.get(client.sessionId);
-            if (!player) return;
-            if (this.state.currentTurn !== client.sessionId) return;
-
-            const first = Math.floor(Math.random() * 6) + 1;
-            const second = Math.floor(Math.random() * 6) + 1;
-            const sum = first + second;
-
-            let newPosition = player.position + sum;
-            // Check pass GO
-            if (newPosition >= 40) {
-                newPosition = newPosition % 40;
-                // Give them money for passing GO
-                player.balance += 200;
-            }
-            player.position = newPosition;
-
-            // Check tile
-            this.handleLandingOnTile(player);
-
-            // broadcast dice roll result
-            this.broadcast("dice_roll_result", {
-                position: player.position,
-                listOfNums: [first, second, player.position],
-                turnId: this.state.currentTurn,
-            });
+        this.onMessage(MessageTypes.ROLL_DICE, (client) => {
+            this.dispatcher.dispatch(new RollDiceCommand( this, client ));
         });
 
-        this.onMessage("unjail", (client, option: "card" | "pay") => {
+        this.onMessage(MessageTypes.GET_OUT_OF_JAIL, (client, option: "card" | "pay") => {
             const player = this.state.players.get(client.sessionId);
             if (!player) return;
             if (!player.isInJail) return;
@@ -152,23 +129,10 @@ export class MonopolyRoom extends Room<RoomState> {
                     player.jailTurnsRemaining = 0;
                 }
             }
-            this.broadcast("unjail", { to: client.sessionId, option });
+            this.broadcast("get_out_of_jail", { to: client.sessionId, option });
         });
 
-        this.onMessage(
-            "player_update",
-            (client, args: { playerId: string; pJson: any }) => {
-                const player = this.state.players.get(args.playerId);
-                if (player) {
-                    player.position = args.pJson.position;
-                    player.balance = args.pJson.balance;
-                    // Update additional fields as needed.
-                    this.broadcast("player_update", args, { except: client });
-                }
-            }
-        );
-
-        this.onMessage("finish-turn", (client, ) => {
+        this.onMessage(MessageTypes.FINISH_TURN, (client, ) => {
             const player = this.state.players.get(client.sessionId);
             if (player) {
                 const playerIds = [];
@@ -199,7 +163,7 @@ export class MonopolyRoom extends Room<RoomState> {
         });
 
         this.onMessage(
-            "exchange",
+            MessageTypes.EXCHANGE,
             (client, args: { balance: number; from: string; to: string }) => {
                 const fromPlayer = this.state.players.get(args.from);
                 const toPlayer = this.state.players.get(args.to);
@@ -220,7 +184,7 @@ export class MonopolyRoom extends Room<RoomState> {
         );
 
         // Pay money to the bank.
-        this.onMessage("pay_bank", (client, amount: number) => {
+        this.onMessage(MessageTypes.PAY_BANK, (client, amount: number) => {
             const player = this.state.players.get(client.sessionId);
             if (player) {
                 player.balance -= amount;
@@ -236,7 +200,7 @@ export class MonopolyRoom extends Room<RoomState> {
         });
 
         // Receive money from the bank.
-        this.onMessage("receive_bank", (client, amount: number) => {
+        this.onMessage(MessageTypes.RECEIVE_BANK, (client, amount: number) => {
             const player = this.state.players.get(client.sessionId);
             if (player) {
                 player.balance += amount;
@@ -293,124 +257,5 @@ export class MonopolyRoom extends Room<RoomState> {
         const hours = now.getHours().toString().padStart(2, "0");
         const minutes = now.getMinutes().toString().padStart(2, "0");
         return `${hours}:${minutes}`;
-    }
-
-    private handleLandingOnTile(player: Player) {
-        const tilePosition = player.position;
-        const idTitle = monopolyJSON.tiles[tilePosition].id;
-        const property = this.state.properties.get(idTitle);
-
-        if (!property || property.group === "special") {
-            // Special tiles like Chance, Jail, Free Parking, etc.
-            this.handleSpecialTile(player, tilePosition);
-            return;
-        }
-
-        if (property.ownedby === "") {
-            // Unowned property → Ask player if they want to buy
-            this.broadcast("offer_buy_property", {
-                property,
-                playerId: player.id,
-            });
-        } else if (property.ownedby !== player.id && !property.mortgaged) {
-            // Owned by another player → Pay rent
-            const rentAmount = this.calculateRent(property);
-            player.balance -= rentAmount;
-
-            const owner = this.state.players.get(property.ownedby);
-            if (owner) {
-                owner.balance += rentAmount;
-                console.log(
-                    `${player.username} paid $${rentAmount} rent to ${owner.username}`
-                );
-            }
-
-            // If the player is bankrupt, handle bankruptcy
-            if (player.balance <= 0) {
-                player.isBankrupt = true;
-                this.broadcast("player_bankrupt", { playerId: player.id });
-            }
-        }
-    }
-
-    private handleSpecialTile(player: Player, position: number) {
-        switch (position) {
-            case 0: // GO
-                console.log(`${player.username} landed on GO!`);
-                break;
-            case 4: // Income Tax
-                player.balance -= 200;
-                console.log(`${player.username} paid $200 in Income Tax.`);
-                break;
-            case 10: // Visiting Jail
-                console.log(`${player.username} is just visiting Jail.`);
-                break;
-            case 30: // Go to Jail
-                player.position = 10;
-                player.isInJail = true;
-                console.log(`${player.username} was sent to Jail!`);
-                break;
-            case 2:
-            case 17:
-            case 33: // Community Chest
-                this.drawChanceOrChestCard(player, false);
-                break;
-            case 7:
-            case 22:
-            case 36: // Chance
-                this.drawChanceOrChestCard(player, true);
-                break;
-            default:
-                console.log(
-                    `${player.username} landed on a non-property tile.`
-                );
-        }
-    }
-
-    private drawChanceOrChestCard(player: Player, isChance: boolean) {
-        const cardArray = isChance
-            ? monopolyJSON.chance
-            : monopolyJSON.communitychest;
-        const randomCard =
-            cardArray[Math.floor(Math.random() * cardArray.length)];
-
-        // Apply the effect of the drawn card
-        this.applyCardEffect(player, randomCard);
-
-        // Broadcast the drawn card to all players
-        this.broadcast("chorch_result", {
-            element: randomCard,
-            is_chance: isChance,
-            turnId: this.state.currentTurn,
-        });
-    }
-
-    private applyCardEffect(player: Player, card: any) {
-        switch (card.action) {
-            case "goto":
-                if (card.tileid === "0") {
-                    player.position = 0; // Go to GO
-                    player.balance += 200;
-                } else if (card.tileid === "JAIL") {
-                    player.position = 10;
-                    player.isInJail = true;
-                }
-                break;
-            case "pay":
-                player.balance -= card.amount;
-                break;
-            case "collect":
-                player.balance += card.amount;
-                break;
-            default:
-                console.log(`Unhandled card action: ${card.action}`);
-        }
-    }
-
-    private calculateRent(property: Property): number {
-        if (property.buildings === 0) {
-            return property.rent;
-        }
-        return property.multipliedrent[property.buildings];
     }
 }
