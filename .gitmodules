@@ -1,0 +1,3 @@
+[submodule "backend/zkShuffle"]
+	path = backend/zkShuffle
+	url = https://github.com/minhvip08/zkShuffle.git
