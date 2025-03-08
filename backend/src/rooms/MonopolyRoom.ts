@@ -109,30 +109,36 @@ export class MonopolyRoom extends Room<RoomState> {
         // Message: "roll_dice" – roll dice, update player position, and broadcast the result.
         // Temporary random dice roll implementation, will be replaced with ZK-Shuffle.
         this.onMessage(MessageTypes.ROLL_DICE, (client) => {
-            this.dispatcher.dispatch(new RollDiceCommand( this, client ));
+            this.dispatcher.dispatch(new RollDiceCommand(this, client));
         });
 
-        this.onMessage(MessageTypes.GET_OUT_OF_JAIL, (client, option: "card" | "pay") => {
-            const player = this.state.players.get(client.sessionId);
-            if (!player) return;
-            if (!player.isInJail) return;
-            if (option === "card") {
-                if (player.getoutCards > 0) {
-                    player.getoutCards--;
-                    player.isInJail = false;
-                    player.jailTurnsRemaining = 0;
+        this.onMessage(
+            MessageTypes.GET_OUT_OF_JAIL,
+            (client, option: "card" | "pay") => {
+                const player = this.state.players.get(client.sessionId);
+                if (!player) return;
+                if (!player.isInJail) return;
+                if (option === "card") {
+                    if (player.getoutCards > 0) {
+                        player.getoutCards--;
+                        player.isInJail = false;
+                        player.jailTurnsRemaining = 0;
+                    }
+                } else if (option === "pay") {
+                    if (player.balance >= 50) {
+                        player.balance -= 50;
+                        player.isInJail = false;
+                        player.jailTurnsRemaining = 0;
+                    }
                 }
-            } else if (option === "pay") {
-                if (player.balance >= 50) {
-                    player.balance -= 50;
-                    player.isInJail = false;
-                    player.jailTurnsRemaining = 0;
-                }
+                this.broadcast("get_out_of_jail", {
+                    to: client.sessionId,
+                    option,
+                });
             }
-            this.broadcast("get_out_of_jail", { to: client.sessionId, option });
-        });
+        );
 
-        this.onMessage(MessageTypes.FINISH_TURN, (client, ) => {
+        this.onMessage(MessageTypes.FINISH_TURN, (client) => {
             const player = this.state.players.get(client.sessionId);
             if (player) {
                 const playerIds = [];
@@ -183,33 +189,169 @@ export class MonopolyRoom extends Room<RoomState> {
             }
         );
 
-        // Pay money to the bank.
-        this.onMessage(MessageTypes.PAY_BANK, (client, amount: number) => {
-            const player = this.state.players.get(client.sessionId);
-            if (player) {
-                player.balance -= amount;
-                if (player.balance <= 0) {
-                    player.isBankrupt = true;
+        this.onMessage(
+            MessageTypes.BUY_PROPERTY,
+            (client, data: { propertyId: number }) => {
+                const player = this.state.players.get(client.sessionId);
+                if (!player) {
+                    console.warn(
+                        `Could not find player with ID ${client.sessionId}`
+                    );
+                    return;
                 }
-                this.broadcast("member_updating", {
-                    playerId: client.sessionId,
-                    pJson: player,
-                    bankruptID: player.isBankrupt ? client.sessionId : "",
-                });
-            }
-        });
 
-        // Receive money from the bank.
-        this.onMessage(MessageTypes.RECEIVE_BANK, (client, amount: number) => {
-            const player = this.state.players.get(client.sessionId);
-            if (player) {
-                player.balance += amount;
-                this.broadcast("member_updating", {
-                    playerId: client.sessionId,
-                    pJson: player,
+                const { propertyId } = data;
+                const property = this.state.properties.get(String(propertyId));
+                if (!property) {
+                    console.warn("Property not found:", propertyId);
+                    return;
+                }
+
+                if (
+                    property.ownedby !== "" &&
+                    property.ownedby !== client.sessionId
+                ) {
+                    client.send("buy_property_fail", {
+                        reason: "Property is already owned.",
+                    });
+                    return;
+                }
+
+                // Buying buildings on a property
+                if (property.ownedby === client.sessionId) {
+                    if (
+                        property.buildings < 4 &&
+                        player.balance >= property.housecost
+                    ) {
+                        property.buildings++;
+                        player.balance -= property.housecost;
+
+                        this.broadcast("property_updating", {
+                            propertyId,
+                            newBuildings: property.buildings,
+                            newBalance: player.balance,
+                        });
+                        return;
+                    } else {
+                        client.send("buy_property_fail", {
+                            reason: "Cannot buy more buildings on this property.",
+                        });
+                    }
+                    return;
+                }
+
+                if (player.balance < property.price) {
+                    client.send("buy_property_fail", {
+                        reason: "Not enough balance to purchase this property.",
+                    });
+                    return;
+                }
+
+                player.balance -= property.price;
+                property.ownedby = client.sessionId;
+
+                this.broadcast("property_purchased", {
+                    propertyId,
+                    ownerId: client.sessionId,
+                    newBalance: player.balance,
+                });
+
+                console.log(
+                    `${player.username} purchased property at position ${property.position}`
+                );
+            }
+        );
+
+        this.onMessage(
+            MessageTypes.SELL_PROPERTY,
+            (
+                client,
+                data: {
+                    propertyId: number;
+                    buildingsToSell: number;
+                    sellEntireProperty: boolean;
+                }
+            ) => {
+                const player = this.state.players.get(client.sessionId);
+                if (!player) {
+                    console.warn(
+                        `sell_property: Player not found for client ${client.sessionId}`
+                    );
+                    return;
+                }
+
+                const property = this.state.properties.get(
+                    String(data.propertyId)
+                );
+                if (!property) {
+                    console.warn(
+                        "sell_property: Property not found:",
+                        data.propertyId
+                    );
+                    return;
+                }
+
+                if (property.ownedby !== client.sessionId) {
+                    client.send("sell_property_fail", {
+                        reason: "You do not own this property.",
+                    });
+                    return;
+                }
+
+                // Base sell (or mortgage) value is half the property price
+                const halfPrice = Math.floor(property.price / 2);
+
+                if (data.sellEntireProperty) {
+                    player.balance += halfPrice;
+
+                    if (property.buildings > 0) {
+                        player.balance +=
+                            property.buildings * property.housecost;
+                        property.buildings = 0;
+                    }
+
+                    property.ownedby = "";
+
+                    this.broadcast("property_sold", {
+                        propertyId: data.propertyId,
+                        ownerId: property.ownedby,
+                        newBuildings: property.buildings,
+                        newBalance: player.balance,
+                    });
+
+                    return;
+                }
+
+                // Sell buildings only
+                if (data.buildingsToSell > 0) {
+                    if (property.buildings < data.buildingsToSell) {
+                        client.send("sell_property_fail", {
+                            reason: `You only have ${property.buildings} buildings but tried to sell ${data.buildingsToSell}.`,
+                        });
+                        return;
+                    }
+
+                    property.buildings -= data.buildingsToSell;
+
+                    const buildingRevenue =
+                        data.buildingsToSell * property.housecost;
+                    player.balance += buildingRevenue;
+
+                    this.broadcast("property_sold", {
+                        propertyId: data.propertyId,
+                        ownerId: property.ownedby,
+                        newBuildings: property.buildings,
+                        newBalance: player.balance,
+                    });
+
+                    return;
+                }
+
+                client.send("sell_property_fail", {
+                    reason: "No valid sell action specified. Either set 'sellEntireProperty' or 'buildingsToSell'.",
                 });
             }
-        });
+        );
     }
 
     onJoin(client: Client, options: any) {

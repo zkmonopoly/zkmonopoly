@@ -7,5 +7,7 @@ export enum MessageTypes {
     READY = "ready",
     RECEIVE_BANK = "receive_bank",
     ROLL_DICE = "roll_dice",
-    GET_OUT_OF_JAIL = "get_out_of_jail"
+    GET_OUT_OF_JAIL = "get_out_of_jail",
+    BUY_PROPERTY = "buy_property",
+    SELL_PROPERTY = "sell_property",
 }
