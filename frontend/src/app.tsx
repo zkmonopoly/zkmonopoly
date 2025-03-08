@@ -15,7 +15,7 @@ export default function App() {
                 <Route path="/" element={<Home />} />
             </Route>
             <Route element={<GameLayout/>}>
-                <Route path="game/:id" element={<Suspense fallback={null}><Game /></Suspense>} />
+                <Route path="game/:id" element={<Suspense fallback={<ProgressCircle/>}><Game /></Suspense>} />
             </Route>
             <Route element={<BasicLayout/>}>
                 <Route path="*" element={<Error code={404} message="Page not found" />} />

@@ -12,7 +12,7 @@ export function ProgressCircle({ size = 48, strokeWidth = 4, ...props }: Progres
     const center = size / 2;
     
     return (
-        <div className="flex items-center justify-center">
+        <div className="h-full flex items-center justify-center">
             <ProgressBar isIndeterminate {...props}>
                 {({ percentage, isIndeterminate }) => (
                     <svg
