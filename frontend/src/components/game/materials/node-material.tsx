@@ -2,6 +2,7 @@ import { Color3, TextureAssetTask } from "@babylonjs/core";
 import { useAssetManager } from "react-babylonjs";
 import { textureTasks } from "@/components/game/assets/tasks";
 import { NodeColor } from "@/components/game/constants/colors";
+import { TextureRootUrl } from "@/components/game/constants/common";
 
 interface NodeMaterialProps {
     color?: Color3
@@ -11,7 +12,7 @@ export function NodeMaterial({ color = NodeColor }: NodeMaterialProps) {
     const textures = useAssetManager(textureTasks, {
         useDefaultLoadingScreen: true
     });
-    const frameBorderTexture = textures.taskNameMap['frame-border'] as TextureAssetTask;
+    const frameBorderTexture = textures.taskNameMap["frame-border"] as TextureAssetTask;
     
     return (
         <standardMaterial
@@ -23,8 +24,8 @@ export function NodeMaterial({ color = NodeColor }: NodeMaterialProps) {
             <texture
                 assignTo="diffuseTexture"
                 fromInstance={frameBorderTexture.texture}
-                url={frameBorderTexture.url}
+                url={TextureRootUrl}
             />
         </standardMaterial>
-    )
+    );
 }

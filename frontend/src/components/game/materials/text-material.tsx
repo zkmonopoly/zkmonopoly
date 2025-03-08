@@ -12,5 +12,5 @@ export function TextMaterial({ color = Color3.Black() }: TextMaterialProps) {
             diffuseColor={color}
             specularColor={Color3.Black()}
         />
-    )
+    );
 }
