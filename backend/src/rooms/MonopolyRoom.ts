@@ -191,7 +191,7 @@ export class MonopolyRoom extends Room<RoomState> {
 
         this.onMessage(
             MessageTypes.BUY_PROPERTY,
-            (client, data: { propertyId: number }) => {
+            (client, propertyId: string) => {
                 const player = this.state.players.get(client.sessionId);
                 if (!player) {
                     console.warn(
@@ -200,8 +200,7 @@ export class MonopolyRoom extends Room<RoomState> {
                     return;
                 }
 
-                const { propertyId } = data;
-                const property = this.state.properties.get(String(propertyId));
+                const property = this.state.properties.get(propertyId);
                 if (!property) {
                     console.warn("Property not found:", propertyId);
                     return;
@@ -266,12 +265,14 @@ export class MonopolyRoom extends Room<RoomState> {
             MessageTypes.SELL_PROPERTY,
             (
                 client,
-                data: {
-                    propertyId: number;
-                    buildingsToSell: number;
+                message: {
+                    propertyId: string;
                     sellEntireProperty: boolean;
+                    buildingsToSell: number;
                 }
             ) => {
+                const { propertyId, sellEntireProperty, buildingsToSell } =
+                    message;
                 const player = this.state.players.get(client.sessionId);
                 if (!player) {
                     console.warn(
@@ -280,13 +281,11 @@ export class MonopolyRoom extends Room<RoomState> {
                     return;
                 }
 
-                const property = this.state.properties.get(
-                    String(data.propertyId)
-                );
+                const property = this.state.properties.get(propertyId);
                 if (!property) {
                     console.warn(
                         "sell_property: Property not found:",
-                        data.propertyId
+                        propertyId
                     );
                     return;
                 }
@@ -301,7 +300,7 @@ export class MonopolyRoom extends Room<RoomState> {
                 // Base sell (or mortgage) value is half the property price
                 const halfPrice = Math.floor(property.price / 2);
 
-                if (data.sellEntireProperty) {
+                if (sellEntireProperty) {
                     player.balance += halfPrice;
 
                     if (property.buildings > 0) {
@@ -313,7 +312,7 @@ export class MonopolyRoom extends Room<RoomState> {
                     property.ownedby = "";
 
                     this.broadcast("property_sold", {
-                        propertyId: data.propertyId,
+                        propertyId: propertyId,
                         ownerId: property.ownedby,
                         newBuildings: property.buildings,
                         newBalance: player.balance,
@@ -323,22 +322,22 @@ export class MonopolyRoom extends Room<RoomState> {
                 }
 
                 // Sell buildings only
-                if (data.buildingsToSell > 0) {
-                    if (property.buildings < data.buildingsToSell) {
+                if (buildingsToSell > 0) {
+                    if (property.buildings < buildingsToSell) {
                         client.send("sell_property_fail", {
-                            reason: `You only have ${property.buildings} buildings but tried to sell ${data.buildingsToSell}.`,
+                            reason: `You only have ${property.buildings} buildings but tried to sell ${buildingsToSell}.`,
                         });
                         return;
                     }
 
-                    property.buildings -= data.buildingsToSell;
+                    property.buildings -= buildingsToSell;
 
                     const buildingRevenue =
-                        data.buildingsToSell * property.housecost;
+                        buildingsToSell * property.housecost;
                     player.balance += buildingRevenue;
 
                     this.broadcast("property_sold", {
-                        propertyId: data.propertyId,
+                        propertyId: propertyId,
                         ownerId: property.ownedby,
                         newBuildings: property.buildings,
                         newBalance: player.balance,
