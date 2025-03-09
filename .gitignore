@@ -1,1 +1,5 @@
+# node.js
+node_modules
+
+# test files
 backend/src/rooms/test.ts
