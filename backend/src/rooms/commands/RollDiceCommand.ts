@@ -15,6 +15,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
     }
 
     execute() {
+        if (this.monopolyRoom.state.rolledDice) return;
         const player = this.monopolyRoom.state.players.get(
             this.client.sessionId
         );
@@ -46,6 +47,9 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             position: player.position,
             turnId: this.state.currentTurn,
         });
+
+        // Set rolledDice to true
+        this.monopolyRoom.state.rolledDice = true;
     }
 
     private handleLandingOnTile(player: Player) {
@@ -156,6 +160,13 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
                 break;
             case "collect":
                 player.balance += card.amount;
+                break;
+            case "move":
+                player.position += card.count;
+                if (player.position >= 40) {
+                    player.position -= 40;
+                    player.balance += 200;
+                }
                 break;
             default:
                 console.log(`Unhandled card action: ${card.action}`);

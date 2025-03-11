@@ -1,6 +1,5 @@
 import { Command } from "@colyseus/command";
 import { Player } from "@rooms/state/PlayerState";
-import { RoomState } from "@rooms/schema/RoomState";
 import { MonopolyRoom } from "@rooms/MonopolyRoom";
 
 export class RegisterPlayerCommand extends Command<MonopolyRoom, { client: any; name: string }> {

@@ -15,4 +15,7 @@ export class RoomState extends Schema {
   @type("string")
   currentTurn: string = "";
 
+  @type("boolean")
+  rolledDice: boolean = false;
+
 }

@@ -1,8 +1,9 @@
 import { Room, Client } from "@colyseus/core";
 import { RoomState } from "@rooms/schema/RoomState";
-import { Player } from "./state/PlayerState";
 import { Property } from "@rooms/state/PropertyState";
 import { RegisterPlayerCommand } from "./commands/RegisterPlayerCommand";
+import { BuyPropertyCommand } from "@rooms/commands/BuyPropertyCommand";
+import { SellPropertyCommand } from "@rooms/commands/SellPropertyCommand";
 import { Dispatcher } from "@colyseus/command";
 import { RollDiceCommand } from "@rooms/commands/RollDiceCommand";
 import { MessageTypes } from "@/types/MessageTypes";
@@ -61,14 +62,9 @@ export class MonopolyRoom extends Room<RoomState> {
             console.log(logMsg);
 
             const player = this.state.players.get(client.sessionId);
-            // Send initials to the joining client.
-            const otherPlayers = [];
-            for (const key in this.state.players) {
-                otherPlayers.push(this.state.players.get(key));
-            }
+
             client.send("initials", {
                 turn_id: this.state.currentTurn,
-                other_players: otherPlayers,
             });
 
             // Notify all other players of the new player.
@@ -139,6 +135,7 @@ export class MonopolyRoom extends Room<RoomState> {
         );
 
         this.onMessage(MessageTypes.FINISH_TURN, (client) => {
+            this.state.rolledDice = false;
             const player = this.state.players.get(client.sessionId);
             if (player) {
                 const playerIds = [];
@@ -191,74 +188,12 @@ export class MonopolyRoom extends Room<RoomState> {
 
         this.onMessage(
             MessageTypes.BUY_PROPERTY,
-            (client, data: { propertyId: number }) => {
-                const player = this.state.players.get(client.sessionId);
-                if (!player) {
-                    console.warn(
-                        `Could not find player with ID ${client.sessionId}`
-                    );
-                    return;
-                }
-
-                const { propertyId } = data;
-                const property = this.state.properties.get(String(propertyId));
-                if (!property) {
-                    console.warn("Property not found:", propertyId);
-                    return;
-                }
-
-                if (
-                    property.ownedby !== "" &&
-                    property.ownedby !== client.sessionId
-                ) {
-                    client.send("buy_property_fail", {
-                        reason: "Property is already owned.",
-                    });
-                    return;
-                }
-
-                // Buying buildings on a property
-                if (property.ownedby === client.sessionId) {
-                    if (
-                        property.buildings < 4 &&
-                        player.balance >= property.housecost
-                    ) {
-                        property.buildings++;
-                        player.balance -= property.housecost;
-
-                        this.broadcast("property_updating", {
-                            propertyId,
-                            newBuildings: property.buildings,
-                            newBalance: player.balance,
-                        });
-                        return;
-                    } else {
-                        client.send("buy_property_fail", {
-                            reason: "Cannot buy more buildings on this property.",
-                        });
-                    }
-                    return;
-                }
-
-                if (player.balance < property.price) {
-                    client.send("buy_property_fail", {
-                        reason: "Not enough balance to purchase this property.",
-                    });
-                    return;
-                }
-
-                player.balance -= property.price;
-                property.ownedby = client.sessionId;
-
-                this.broadcast("property_purchased", {
-                    propertyId,
-                    ownerId: client.sessionId,
-                    newBalance: player.balance,
+            (client, data: { propertyId: string }) => {
+                this.dispatcher.dispatch(new BuyPropertyCommand(), {
+                    client: client,
+                    monopolyRoom: this,
+                    data: data,
                 });
-
-                console.log(
-                    `${player.username} purchased property at position ${property.position}`
-                );
             }
         );
 
@@ -267,88 +202,15 @@ export class MonopolyRoom extends Room<RoomState> {
             (
                 client,
                 data: {
-                    propertyId: number;
+                    propertyId: string;
                     buildingsToSell: number;
                     sellEntireProperty: boolean;
                 }
             ) => {
-                const player = this.state.players.get(client.sessionId);
-                if (!player) {
-                    console.warn(
-                        `sell_property: Player not found for client ${client.sessionId}`
-                    );
-                    return;
-                }
-
-                const property = this.state.properties.get(
-                    String(data.propertyId)
-                );
-                if (!property) {
-                    console.warn(
-                        "sell_property: Property not found:",
-                        data.propertyId
-                    );
-                    return;
-                }
-
-                if (property.ownedby !== client.sessionId) {
-                    client.send("sell_property_fail", {
-                        reason: "You do not own this property.",
-                    });
-                    return;
-                }
-
-                // Base sell (or mortgage) value is half the property price
-                const halfPrice = Math.floor(property.price / 2);
-
-                if (data.sellEntireProperty) {
-                    player.balance += halfPrice;
-
-                    if (property.buildings > 0) {
-                        player.balance +=
-                            property.buildings * property.housecost;
-                        property.buildings = 0;
-                    }
-
-                    property.ownedby = "";
-
-                    this.broadcast("property_sold", {
-                        propertyId: data.propertyId,
-                        ownerId: property.ownedby,
-                        newBuildings: property.buildings,
-                        newBalance: player.balance,
-                    });
-
-                    return;
-                }
-
-                // Sell buildings only
-                if (data.buildingsToSell > 0) {
-                    if (property.buildings < data.buildingsToSell) {
-                        client.send("sell_property_fail", {
-                            reason: `You only have ${property.buildings} buildings but tried to sell ${data.buildingsToSell}.`,
-                        });
-                        return;
-                    }
-
-                    property.buildings -= data.buildingsToSell;
-
-                    const buildingRevenue =
-                        data.buildingsToSell * property.housecost;
-                    player.balance += buildingRevenue;
-
-                    this.broadcast("property_sold", {
-                        propertyId: data.propertyId,
-                        ownerId: property.ownedby,
-                        newBuildings: property.buildings,
-                        newBalance: player.balance,
-                    });
-
-                    return;
-                }
-
-                client.send("sell_property_fail", {
-                    reason: "No valid sell action specified. Either set 'sellEntireProperty' or 'buildingsToSell'.",
+                this.dispatcher.dispatch(new SellPropertyCommand(), {
+                    client: client,
+                    monopolyRoom: this,
+                    data: data,
                 });
             }
         );
