@@ -8,6 +8,8 @@ import { Dispatcher } from "@colyseus/command";
 import { RollDiceCommand } from "@rooms/commands/RollDiceCommand";
 import { MessageTypes } from "@/types/MessageTypes";
 import monopolyJSON from "@/assets/monopoly.json";
+import { ZKService } from "@/services/ZkService";
+
 
 // Reference from: https://github.com/itaylayzer/Monopoly/blob/main/src/assets/server.ts
 // https://github.com/itaylayzer/Monopoly/blob/main/src/assets/monopoly.json
@@ -17,7 +19,10 @@ export class MonopolyRoom extends Room<RoomState> {
 
     dispatcher = new Dispatcher(this);
 
+    private zkService: ZKService
+
     onCreate(options: any) {
+        this.zkService = ZKService.getInstance(this.roomId);
         this.state = new RoomState();
         monopolyJSON.properties.forEach((prop: any, index: number) => {
             const newProp = new Property();
@@ -45,6 +50,7 @@ export class MonopolyRoom extends Room<RoomState> {
 
         this.onMessage(MessageTypes.REGISTER, (client, name: string) => {
             // RegisterPlayerCommand
+
             this.dispatcher.dispatch(new RegisterPlayerCommand(), {
                 client: client,
                 name: name,
@@ -105,6 +111,9 @@ export class MonopolyRoom extends Room<RoomState> {
         // Message: "roll_dice" – roll dice, update player position, and broadcast the result.
         // Temporary random dice roll implementation, will be replaced with ZK-Shuffle.
         this.onMessage(MessageTypes.ROLL_DICE, (client) => {
+            this.zkService.rollDice().then((result) => {
+                console.log(`Dice rolled: ${result.result} for Client ${result.result}`);
+            });
             this.dispatcher.dispatch(new RollDiceCommand(this, client));
         });
 
