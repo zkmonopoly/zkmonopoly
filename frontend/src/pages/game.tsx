@@ -15,6 +15,7 @@ import { FreeParkingNode } from "@/components/game/free-parking-node";
 import { GoToJailNode } from "@/components/game/go-to-jail-node";
 import { WaterCompanyMaterial } from "@/components/game/materials/water-company-material";
 import { LuxuryTaxMaterial } from "@/components/game/materials/luxury-tax-material";
+import { Player } from "@/components/game/player";
 
 export default function Game() {
     return (
@@ -339,6 +340,9 @@ export default function Game() {
                                 color={MonopolyColors.Blue}
                                 propertyName={["BOARDWALK"]}
                                 propertyValue="$ 400"
+                            />
+                            <Player 
+                                position={new Vector3(0, 2, 0)}
                             />
                         </Suspense>
                     </shadowGenerator>

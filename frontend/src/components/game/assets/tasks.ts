@@ -1,4 +1,5 @@
 import { Task, TaskType } from "react-babylonjs";
+import "@babylonjs/loaders";
 
 export const textureTasks: Task[] = [
     {
@@ -50,5 +51,11 @@ export const textureTasks: Task[] = [
         taskType: TaskType.Texture,
         name: "go-to-jail",
         url: "/assets/game/2d/go_to_jail.png"
+    },
+    {
+        taskType: TaskType.Mesh,
+        name: "player",
+        rootUrl: "/assets/game/3d/token/",
+        sceneFilename: "token.gltf"
     }
 ];
