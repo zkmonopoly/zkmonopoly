@@ -16,6 +16,7 @@ import { GoToJailNode } from "@/components/game/go-to-jail-node";
 import { WaterCompanyMaterial } from "@/components/game/materials/water-company-material";
 import { LuxuryTaxMaterial } from "@/components/game/materials/luxury-tax-material";
 import { Player } from "@/components/game/player";
+import { NodePositions } from "@/components/game/constants/common";
 
 export default function Game() {
     return (
@@ -30,8 +31,8 @@ export default function Game() {
             <Scene>
                 <universalCamera
                     name="camera1"
-                    position={new Vector3(34.5, 10, -30.25)}
-                    setTarget={[new Vector3(34.5, 0.5, -30.25)]}
+                    position={new Vector3(0, 10, 0)}
+                    setTarget={[new Vector3(0, 1, 0)]}
                     keysDown={[83]}
                     keysUp={[87]}
                     keysLeft={[65]}
@@ -49,29 +50,29 @@ export default function Game() {
                         <Suspense fallback={null}>
                             <GoNode
                                 name="go"
-                                position={new Vector3(0, 0.5, 0)}
+                                position={NodePositions[0]}
                             />
                             <PropertyNode 
                                 name="mediterraneanAvenue"
-                                position={new Vector3(4.25, 0.5, 0)}
+                                position={NodePositions[1]}
                                 color={MonopolyColors.Brown}
                                 propertyName={["MEDITER-", "RANEAN", "AVENUE"]}
                                 propertyValue="$ 60"
                             />
                             <CommunityChestNode
                                 name="communityChest1"
-                                position={new Vector3(7.5, 0.5, 0)}
+                                position={NodePositions[2]}
                             />
                             <PropertyNode
                                 name="balticAvenue"
-                                position={new Vector3(10.75, 0.5, 0)}
+                                position={NodePositions[3]}
                                 color={MonopolyColors.Brown}
                                 propertyName={["BALTIC", "AVENUE"]}
                                 propertyValue="$ 60"
                             />
                             <SpecialPropertyNode
                                 name="incomeTax"
-                                position={new Vector3(14, 0.5, 0)}
+                                position={NodePositions[4]}
                                 width={RectangleDimensions[0].width}
                                 height={RectangleDimensions[0].height}
                                 propertyName={["INCOME", "TAX"]}
@@ -79,7 +80,7 @@ export default function Game() {
                             />
                             <SpecialPropertyNode
                                 name="readingRailroad"
-                                position={new Vector3(17.25, 0.5, 0)}
+                                position={NodePositions[5]}
                                 width={RectangleDimensions[1].width}
                                 height={RectangleDimensions[1].height}
                                 propertyName={["READING", "RAILROAD"]}
@@ -89,34 +90,34 @@ export default function Game() {
                             </SpecialPropertyNode>
                             <PropertyNode
                                 name="orientalAvenue"
-                                position={new Vector3(20.5, 0.5, 0)}
+                                position={NodePositions[6]}
                                 color={MonopolyColors.LightBlue}
                                 propertyName={["ORIENTAL", "AVENUE"]}
                                 propertyValue="$ 100"
                             />
                             <ChanceNode 
                                 name="chance1"
-                                position={new Vector3(23.75, 0.5, 0)}
+                                position={NodePositions[7]}
                                 color={MonopolyColors.Magenta}
                             />
                             <PropertyNode
                                 name="vermontAvenue"
-                                position={new Vector3(27, 0.5, 0)}
+                                position={NodePositions[8]}
                                 color={MonopolyColors.LightBlue}
                                 propertyName={["VERMONT", "AVENUE"]}
                                 propertyValue="$ 100"
                             />
                             <PropertyNode
                                 name="connecticutAvenue"
-                                position={new Vector3(30.25, 0.5, 0)}
+                                position={NodePositions[9]}
                                 color={MonopolyColors.LightBlue}
                                 propertyName={["CONNECTICUT", "AVENUE"]}
                                 propertyValue="$ 120"
                             />
-                            <JailNode name="inJail" position={new Vector3(34.5, 0.5, 0)} />
+                            <JailNode name="inJail" position={NodePositions[10]} />
                             <PropertyNode
                                 name="stCharlesPlace"
-                                position={new Vector3(34.5, 0.5, -4.25)}
+                                position={NodePositions[11]}
                                 rotationIndex={1}
                                 color={MonopolyColors.Magenta}
                                 propertyName={["ST. CHARLES", "PLACE"]}
@@ -124,7 +125,7 @@ export default function Game() {
                             />
                             <SpecialPropertyNode
                                 name="electricCompany"
-                                position={new Vector3(34.5, 0.5, -7.5)}
+                                position={NodePositions[12]}
                                 width={RectangleDimensions[2].width}
                                 height={RectangleDimensions[2].height}
                                 rotationIndex={1}
@@ -135,7 +136,7 @@ export default function Game() {
                             </SpecialPropertyNode>
                             <PropertyNode
                                 name="statesAvenue"
-                                position={new Vector3(34.5, 0.5, -10.75)}
+                                position={NodePositions[13]}
                                 rotationIndex={1}
                                 color={MonopolyColors.Magenta}    
                                 propertyName={["STATES", "AVENUE"]}
@@ -143,7 +144,7 @@ export default function Game() {
                             />
                             <PropertyNode
                                 name="virginiaAvenue"
-                                position={new Vector3(34.5, 0.5, -14)}
+                                position={NodePositions[14]}
                                 rotationIndex={1}
                                 color={MonopolyColors.Magenta}
                                 propertyName={["VIRGINIA", "AVENUE"]}
@@ -151,7 +152,7 @@ export default function Game() {
                             />
                             <SpecialPropertyNode
                                 name="pennsylvaniaRailroad"
-                                position={new Vector3(34.5, 0.5, -17.25)}
+                                position={NodePositions[15]}
                                 width={RectangleDimensions[1].width}
                                 height={RectangleDimensions[1].height}
                                 rotationIndex={1}
@@ -162,7 +163,7 @@ export default function Game() {
                             </SpecialPropertyNode>
                             <PropertyNode
                                 name="stJamesPlace"
-                                position={new Vector3(34.5, 0.5, -20.5)}
+                                position={NodePositions[16]}
                                 rotationIndex={1}
                                 color={MonopolyColors.Orange}
                                 propertyName={["ST. JAMES", "PLACE"]}
@@ -170,12 +171,12 @@ export default function Game() {
                             />
                             <CommunityChestNode
                                 name="communityChest2"
-                                position={new Vector3(34.5, 0.5, -23.75)}
+                                position={NodePositions[17]}
                                 rotationIndex={1}
                             />
                             <PropertyNode
                                 name="tennesseeAvenue"
-                                position={new Vector3(34.5, 0.5, -27)}
+                                position={NodePositions[18]}
                                 rotationIndex={1}
                                 color={MonopolyColors.Orange}
                                 propertyName={["TENNESSEE", "AVENUE"]}
@@ -183,7 +184,7 @@ export default function Game() {
                             />
                             <PropertyNode
                                 name="newYorkAvenue"
-                                position={new Vector3(34.5, 0.5, -30.25)}
+                                position={NodePositions[19]}
                                 rotationIndex={1}
                                 color={MonopolyColors.Orange}
                                 propertyName={["NEW YORK", "AVENUE"]}
@@ -191,11 +192,11 @@ export default function Game() {
                             />
                             <FreeParkingNode
                                 name="freeParking"
-                                position={new Vector3(34.5, 0.5, -34.5)}
+                                position={NodePositions[20]}
                             />
                             <PropertyNode
                                 name="kentuckyAvenue"
-                                position={new Vector3(30.25, 0.5, -34.5)}
+                                position={NodePositions[21]}
                                 rotationIndex={2}
                                 color={MonopolyColors.Red}
                                 propertyName={["KENTUCKY", "AVENUE"]}
@@ -203,26 +204,26 @@ export default function Game() {
                             />
                             <ChanceNode
                                 name="chance2"
-                                position={new Vector3(27, 0.5, -34.5)}
+                                position={NodePositions[22]}
                                 rotationIndex={2}
                                 color={MonopolyColors.CommunityChest} />
                             <PropertyNode
                                 name="indianaAvenue"
-                                position={new Vector3(23.75, 0.5, -34.5)}
+                                position={NodePositions[23]}
                                 rotationIndex={2}
                                 color={MonopolyColors.Red}
                                 propertyName={["INDIANA", "AVENUE"]}
                                 propertyValue="$ 220" />
                             <PropertyNode
                                 name="illinoisAvenue"
-                                position={new Vector3(20.5, 0.5, -34.5)}
+                                position={NodePositions[24]}
                                 rotationIndex={2}
                                 color={MonopolyColors.Red}
                                 propertyName={["ILLINOIS", "AVENUE"]}
                                 propertyValue="$ 240" />
                             <SpecialPropertyNode
                                 name="bAndORailroad"
-                                position={new Vector3(17.25, 0.5, -34.5)}
+                                position={NodePositions[25]}
                                 width={RectangleDimensions[1].width}
                                 height={RectangleDimensions[1].height}
                                 rotationIndex={2}
@@ -233,21 +234,21 @@ export default function Game() {
                             </SpecialPropertyNode>
                             <PropertyNode
                                 name="atlanticAvenue"
-                                position={new Vector3(14, 0.5, -34.5)}
+                                position={NodePositions[26]}
                                 rotationIndex={2}
                                 color={MonopolyColors.Yellow}
                                 propertyName={["ATLANTIC", "AVENUE"]}
                                 propertyValue="$ 260" />
                             <PropertyNode
                                 name="ventnorAvenue"
-                                position={new Vector3(10.75, 0.5, -34.5)}
+                                position={NodePositions[27]}
                                 rotationIndex={2}
                                 color={MonopolyColors.Yellow}
                                 propertyName={["VENTNOR", "AVENUE"]}
                                 propertyValue="$ 260" />
                             <SpecialPropertyNode
                                 name="waterCompany"
-                                position={new Vector3(7.5, 0.5, -34.5)}
+                                position={NodePositions[28]}
                                 width={RectangleDimensions[0].width}
                                 height={RectangleDimensions[0].height}
                                 rotationIndex={2}
@@ -258,27 +259,27 @@ export default function Game() {
                             </SpecialPropertyNode>
                             <PropertyNode
                                 name="marvinGardens"
-                                position={new Vector3(4.25, 0.5, -34.5)}
+                                position={NodePositions[29]}
                                 rotationIndex={2}
                                 color={MonopolyColors.Yellow}
                                 propertyName={["MARVIN", "GARDENS"]}
                                 propertyValue="$ 280"
                             />
+                            <GoToJailNode
+                                name="goToJail"
+                                position={NodePositions[30]}
+                            />
                             <PropertyNode
                                 name="pacificAvenue"
-                                position={new Vector3(0, 0.5, -30.25)}
+                                position={NodePositions[31]}
                                 rotationIndex={3}
                                 color={MonopolyColors.Green}
                                 propertyName={["PACIFIC", "AVENUE"]}
                                 propertyValue="$ 300"
                             />
-                            <GoToJailNode
-                                name="goToJail"
-                                position={new Vector3(0, 0.5, -34.5)}
-                            />
                             <PropertyNode
                                 name="northCarolinaAvenue"
-                                position={new Vector3(0, 0.5, -27)}
+                                position={NodePositions[32]}
                                 rotationIndex={3}
                                 color={MonopolyColors.Green}
                                 propertyName={["NORTH", "CAROLINA", "AVENUE"]}
@@ -286,12 +287,12 @@ export default function Game() {
                             />
                             <CommunityChestNode
                                 name="communityChest3"
-                                position={new Vector3(0, 0.5, -23.75)}
+                                position={NodePositions[33]}
                                 rotationIndex={3}
                             />
                             <PropertyNode
                                 name="pennsylvaniaAvenue"
-                                position={new Vector3(0, 0.5, -20.5)}
+                                position={NodePositions[34]}
                                 rotationIndex={3}
                                 color={MonopolyColors.Green}
                                 propertyName={["PENNSYLVANIA", "AVENUE"]}
@@ -299,7 +300,7 @@ export default function Game() {
                             />
                             <SpecialPropertyNode
                                 name="shortLine"
-                                position={new Vector3(0, 0.5, -17.25)}
+                                position={NodePositions[35]}
                                 width={RectangleDimensions[1].width}
                                 height={RectangleDimensions[1].height}
                                 rotationIndex={3}
@@ -310,13 +311,13 @@ export default function Game() {
                             </SpecialPropertyNode>
                             <ChanceNode
                                 name="chance3"
-                                position={new Vector3(0, 0.5, -14)}
+                                position={NodePositions[36]}
                                 rotationIndex={3}
                                 color={MonopolyColors.Orange}
                             />
                             <PropertyNode
                                 name="parkPlace"
-                                position={new Vector3(0, 0.5, -10.75)}
+                                position={NodePositions[37]}
                                 rotationIndex={3}
                                 color={MonopolyColors.Blue}
                                 propertyName={["PARK", "PLACE"]}
@@ -324,7 +325,7 @@ export default function Game() {
                             />
                             <SpecialPropertyNode
                                 name="luxuryTax"
-                                position={new Vector3(0, 0.5, -7.5)}
+                                position={NodePositions[38]}
                                 width={RectangleDimensions[0].width}
                                 height={RectangleDimensions[0].height}
                                 rotationIndex={3}
@@ -335,14 +336,17 @@ export default function Game() {
                             </SpecialPropertyNode>
                             <PropertyNode
                                 name="boardwalk"
-                                position={new Vector3(0, 0.5, -4.25)}
+                                position={NodePositions[39]}
                                 rotationIndex={3}
                                 color={MonopolyColors.Blue}
                                 propertyName={["BOARDWALK"]}
                                 propertyValue="$ 400"
                             />
                             <Player 
-                                position={new Vector3(0, 2, 0)}
+                                playerIndex={0}
+                            />
+                            <Player
+                                playerIndex={1}
                             />
                         </Suspense>
                     </shadowGenerator>
