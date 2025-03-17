@@ -1,6 +1,6 @@
 import { ProgressBar, ProgressBarProps } from "react-aria-components";
 
-interface ProgressCircleProps extends Omit<ProgressBarProps, "children"> {
+interface ProgressCircleProps extends Omit<ProgressBarProps, "children" | "aria-label"> {
     size?: number;
     strokeWidth?: number;
 }
@@ -13,7 +13,7 @@ export function ProgressCircle({ size = 48, strokeWidth = 4, ...props }: Progres
     
     return (
         <div className="h-full flex items-center justify-center">
-            <ProgressBar isIndeterminate {...props}>
+            <ProgressBar isIndeterminate {...props} aria-label="Loading">
                 {({ percentage, isIndeterminate }) => (
                     <svg
                         width={size}
