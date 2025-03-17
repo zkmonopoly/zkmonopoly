@@ -66,7 +66,7 @@ export class ZKService {
       const timeout = setTimeout(() => {
         this.requestMap.delete(requestId);
         reject(new Error(`Request timed out: ${action}`));
-      }, 50000);
+      }, 500000);
 
       this.requestMap.set(requestId, { resolve, timeout });
       this.ws.send(JSON.stringify({ action, requestId, ...data }));

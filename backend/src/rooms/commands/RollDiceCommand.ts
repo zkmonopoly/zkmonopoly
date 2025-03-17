@@ -1,5 +1,5 @@
 import { Command } from "@colyseus/command";
-import {  Client } from "@colyseus/core";
+import { Client } from "@colyseus/core";
 import { Player } from "@rooms/state/PlayerState";
 import { MonopolyRoom } from "@rooms/MonopolyRoom";
 import { Property } from "@rooms/state/PropertyState";
@@ -14,7 +14,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         super();
     }
 
-    execute() {
+    async execute() {
         if (this.monopolyRoom.state.rolledDice) return;
         const player = this.monopolyRoom.state.players.get(
             this.client.sessionId
@@ -24,10 +24,19 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             return;
         }
 
-        const first = Math.floor(Math.random() * 6) + 1;
-        const second = Math.floor(Math.random() * 6) + 1;
-        const sum = first + second;
+        let first;
+        let second;
 
+        try {
+            const responseFirst = await this.monopolyRoom.zkService.rollDice();
+            const responseSecond = await this.monopolyRoom.zkService.rollDice();
+            first = responseFirst.result;
+            second = await responseSecond.result;
+        } catch (error) {
+            console.log(error);
+        }
+
+        let sum = first + second;
         let newPosition = player.position + sum;
         // Check pass GO
         if (newPosition >= 40) {
@@ -136,7 +145,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         this.applyCardEffect(player, randomCard);
 
         // Broadcast the drawn card to all players
-        
+
         this.monopolyRoom.broadcast("chance_community_card", {
             element: randomCard,
             is_chance: isChance,

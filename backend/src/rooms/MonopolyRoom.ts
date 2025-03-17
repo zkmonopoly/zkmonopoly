@@ -19,11 +19,11 @@ export class MonopolyRoom extends Room<RoomState> {
 
     dispatcher = new Dispatcher(this);
 
-    private zkService: ZKService
+    zkService: ZKService;
 
     onCreate(options: any) {
-        this.zkService = ZKService.getInstance(this.roomId);
         this.state = new RoomState();
+        this.zkService = ZKService.getInstance(this.roomId);
         monopolyJSON.properties.forEach((prop: any, index: number) => {
             const newProp = new Property();
             newProp.id = prop.id;
@@ -111,9 +111,7 @@ export class MonopolyRoom extends Room<RoomState> {
         // Message: "roll_dice" – roll dice, update player position, and broadcast the result.
         // Temporary random dice roll implementation, will be replaced with ZK-Shuffle.
         this.onMessage(MessageTypes.ROLL_DICE, (client) => {
-            this.zkService.rollDice().then((result) => {
-                console.log(`Dice rolled: ${result.result} for Client ${result.result}`);
-            });
+
             this.dispatcher.dispatch(new RollDiceCommand(this, client));
         });
 
