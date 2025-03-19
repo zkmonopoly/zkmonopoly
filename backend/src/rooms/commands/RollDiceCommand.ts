@@ -36,6 +36,9 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             console.log(error);
         }
 
+        // const first = Math.floor(Math.random() * 6) + 1;
+        // const second = Math.floor(Math.random() * 6) + 1;
+
         let sum = first + second;
         let newPosition = player.position + sum;
         // Check pass GO
