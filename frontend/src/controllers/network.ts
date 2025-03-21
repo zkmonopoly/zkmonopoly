@@ -1,36 +1,34 @@
 import { Client, Room } from "colyseus.js";
+import { GameController } from "./game-controller";
 import dotenv from "dotenv";
 dotenv.config();
 
 export class Network {
     private client: Client;
     private room: Room<any> | undefined;
-    private gameController: any;
+    private gameController: GameController;
 
-    constructor(gameController: any) {
+    constructor(gameController: GameController) {
         this.client = new Client(process.env.REACT_APP_COLYSEUS_ENDPOINT || "ws://localhost:2567");
         this.gameController = gameController;
     }
 
-    async connect() {
-        try {
-            this.room = await this.client.joinOrCreate("monopoly");
-            console.log("Successful connection, ID:", this.room.sessionId);
+    async joinRoom(roomName: string, options?: any): Promise<Room<any>> {
+        this.room = await this.client.joinOrCreate(roomName, options);
+        return this.room;
+      }
 
-            this.room.onMessage("updateState", (state) => {
-                this.gameController.updateState(state);
-            });
-
-        } catch (error) {
-            console.error("Error connection, ", error);
-        }
-    }
-
-
-
-    sendRollDice() {
+    send(type: string, payload?: any) {
         if (this.room) {
-            this.room.send("rollDice");
+          this.room.send(type, payload);
         }
-    }
+      }
+    
+      onMessage(type: string, callback: (message: any) => void) {
+        this.room?.onMessage(type, callback);
+      }
+    
+      getRoom(): Room<any> | null {
+        return this.room ?? null;
+      }
 }
