@@ -6,19 +6,32 @@ import Home from "@/pages/home";
 import Error from "@/pages/error";
 import GameLayout from "./layouts/game-layout";
 import { ProgressCircle } from "./components/progress-circle";
+import { GameProvider } from "@/contexts/game-context";
 const Game = lazy(() => import("@/pages/game"));
 
 export default function App() {
     return (
         <Routes>
-            <Route element={<HomeLayout/>}>
+            <Route element={<HomeLayout />}>
                 <Route path="/" element={<Home />} />
             </Route>
-            <Route element={<GameLayout/>}>
-                <Route path="game/:id" element={<Suspense fallback={<ProgressCircle/>}><Game /></Suspense>} />
+            <Route element={<GameLayout />}>
+                <Route
+                    path="game/:id"
+                    element={
+                        <Suspense fallback={<ProgressCircle />}>
+                            <GameProvider>
+                                <Game />
+                            </GameProvider>
+                        </Suspense>
+                    }
+                />
             </Route>
-            <Route element={<BasicLayout/>}>
-                <Route path="*" element={<Error code={404} message="Page not found" />} />
+            <Route element={<BasicLayout />}>
+                <Route
+                    path="*"
+                    element={<Error code={404} message="Page not found" />}
+                />
             </Route>
         </Routes>
     );

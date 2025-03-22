@@ -7,10 +7,7 @@ interface GameContextValue {
 
 const GameContext = createContext<GameContextValue | null>(null);
 
-/**
- * Wrap your app with GameProvider so that all children
- * can access the same GameController instance via `useGameController()`.
- */
+
 export function GameProvider({ children }: { children: React.ReactNode }) {
   const [controller] = useState(() => new GameController());
 

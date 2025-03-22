@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Engine, Scene } from "react-babylonjs";
 import { Vector3 } from "@babylonjs/core";
 import { PropertyNode } from "@/components/game/property-node";
@@ -17,8 +17,20 @@ import { WaterCompanyMaterial } from "@/components/game/materials/water-company-
 import { LuxuryTaxMaterial } from "@/components/game/materials/luxury-tax-material";
 import { Player } from "@/components/game/player";
 import { NodePositions } from "@/components/game/constants/common";
+import { useGameController } from "@/contexts/game-context";
 
 export default function Game() {
+    const controller = useGameController();
+
+    const [gameState, setGameState] = useState<any>(null);
+
+    useEffect(() => {
+        controller.onStateUpdate((state) => {
+            setGameState(state);
+        });
+    }, [controller]);
+
+
     return (
         <Engine
             antialias
