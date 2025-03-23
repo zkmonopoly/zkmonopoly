@@ -1,6 +1,7 @@
-import { Suspense } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Engine, Scene } from "react-babylonjs";
-import { Vector3 } from "@babylonjs/core";
+import { HavokPlugin, Vector3 } from "@babylonjs/core";
+import HavokPhysics, { HavokPhysicsWithBindings } from '@babylonjs/havok';
 import { PropertyNode } from "@/components/game/property-node";
 import { JailNode } from "@/components/game/jail-node";
 import { MonopolyColors } from "@/components/game/constants/colors";
@@ -19,6 +20,27 @@ import { Player } from "@/components/game/player";
 import { NodePositions } from "@/components/game/constants/common";
 
 export default function Game() {
+    const [HK, setHK] = useState<HavokPhysicsWithBindings>();
+    const [, setFontsReady] = useState(false);
+  
+    const faLoaded = useRef(false);
+    useEffect(() => {
+      if (document.fonts.check('16px FontAwesome') === false) {
+        document.fonts.load('16px FontAwesome').then(() => {
+          if (faLoaded.current !== true) {
+            faLoaded.current = true
+            setFontsReady(true)
+          }
+        })
+      } else if (faLoaded.current !== true) {
+        faLoaded.current = true
+        setFontsReady(true)
+      }
+      HavokPhysics().then((havok) => {
+        setHK(havok);
+      });
+    }, []);
+
     return (
         <Engine
             antialias
@@ -28,7 +50,13 @@ export default function Game() {
                 whenVisibleOnly: true,
             }}
         >
-            <Scene>
+            {HK ?
+            <Scene
+                enablePhysics={[
+                    null,
+                    new HavokPlugin(false, HK)
+                ]}
+            >
                 <universalCamera
                     name="camera1"
                     position={new Vector3(0, 10, 0)}
@@ -351,7 +379,8 @@ export default function Game() {
                         </Suspense>
                     </shadowGenerator>
                 </directionalLight>
-            </Scene>
+            </Scene> :
+            null}
         </Engine>
     );
 }

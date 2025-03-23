@@ -54,8 +54,6 @@ export function Player(props: PlayerProps) {
     useBeforeRender((scene) => {
         if (scene && playerMeshRef.current) {
             if (!playerMeshRef.current.position.equals(positionRef.current)) {
-                let oldPosition = new Vector3();
-                Object.assign(oldPosition, playerMeshRef.current.position);
                 playerMeshRef.current.position = Vector3.Lerp(playerMeshRef.current.position, positionRef.current, 0.1);
                 if (playerMeshRef.current.position.equalsWithEpsilon(positionRef.current, 0.1)) {
                     playerMeshRef.current.position = positionRef.current;
@@ -64,8 +62,8 @@ export function Player(props: PlayerProps) {
                 const movement = movementSequenceRef.current.pop();
                 if (movement) {
                     console.log(`Player ${props.playerIndex} moved to cell ${movement}`);
-                    console.log(movementSequenceRef.current.length)
-                    positionRef.current = NodePositions[movement].add(new Vector3(PlayerPositions[props.playerIndex].x, 0, PlayerPositions[props.playerIndex].z));
+                    console.log(movementSequenceRef.current.length);
+                    positionRef.current = NodePositions[movement].add(new Vector3(PlayerPositions[props.playerIndex].x, 0.5, PlayerPositions[props.playerIndex].z));
                 }
             }
         }
