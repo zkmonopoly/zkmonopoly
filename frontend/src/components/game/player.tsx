@@ -70,14 +70,14 @@ export function Player(props: PlayerProps) {
     });
 
     // DEBUG: Move player every 3 seconds
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            updateCellIndex(35);
-        }, 3000);
-        return () => {
-            clearTimeout(timer);
-        }
-    }, [cellIndex]);
+    // useEffect(() => {
+    //     const timer = setTimeout(() => {
+    //         updateCellIndex(35);
+    //     }, 3000);
+    //     return () => {
+    //         clearTimeout(timer);
+    //     }
+    // }, [cellIndex]);
 
     useEffect(() => {
         const scalingFactor = 2;
@@ -85,10 +85,10 @@ export function Player(props: PlayerProps) {
         
         if (props.playerIndex === 0) {
             playerMeshRef.current = playerTexture.loadedMeshes[0];
-            playerMeshRef.current.name = `player${props.playerIndex}`;
         } else {
             playerMeshRef.current = playerTexture.loadedMeshes[0].clone(`player${props.playerIndex}`, null)!;
         }
+        playerMeshRef.current.name = `player${props.playerIndex}`;
         playerMeshRef.current.position = PlayerPositions[props.playerIndex];
         playerMeshRef.current.scaling = scale;
         const playerMaterial = new StandardMaterial(`player${props.playerIndex}Material`, scene!);

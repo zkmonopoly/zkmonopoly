@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Engine, Scene } from "react-babylonjs";
-import { HavokPlugin, Vector3 } from "@babylonjs/core";
+import { HavokPlugin, PhysicsShapeType, Vector3 } from "@babylonjs/core";
 import HavokPhysics, { HavokPhysicsWithBindings } from '@babylonjs/havok';
 import { PropertyNode } from "@/components/game/property-node";
 import { JailNode } from "@/components/game/jail-node";
@@ -18,6 +18,7 @@ import { WaterCompanyMaterial } from "@/components/game/materials/water-company-
 import { LuxuryTaxMaterial } from "@/components/game/materials/luxury-tax-material";
 import { Player } from "@/components/game/player";
 import { NodePositions } from "@/components/game/constants/common";
+import { Dice } from "@/components/game/dice";
 
 export default function Game() {
     const [HK, setHK] = useState<HavokPhysicsWithBindings>();
@@ -60,14 +61,19 @@ export default function Game() {
                 <universalCamera
                     name="camera1"
                     position={new Vector3(0, 10, 0)}
-                    setTarget={[new Vector3(0, 1, 0)]}
+                    setTarget={[new Vector3(17.25, 0, -17.25)]}
                     keysDown={[83]}
                     keysUp={[87]}
                     keysLeft={[65]}
                     keysRight={[68]}
                 />
                 <hemisphericLight name="light1" intensity={0.7} direction={Vector3.Up()} />
-                <ground name="ground1" width={128} height={128} subdivisions={2} receiveShadows />
+                <ground name="ground1" position={new Vector3(17.25, 0, -17.25)} width={39.5} height={39.5} subdivisions={2} receiveShadows>
+                    <physicsAggregate
+                        type={PhysicsShapeType.BOX}
+                        _options={{ mass: 0, restitution: 0.9 }}
+                    />
+                </ground>
                 <directionalLight
                     name="dl"
                     intensity={0.6}
@@ -376,6 +382,7 @@ export default function Game() {
                             <Player
                                 playerIndex={1}
                             />
+                            <Dice />
                         </Suspense>
                     </shadowGenerator>
                 </directionalLight>

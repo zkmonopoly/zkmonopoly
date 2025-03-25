@@ -57,5 +57,11 @@ export const textureTasks: Task[] = [
         name: "player",
         rootUrl: "/assets/game/3d/token/",
         sceneFilename: "token.gltf"
+    },
+    {
+        taskType: TaskType.Mesh,
+        name: "dice",
+        rootUrl: "/assets/game/3d/dice/",
+        sceneFilename: "dice.gltf"
     }
 ];
