@@ -1,6 +1,6 @@
 import { Outlet } from "react-router";
 import { twMerge } from "tailwind-merge";
-import { Branding } from "@/components/branding";
+import { Branding } from "@/components/ui/branding";
 
 interface HomeLayoutProps {
     className?: string;

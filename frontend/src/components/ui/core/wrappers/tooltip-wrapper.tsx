@@ -1,5 +1,5 @@
 import { OverlayArrow, Tooltip, TooltipProps } from "react-aria-components";
-import { tooltipStyles } from "@/components/ui/styles/tooltip";
+import { tooltipStyles } from "@/components/ui/core/styles/tooltip";
 import { twMerge } from "tailwind-merge";
 
 interface TooltipWrapperProps extends Omit<TooltipProps, "children" | "className"> {

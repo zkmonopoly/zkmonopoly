@@ -1,4 +1,4 @@
-import { InteractiveConsole } from "@/components/interactive-console";
+import { InteractiveConsole } from "@/components/ui/interactive-console";
 import { Outlet } from "react-router";
 
 export default function GameLayout() {

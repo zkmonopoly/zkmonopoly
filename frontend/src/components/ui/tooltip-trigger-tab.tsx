@@ -1,8 +1,8 @@
 import { Button, Tab, Key, TabProps, TabsContext, TooltipTrigger, useSlottedContext } from "react-aria-components";
-import { TooltipWrapper } from "./ui/wrappers/tooltip-wrapper";
+import { TooltipWrapper } from "./core/wrappers/tooltip-wrapper";
 import { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
-import { tabStyles } from "./ui/styles/tabs";
+import { tabStyles } from "./core/styles/tabs";
 
 interface TooltipTriggerTabProps extends Omit<TabProps, "className"> {
     id: Key;
