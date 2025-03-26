@@ -40,7 +40,7 @@ export function InteractiveConsole(props: InteractiveConsoleProps) {
                 />    
             </Button>
                 
-            <pre className="scrollbar-thin scrollbar-neutral-800 text-xs w-full h-full px-2 overflow-y-scroll [&_p]:my-1 [&_p]:text-wrap [&_p]:break-all">
+            <pre className="scrollbar-thin scrollbar-ubuntu text-xs w-full h-full px-2 overflow-y-scroll [&_p]:my-1 [&_p]:text-wrap [&_p]:break-all">
                 <p>console.log()</p>
             </pre>
         </div>

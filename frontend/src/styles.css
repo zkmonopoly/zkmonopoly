@@ -19,6 +19,6 @@ html, body {
     scrollbar-width: thin;
 }
 
-@utility scrollbar-neutral-800 {
-    scrollbar-color: var(--color-white) var(--color-neutral-800);
+@utility scrollbar-ubuntu {
+    scrollbar-color: var(--color-white) var(--color-ubuntu);
 }
