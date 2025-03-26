@@ -4,7 +4,15 @@
 @theme {
     --font-sans: "Josefin Sans", ui-sans-serif, system-ui, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    /* colors */
     --color-ubuntu: #300924;
+    /* font sizes */
+    --text-monopoly-s: 10px;
+    --text-monopoly-s--line-height: 1.3333rem;
+    --text-monopoly-s--font-weight: 500;
+    --text-monopoly-m: 13px;
+    --text-monopoly-m--line-height: 1.3333rem;
+    --text-monopoly-s--font-weight: 700;
 }
   
 html, body {
