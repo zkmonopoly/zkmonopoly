@@ -1,21 +1,21 @@
 import { TextureAssetTask } from "@babylonjs/core";
 import { useAssetManager } from "react-babylonjs";
-import { textureTasks } from "@/components/game/assets/tasks";
-import { TextureRootUrl } from "@/components/game/constants/common";
+import { textureTasks } from "@/components/game/core/assets/tasks";
+import { TextureRootUrl } from "@/components/game/core/constants/common";
 
-export function WaterCompanyMaterial() {
+export function GoArrowMaterial() {
     const textures = useAssetManager(textureTasks, {
         useDefaultLoadingScreen: true
     });
-    const waterCompanyTexture = textures.taskNameMap["water-company"] as TextureAssetTask;
+    const goArrowTexture = textures.taskNameMap["go-arrow"] as TextureAssetTask;
 
     return (
         <standardMaterial
-            name="water-company-mat"
+            name="go-arrow-mat"
         >
             <texture
                 assignTo="diffuseTexture"
-                fromInstance={waterCompanyTexture.texture}
+                fromInstance={goArrowTexture.texture}
                 url={TextureRootUrl}
                 hasAlpha
             />

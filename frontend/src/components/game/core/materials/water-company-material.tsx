@@ -1,21 +1,21 @@
 import { TextureAssetTask } from "@babylonjs/core";
 import { useAssetManager } from "react-babylonjs";
-import { textureTasks } from "@/components/game/assets/tasks";
-import { TextureRootUrl } from "@/components/game/constants/common";
+import { textureTasks } from "@/components/game/core/assets/tasks";
+import { TextureRootUrl } from "@/components/game/core/constants/common";
 
-export function LuxuryTaxMaterial() {
+export function WaterCompanyMaterial() {
     const textures = useAssetManager(textureTasks, {
         useDefaultLoadingScreen: true
     });
-    const luxuryTaxTexture = textures.taskNameMap["luxury-tax"] as TextureAssetTask;
+    const waterCompanyTexture = textures.taskNameMap["water-company"] as TextureAssetTask;
 
     return (
         <standardMaterial
-            name="luxury-tax-mat"
+            name="water-company-mat"
         >
             <texture
                 assignTo="diffuseTexture"
-                fromInstance={luxuryTaxTexture.texture}
+                fromInstance={waterCompanyTexture.texture}
                 url={TextureRootUrl}
                 hasAlpha
             />

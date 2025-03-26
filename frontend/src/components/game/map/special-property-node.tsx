@@ -1,9 +1,9 @@
 import { PropsWithChildren } from "react";
 import { Vector3 } from "@babylonjs/core";
 import { EdgeNode } from "./edge-node";
-import { JsText } from "./texts/js-text";
-import { DefaultMeshOffset } from "./constants/offsets";
-import { getRotation, getSpecialPropertyOffset } from "./constants/rotations";
+import { JsText } from "../core/texts/js-text";
+import { DefaultMeshOffset } from "../core/constants/offsets";
+import { getRotation, getSpecialPropertyOffset } from "../core/constants/rotations";
 
 interface RailroadNodeProps extends PropsWithChildren {
     name: string

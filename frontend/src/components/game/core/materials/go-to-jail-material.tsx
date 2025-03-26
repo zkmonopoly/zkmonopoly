@@ -1,21 +1,21 @@
 import { TextureAssetTask } from "@babylonjs/core";
 import { useAssetManager } from "react-babylonjs";
-import { textureTasks } from "@/components/game/assets/tasks";
-import { TextureRootUrl } from "@/components/game/constants/common";
+import { textureTasks } from "@/components/game/core/assets/tasks";
+import { TextureRootUrl } from "@/components/game/core/constants/common";
 
-export function ElectricCompanyMaterial() {
+export function GoToJailMaterial() {
     const textures = useAssetManager(textureTasks, {
         useDefaultLoadingScreen: true
     });
-    const electricCompanyTexture = textures.taskNameMap["electric-company"] as TextureAssetTask;
+    const goToJailTexture = textures.taskNameMap["go-to-jail"] as TextureAssetTask;
 
     return (
         <standardMaterial
-            name="electric-company-mat"
+            name="go-to-jail-mat"
         >
             <texture
                 assignTo="diffuseTexture"
-                fromInstance={electricCompanyTexture.texture}
+                fromInstance={goToJailTexture.texture}
                 url={TextureRootUrl}
                 hasAlpha
             />

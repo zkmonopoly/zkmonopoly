@@ -1,7 +1,7 @@
 import { Color3 } from "@babylonjs/core";
 import { EdgeNodeProps, EdgeNode } from "./edge-node";
-import { JsText } from "./texts/js-text";
-import { getRotation } from "./constants/rotations";
+import { JsText } from "../core/texts/js-text";
+import { getRotation } from "../core/constants/rotations";
 
 interface ChanceNodeProps extends Omit<EdgeNodeProps, "children" | "rotation"> {
     rotationIndex?: number

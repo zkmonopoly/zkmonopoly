@@ -1,7 +1,7 @@
 import { TextureAssetTask } from "@babylonjs/core";
 import { useAssetManager } from "react-babylonjs";
-import { textureTasks } from "@/components/game/assets/tasks";
-import { TextureRootUrl } from "@/components/game/constants/common";
+import { textureTasks } from "@/components/game/core/assets/tasks";
+import { TextureRootUrl } from "@/components/game/core/constants/common";
 
 export function FreeParkingMaterial() {
     const textures = useAssetManager(textureTasks, {

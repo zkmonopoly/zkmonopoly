@@ -1,21 +1,21 @@
 import { TextureAssetTask } from "@babylonjs/core";
 import { useAssetManager } from "react-babylonjs";
-import { textureTasks } from "@/components/game/assets/tasks";
-import { TextureRootUrl } from "@/components/game/constants/common";
+import { textureTasks } from "@/components/game/core/assets/tasks";
+import { TextureRootUrl } from "@/components/game/core/constants/common";
 
-export function GoArrowMaterial() {
+export function CommunityChestMaterial() {
     const textures = useAssetManager(textureTasks, {
         useDefaultLoadingScreen: true
     });
-    const goArrowTexture = textures.taskNameMap["go-arrow"] as TextureAssetTask;
+    const communityChestTexture = textures.taskNameMap["community-chest"] as TextureAssetTask;
 
     return (
         <standardMaterial
-            name="go-arrow-mat"
+            name="community-chest-mat"
         >
             <texture
                 assignTo="diffuseTexture"
-                fromInstance={goArrowTexture.texture}
+                fromInstance={communityChestTexture.texture}
                 url={TextureRootUrl}
                 hasAlpha
             />

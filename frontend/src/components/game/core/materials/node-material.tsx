@@ -1,8 +1,8 @@
 import { Color3, TextureAssetTask } from "@babylonjs/core";
 import { useAssetManager } from "react-babylonjs";
-import { textureTasks } from "@/components/game/assets/tasks";
-import { NodeColor } from "@/components/game/constants/colors";
-import { TextureRootUrl } from "@/components/game/constants/common";
+import { textureTasks } from "@/components/game/core/assets/tasks";
+import { NodeColor } from "@/components/game/core/constants/colors";
+import { TextureRootUrl } from "@/components/game/core/constants/common";
 
 interface NodeMaterialProps {
     color?: Color3

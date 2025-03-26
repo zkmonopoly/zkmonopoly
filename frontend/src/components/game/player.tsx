@@ -1,9 +1,9 @@
 import { AbstractMesh, MeshAssetTask, Vector3, StandardMaterial, Color3, Nullable } from "@babylonjs/core";
 import { useEffect, useRef, useState } from "react"
 import { useAssetManager, useBeforeRender, useScene } from "react-babylonjs";
-import { textureTasks } from "./assets/tasks";
-import { NodePositions, PlayerPositions } from "./constants/common";
-import { MonopolyColors } from "./constants/colors";
+import { textureTasks } from "./core/assets/tasks";
+import { NodePositions, PlayerPositions } from "./core/constants/common";
+import { MonopolyColors } from "./core/constants/colors";
 
 interface PlayerProps {
     playerIndex: number;
@@ -70,27 +70,29 @@ export function Player(props: PlayerProps) {
     });
 
     // DEBUG: Move player every 3 seconds
-    // useEffect(() => {
-    //     const timer = setTimeout(() => {
-    //         updateCellIndex(35);
-    //     }, 3000);
-    //     return () => {
-    //         clearTimeout(timer);
-    //     }
-    // }, [cellIndex]);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            updateCellIndex(35);
+        }, 3000);
+        return () => {
+            clearTimeout(timer);
+        }
+    }, [cellIndex]);
 
     useEffect(() => {
         const scalingFactor = 2;
         const scale = new Vector3(scalingFactor, scalingFactor, scalingFactor);
-        
+        // if player index is 0, use the original mesh, otherwise clone it
         if (props.playerIndex === 0) {
             playerMeshRef.current = playerTexture.loadedMeshes[0];
         } else {
             playerMeshRef.current = playerTexture.loadedMeshes[0].clone(`player${props.playerIndex}`, null)!;
         }
+        // set player mesh properties
         playerMeshRef.current.name = `player${props.playerIndex}`;
         playerMeshRef.current.position = PlayerPositions[props.playerIndex];
         playerMeshRef.current.scaling = scale;
+        // set player material
         const playerMaterial = new StandardMaterial(`player${props.playerIndex}Material`, scene!);
         playerMaterial.specularColor = Color3.Black();
         switch (props.playerIndex) {

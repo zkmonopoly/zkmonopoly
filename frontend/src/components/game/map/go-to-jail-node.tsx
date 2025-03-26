@@ -1,9 +1,9 @@
 import { Vector3 } from "@babylonjs/core";
-import { DefaultMeshOffset } from "./constants/offsets";
-import { JsText } from "./texts/js-text";
+import { DefaultMeshOffset } from "../core/constants/offsets";
+import { JsText } from "../core/texts/js-text";
 import { CornerNode, CornerNodeProps } from "./corner-node";
-import { RectangleDimensions } from "./constants/dimensions";
-import { GoToJailMaterial } from "./materials/go-to-jail-material";
+import { RectangleDimensions } from "../core/constants/dimensions";
+import { GoToJailMaterial } from "../core/materials/go-to-jail-material";
 
 interface GoToJailNodeProps extends Omit<CornerNodeProps, "children"> {}
 

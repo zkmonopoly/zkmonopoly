@@ -1,21 +1,21 @@
 import { TextureAssetTask } from "@babylonjs/core";
 import { useAssetManager } from "react-babylonjs";
-import { textureTasks } from "@/components/game/assets/tasks";
-import { TextureRootUrl } from "@/components/game/constants/common";
+import { textureTasks } from "@/components/game/core/assets/tasks";
+import { TextureRootUrl } from "@/components/game/core/constants/common";
 
-export function RailroadMaterial() {
+export function PrisonMaterial() {
     const textures = useAssetManager(textureTasks, {
         useDefaultLoadingScreen: true
     });
-    const railroadTexture = textures.taskNameMap["railroad"] as TextureAssetTask;
+    const prisonTexture = textures.taskNameMap["prison"] as TextureAssetTask;
 
     return (
         <standardMaterial
-            name="railroad-mat"
+            name="prison-mat"
         >
             <texture
                 assignTo="diffuseTexture"
-                fromInstance={railroadTexture.texture}
+                fromInstance={prisonTexture.texture}
                 url={TextureRootUrl}
                 hasAlpha
             />
