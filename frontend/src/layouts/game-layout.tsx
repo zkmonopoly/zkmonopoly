@@ -21,6 +21,7 @@ export default function GameLayout() {
                                 }}
                                 color={MonopolyColors.Brown}
                             />
+                            {/* <ChanceCard body={["ABC", "XYZ"]}/> */}
                             {/* <RailroadPropertyCard
                                 propertyInfo={{
                                     name: "READING RAILROAD"
