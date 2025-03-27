@@ -2,6 +2,7 @@ import { PropertyInfo } from "@/models/property";
 import { MonopolyCard } from "./shared/monopoly-card";
 import { Color3 } from "@babylonjs/core";
 import { LuHouse } from "react-icons/lu";
+import { MonopolyHouseIcon } from "../icons/monopoly-house-icon";
 
 interface PropertyCardProps {
     propertyInfo: PropertyInfo;
@@ -31,42 +32,46 @@ export function PropertyCard(props: PropertyCardProps) {
                         <div>${props.propertyInfo.rentWithColorSet}</div>
                     </div>
                     <div className="flex justify-between">
-                        <div>Rent with 1
-                            <span className="relative">
-                                <LuHouse className="z-0 align-text-top ml-[6.5px] inline text-green-500" fill="#00c951"/>
-                            </span>
+                        <div>{"Rent with "}
+                            <MonopolyHouseIcon
+                                text="1"
+                                hexColor="#00c951"
+                            />
                         </div>
                         <div>${props.propertyInfo.multipliedRents[0]}</div>
                     </div>
                     <div className="flex justify-between">
-                        <div>Rent with 2
-                            <span className="relative">
-                                <LuHouse className="z-0 align-text-top ml-1 inline text-green-500" fill="#00c951"/>
-                            </span>
+                        <div>{"Rent with "}
+                            <MonopolyHouseIcon
+                                text="2"
+                                hexColor="#00c951"
+                            />
                         </div>
                         <div>${props.propertyInfo.multipliedRents[1]}</div>
                     </div>
                     <div className="flex justify-between">
-                        <div>Rent with 3
-                            <span className="relative">
-                                <LuHouse className="z-0 align-text-top ml-1 inline text-green-500" fill="#00c951"/>
-                            </span>
+                        <div>{"Rent with "}
+                            <MonopolyHouseIcon
+                                text="3"
+                                hexColor="#00c951"
+                            />
                         </div>
                         <div>${props.propertyInfo.multipliedRents[2]}</div>
                     </div>
                     <div className="flex justify-between">
-                        <div>Rent with 4
-                            <span className="relative">
-                                <LuHouse className="z-0 align-text-top ml-1 inline text-green-500" fill="#00c951"/>
-                            </span>
+                        <div>{"Rent with "}
+                            <MonopolyHouseIcon
+                                text="4"
+                                hexColor="#00c951"
+                            />
                         </div>
                         <div>${props.propertyInfo.multipliedRents[3]}</div>
                     </div>
                     <div className="flex justify-between">
-                        <div>Rent with 1
-                            <span className="relative">
-                                <LuHouse className="z-0 align-text-top ml-[6.5px] inline text-red-500" fill="#fb2c36"/>
-                            </span>
+                        <div>{"Rent with "}
+                            <MonopolyHouseIcon
+                                hexColor="#fb2c36"
+                            />
                         </div>
                         <div>${props.propertyInfo.multipliedRents[4]}</div>
                     </div>
