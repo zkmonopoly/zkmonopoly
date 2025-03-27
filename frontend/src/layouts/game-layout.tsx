@@ -1,7 +1,5 @@
 import { MonopolyColors } from "@/components/game/core/constants/colors";
-import { ElectricCompanyCard } from "@/components/ui/cards/electric-company-card";
 import { PropertyCard } from "@/components/ui/cards/property-card";
-import { RailroadPropertyCard } from "@/components/ui/cards/railroad-property-card";
 import { InteractiveConsole } from "@/components/ui/interactive-console";
 import { Outlet } from "react-router";
 
@@ -23,12 +21,12 @@ export default function GameLayout() {
                                 }}
                                 color={MonopolyColors.Brown}
                             />
-                            <RailroadPropertyCard
+                            {/* <RailroadPropertyCard
                                 propertyInfo={{
                                     name: "READING RAILROAD"
                                 }}
                             />
-                            <ElectricCompanyCard />
+                            <ElectricCompanyCard /> */}
                         </div>
                         
                         <InteractiveConsole className="w-full absolute left-0 bottom-0 " />

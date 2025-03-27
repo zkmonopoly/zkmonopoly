@@ -53,6 +53,11 @@ export const textureTasks: Task[] = [
         url: "/assets/game/2d/go_to_jail.png"
     },
     {
+        taskType: TaskType.Texture,
+        name: "tax-symbol",
+        url: "/assets/game/2d/tax_symbol.png"
+    },
+    {
         taskType: TaskType.Mesh,
         name: "player",
         rootUrl: "/assets/game/3d/token/",

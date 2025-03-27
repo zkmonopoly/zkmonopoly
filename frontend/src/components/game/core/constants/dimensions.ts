@@ -27,5 +27,9 @@ export const RectangleDimensions: Dimension2D[] = [
     {
         width: 1.431640625,
         height: 2
+    },
+    {
+        width: 0.5,
+        height: 0.5
     }
 ]

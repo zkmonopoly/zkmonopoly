@@ -19,6 +19,7 @@ import { LuxuryTaxMaterial } from "@/components/game/core/materials/luxury-tax-m
 import { Player } from "@/components/game/player";
 import { NodePositions } from "@/components/game/core/constants/common";
 import { Dice } from "@/components/game/dice";
+import { TaxSymbolMaterial } from "@/components/game/core/materials/tax-symbol-material";
 
 export default function Game() {
     const [HK, setHK] = useState<HavokPhysicsWithBindings>();
@@ -60,7 +61,7 @@ export default function Game() {
             >
                 <universalCamera
                     name="camera1"
-                    position={new Vector3(0, 10, 0)}
+                    position={new Vector3(17.25, 30, 20)}
                     setTarget={[new Vector3(17.25, 0, -17.25)]}
                     keysDown={[83]}
                     keysUp={[87]}
@@ -107,11 +108,13 @@ export default function Game() {
                             <SpecialPropertyNode
                                 name="incomeTax"
                                 position={NodePositions[4]}
-                                width={RectangleDimensions[0].width}
-                                height={RectangleDimensions[0].height}
+                                width={RectangleDimensions[6].width}
+                                height={RectangleDimensions[6].height}
                                 propertyName={["INCOME", "TAX"]}
                                 propertyValue="PAY $ 200"
-                            />
+                            >
+                                <TaxSymbolMaterial />
+                            </SpecialPropertyNode>
                             <SpecialPropertyNode
                                 name="readingRailroad"
                                 position={NodePositions[5]}
