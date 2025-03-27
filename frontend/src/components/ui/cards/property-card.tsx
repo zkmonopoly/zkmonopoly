@@ -1,7 +1,6 @@
 import { PropertyInfo } from "@/models/property";
 import { MonopolyCard } from "./shared/monopoly-card";
 import { Color3 } from "@babylonjs/core";
-import { LuHouse } from "react-icons/lu";
 import { MonopolyHouseIcon } from "../icons/monopoly-house-icon";
 
 interface PropertyCardProps {

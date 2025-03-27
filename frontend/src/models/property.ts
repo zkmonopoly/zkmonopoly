@@ -6,3 +6,7 @@ export interface PropertyInfo {
     houseCost: number;
     hotelCost: number;
 }
+
+export interface RailroadPropertyInfo {
+    name: string;
+}

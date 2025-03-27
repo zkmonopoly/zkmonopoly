@@ -1,5 +1,7 @@
 import { MonopolyColors } from "@/components/game/core/constants/colors";
+import { ElectricCompanyCard } from "@/components/ui/cards/electric-company-card";
 import { PropertyCard } from "@/components/ui/cards/property-card";
+import { RailroadPropertyCard } from "@/components/ui/cards/railroad-property-card";
 import { InteractiveConsole } from "@/components/ui/interactive-console";
 import { Outlet } from "react-router";
 
@@ -9,7 +11,7 @@ export default function GameLayout() {
             <div className='flex flex-grow'>
                 <div className="w-full grid md:grid-cols-12">
                     <div className="md:col-span-3 hidden md:block relative">
-                        <div className="flex justify-center">
+                        <div className="flex flex-col justify-center">
                             <PropertyCard 
                                 propertyInfo={{
                                     name: "MEDITERRANEAN AVENUE",
@@ -21,6 +23,12 @@ export default function GameLayout() {
                                 }}
                                 color={MonopolyColors.Brown}
                             />
+                            <RailroadPropertyCard
+                                propertyInfo={{
+                                    name: "READING RAILROAD"
+                                }}
+                            />
+                            <ElectricCompanyCard />
                         </div>
                         
                         <InteractiveConsole className="w-full absolute left-0 bottom-0 " />
