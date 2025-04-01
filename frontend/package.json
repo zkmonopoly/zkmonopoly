@@ -17,6 +17,7 @@
         "@babylonjs/loaders": "^7.53.2",
         "@tailwindcss/vite": "^4.0.9",
         "@zk-shuffle/jssdk": "file:../zkShuffle/packages/jssdk",
+        "colyseus": "^0.16.3",
         "earcut": "^3.0.1",
         "react": "18.3.1",
         "react-aria-components": "^1.6.0",
