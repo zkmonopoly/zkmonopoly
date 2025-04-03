@@ -30,3 +30,7 @@ html, body {
 @utility scrollbar-ubuntu {
     scrollbar-color: var(--color-white) var(--color-ubuntu);
 }
+
+@utility scrollbar-black {
+    scrollbar-color: var(--color-white) transparent;
+}

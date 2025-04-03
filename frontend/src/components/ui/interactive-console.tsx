@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { twJoin, twMerge } from "tailwind-merge";
-import { LuChevronDown } from "react-icons/lu";
+import { LuChevronRight } from "react-icons/lu";
 import { Button } from "react-aria-components";
+import { SelectItem, SelectWrapper } from "./core/wrappers/select-wrapper";
+import { buttonStyles } from "./core/styles/button";
 
 interface InteractiveConsoleProps {
     className?: string;
@@ -20,29 +22,49 @@ export function InteractiveConsole(props: InteractiveConsoleProps) {
             className={twMerge(
                 props.className,
                 "flex flex-col border-gray-200",
-                "transition-[height,background-color] duration-300",
+                "transition-[height,background-color,opacity] duration-300",
                 "scrollbar-none",
-                consoleOpen ? "h-72" : "h-8",
+                consoleOpen ? "w-72" : "w-8",
                 consoleOpen ? "overflow-y-auto" : "overflow-y-hidden",
-                consoleOpen ? "bg-ubuntu" : "bg-transparent"
+                consoleOpen ? "bg-black/20" : "bg-transparent"
             )}
-        >
-            <Button 
-                className="w-full flex justify-center hover:bg-black/10 py-1"
-                onPress={() => setConsoleOpen(!consoleOpen)}
-            >
-                <LuChevronDown
-                    size={consoleButtonHeight}
+        >   
+            <div className="relative">
+                <span
                     className={twJoin(
-                        "transition-[rotate] duration-300",
-                        consoleOpen ? "rotate-0" : "-rotate-180"
+                        "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
+                        consoleOpen ? "" : "hidden"
                     )}
-                />    
-            </Button>
-                
-            <pre className="scrollbar-thin scrollbar-ubuntu text-xs w-full h-full px-2 overflow-y-scroll [&_p]:my-1 [&_p]:text-wrap [&_p]:break-all">
+                >CONSOLE</span>
+                <Button 
+                    className="float-end w-8 inline-flex justify-center self-end hover:bg-black/10 py-1"
+                    onPress={() => setConsoleOpen(!consoleOpen)}
+                >
+                    <LuChevronRight
+                        size={consoleButtonHeight}
+                        className={twJoin(
+                            "transition-[rotate] duration-300",
+                            consoleOpen ? "rotate-0" : "-rotate-180"
+                        )}
+                    />    
+                </Button>
+            </div>
+            <pre className={twJoin(
+                "scrollbar-thin scrollbar-black text-xs w-full h-full px-2 overflow-y-scroll [&_p]:my-1 [&_p]:text-wrap [&_p]:break-all",
+                consoleOpen ? "" : "hidden"
+            )}>
                 <p>console.log()</p>
             </pre>
+            <div className={twJoin("m-2 flex justify-between", consoleOpen ? "" : "hidden")}>
+                <SelectWrapper className="min-w-32" label="Command">
+                    <SelectItem>Item 1</SelectItem>
+                </SelectWrapper>
+                <Button className={twMerge(
+                    buttonStyles,
+                    "text-xs h-fit place-self-end"
+                )}>Send</Button>
+            </div>
+           
         </div>
     )
 }
