@@ -22,7 +22,7 @@ export function InteractiveConsole(props: InteractiveConsoleProps) {
             className={twMerge(
                 props.className,
                 "flex flex-col border-gray-200",
-                "transition-[height,background-color,opacity] duration-300",
+                "transition-[width,background-color,opacity] duration-300",
                 "scrollbar-none",
                 consoleOpen ? "w-72" : "w-8",
                 consoleOpen ? "overflow-y-auto" : "overflow-y-hidden",
