@@ -10,7 +10,12 @@ export class GameController {
 
     constructor() {
         this.network = new Network(this);
-        this.joinGame("Simi");
+        // WAIT FOR 1 SECOND BEFORE JOINING THE GAME
+        setTimeout(() => {
+            this.joinGame("Simi");
+        }, 1000);
+
+        // this.joinGame("Simi");
     }
 
     async joinGame(name: string) {
@@ -19,23 +24,34 @@ export class GameController {
 
         this.network.send("register", name);
 
+        this.onReady();
+    }
+
+    onReady() {
         this.network.send("ready");
         this.network.onMessage("ready", (state) => {
             this.gameState = state;
-            console.log("Game state: ", this.gameState);
+            console.log("Game state ready: ", this.gameState);
+        });
+        this.network.onMessage("start-game", (state) => {
+            this.gameState = state;
+            console.log("Game state start-game: ", this.gameState);
         });
 
+        this.network.onMessage("new-player", (state) => {
+            this.gameState = state;
+            console.log("Game state new-player: ", this.gameState);
+        });
     }
 
-    readyUp() {
-        this.network.send("ready");
-    }
+    
 
     onStateUpdate(callback: StateListener) {
         this.listeners.push(callback);
     }
 
     notifyListeners() {
+        console.log("Notifying listeners with game state:", this.gameState);
         this.listeners.forEach((listener) => listener(this.gameState));
     }
 }

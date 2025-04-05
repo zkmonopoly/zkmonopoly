@@ -20,13 +20,16 @@ import { Player } from "@/components/game/player";
 import { NodePositions } from "@/components/game/core/constants/common";
 import { Dice } from "@/components/game/dice";
 import { TaxSymbolMaterial } from "@/components/game/core/materials/tax-symbol-material";
+import { useGameController } from "@/contexts/game-context";
 
 export default function GameScene() {
     const [HK, setHK] = useState<HavokPhysicsWithBindings>();
     const [, setFontsReady] = useState(false);
 
     const faLoaded = useRef(false);
+    const context = useGameController();
 
+    
     useEffect(() => {
         if (document.fonts.check("16px FontAwesome") === false) {
             document.fonts.load("16px FontAwesome").then(() => {
@@ -41,6 +44,9 @@ export default function GameScene() {
         }
         HavokPhysics().then((havok) => {
             setHK(havok);
+        });
+        context.onStateUpdate((state) => {
+            console.log("State updated: ", state);
         });
     }, []);
 
