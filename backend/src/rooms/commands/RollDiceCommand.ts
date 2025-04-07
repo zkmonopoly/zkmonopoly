@@ -15,7 +15,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
     }
 
     async execute() {
-        if (this.monopolyRoom.state.rolledDice) return;
+        // if (this.monopolyRoom.state.rolledDice) return;
         const player = this.monopolyRoom.state.players.get(
             this.client.sessionId
         );

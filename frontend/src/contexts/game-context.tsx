@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { GameController } from "../controllers/game-controller";
+// import { atom } from "nanostores";
 
 interface GameContextValue {
   controller: GameController;
@@ -7,9 +8,10 @@ interface GameContextValue {
 
 export const GameContext = createContext<GameContextValue | null>(null);
 
+const gameController = GameController.getInstance();
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
-  const [controller] = useState(() => new GameController());
+  const [controller] = useState(() => gameController);
 
   return (
     <GameContext.Provider value={{ controller }}>
@@ -25,3 +27,5 @@ export function useGameController(): GameController {
   }
   return context.controller;
 }
+
+// export const gameControllerStore = atom<GameController>(gameController);

@@ -4,12 +4,22 @@ import { Network } from "./network";
 type StateListener = (roomState: any, payload: any) => void;
 
 export class GameController {
+    private static instance: GameController | null = null;
+
     private network: Network;
     private listeners: StateListener[] = [];
     // private gameState: any = {}
     private payload: any = {};
 
-    constructor() {
+    public static getInstance(): GameController {
+        if (!GameController.instance) {
+          GameController.instance = new GameController();
+        }
+        return GameController.instance;
+      }
+    
+
+    private constructor() {
         this.network = new Network(this);
         // WAIT FOR 1 SECOND BEFORE JOINING THE GAME
 
@@ -25,9 +35,6 @@ export class GameController {
         this.onRegister(name);
         this.onReady();
 
-        setTimeout(() =>{
-            this.onRollDice();
-        }, 1000);
     }
 
     onRegister(name: string) {

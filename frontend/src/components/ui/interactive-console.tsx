@@ -4,7 +4,7 @@ import { LuChevronRight } from "react-icons/lu";
 import { Button } from "react-aria-components";
 import { SelectItem, SelectWrapper } from "./core/wrappers/select-wrapper";
 import { buttonStyles } from "./core/styles/button";
-import { set } from "react-hook-form";
+import { GameController } from "@/controllers/game-controller";
 
 interface InteractiveConsoleProps {
     className?: string;
@@ -22,10 +22,12 @@ export function InteractiveConsole(props: InteractiveConsoleProps) {
 
     // TODO: add shared state/service to manage console state (add new lines, clear, etc)
 
+    const context = GameController.getInstance();
+
     function runCommand(command: string) {
         switch (command) {
-            case "item-1":
-                console.log("Item 1 executed!");
+            case "roll-dice":
+                context.onRollDice();
                 break;
             case "item-2":
                 console.log("Item 2 executed!");
@@ -97,7 +99,7 @@ export function InteractiveConsole(props: InteractiveConsoleProps) {
                         setSelectedCommand(key as string)
                     }
                 >
-                    <SelectItem id="item-1">Item 1</SelectItem>
+                    <SelectItem id="roll-dice">Roll Dice</SelectItem>
                 </SelectWrapper>
                 <Button
                     className={twMerge(

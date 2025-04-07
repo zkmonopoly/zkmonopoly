@@ -22,6 +22,7 @@ import { Dice } from "@/components/game/dice";
 import { TaxSymbolMaterial } from "@/components/game/core/materials/tax-symbol-material";
 import { useGameController } from "@/contexts/game-context";
 
+
 export default function GameScene() {
     const [HK, setHK] = useState<HavokPhysicsWithBindings>();
     const [, setFontsReady] = useState(false);
@@ -57,6 +58,7 @@ export default function GameScene() {
             context.onDiceRollResultMessage((message) => {
                 
                 setDiceIndex([message.first, message.second]);
+                console.log("Dice roll result: ", message.first, message.second);
                 setTimeout(() => {
 
                 setPlayer1Position(message.position);

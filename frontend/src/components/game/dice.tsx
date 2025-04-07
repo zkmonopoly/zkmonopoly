@@ -17,7 +17,6 @@ export function Dice(props: DiceProps) {
 
     useEffect(() => {
         if (scene && props.diceIndex && props.diceIndex.length > 0) {
-            console.log("Dice props: ", props.diceIndex);
             if (props.diceIndex[0] > 0 && props.diceIndex[1] > 0) {
                 DiceRollerFactory.createFromLoadedMesh(
                     diceTexture.loadedMeshes[0],
