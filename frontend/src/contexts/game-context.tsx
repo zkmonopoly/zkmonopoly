@@ -5,7 +5,7 @@ interface GameContextValue {
   controller: GameController;
 }
 
-const GameContext = createContext<GameContextValue | null>(null);
+export const GameContext = createContext<GameContextValue | null>(null);
 
 
 export function GameProvider({ children }: { children: React.ReactNode }) {

@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge";
 interface SelectWrapperProps extends PropsWithChildren {
     className?: string;
     label?: string;
+    onSelectionChange?: (key: React.Key) => void; 
 }
 
 export function SelectWrapper(props: SelectWrapperProps) {
@@ -15,6 +16,7 @@ export function SelectWrapper(props: SelectWrapperProps) {
                 "flex flex-col gap-1",
                 props.className
             )}
+            onSelectionChange={props.onSelectionChange}
             isDisabled={props.children == null}>
             {props.label && <Label className="text-xs cursor-default">{props.label}</Label>}
             <Button className="flex items-center cursor-default rounded-lg border-0 bg-black/90 pressed:bg-black transition py-2 pl-5 pr-2 text-base text-left leading-normal shadow-md text-white focus:outline-hidden ">

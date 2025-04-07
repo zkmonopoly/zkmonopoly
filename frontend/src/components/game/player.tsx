@@ -5,8 +5,11 @@ import { textureTasks } from "./core/assets/tasks";
 import { NodePositions, PlayerPositions } from "./core/constants/common";
 import { MonopolyColors } from "./core/constants/colors";
 
+import { useGameController } from "@/contexts/game-context";
+
 interface PlayerProps {
     playerIndex: number;
+    position: number;
 }
 
 export function Player(props: PlayerProps) {
@@ -22,6 +25,21 @@ export function Player(props: PlayerProps) {
     const [oldCellIndex, setOldCellIndex] = useState<number>(NaN);
     const movementSequenceRef = useRef<number[]>([]);
     const positionRef = useRef<Vector3>(PlayerPositions[props.playerIndex]);
+    // const [position, setPosition] = useState<number>(0);
+
+    // updateCellIndex(props.playerIndex);
+
+    // const controller = useGameController();
+
+    // const context = useGameController();
+
+    
+    //     context.onDiceRollResultMessage((message) => {
+    //         setPosition(message.position);
+    //                     // console.log("Player position: ", position.current);
+            
+    //     });
+    
 
     // update cell index
     function updateCellIndex(newCellIndex: number) {
@@ -72,12 +90,13 @@ export function Player(props: PlayerProps) {
     // DEBUG: Move player every 3 seconds
     useEffect(() => {
         const timer = setTimeout(() => {
-            updateCellIndex(35);
+            console.log(`Player ${props.playerIndex} moved to cell ${props.position}`);
+            updateCellIndex(props.position);
         }, 3000);
         return () => {
             clearTimeout(timer);
         }
-    }, [cellIndex]);
+    }, [props]);
 
     useEffect(() => {
         const scalingFactor = 2;

@@ -14,12 +14,20 @@ export class Network {
             import.meta.env.VITE_COLYSEUS_ENDPOINT || "ws://localhost:2567"
         );
         console.log("Create connection: ", this.client);
+        
         this.gameController = gameController;
         
     }
 
     async joinRoom(roomName: string, options?: any): Promise<Room<any>> {
+        this.roomName = roomName;
+        console.log("Joining room: ", this.roomName, options);
         this.room = await this.client.joinOrCreate(this.roomName);
+        // this.room.onStateChange((state: any) => {
+        //     console.log("State changed: ", state);
+        //     // console.log("State changed: ");
+        //     // this.gameController.notifyListeners(state, this.room?.sessionId);
+        // });
         return this.room;
     }
 
@@ -33,9 +41,15 @@ export class Network {
         this.room?.onMessage(type, (message: any) => {
             callback(message);
             this.gameController.notifyListeners();
-            console.log("Message received: ", message);
+            // console.log("Message received: ", message);
         });
     }
+
+    getRoomState(){
+        return this.room?.state;
+    }
+
+
 
     getRoom(): Room<any> | null {
         return this.room ?? null;

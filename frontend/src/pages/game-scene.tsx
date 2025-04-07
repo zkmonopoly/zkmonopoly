@@ -29,7 +29,11 @@ export default function GameScene() {
     const faLoaded = useRef(false);
     const context = useGameController();
 
-    
+    let [player1Position, setPlayer1Position] = useState(0);
+    // let [indexPlayer2, setIndexPlayer2] = useState(0);
+
+    let [diceIndex, setDiceIndex] = useState([0, 0]);
+
     useEffect(() => {
         if (document.fonts.check("16px FontAwesome") === false) {
             document.fonts.load("16px FontAwesome").then(() => {
@@ -48,7 +52,21 @@ export default function GameScene() {
         context.onStateUpdate((state) => {
             console.log("State updated: ", state);
         });
+
+        setTimeout(() =>{
+            context.onDiceRollResultMessage((message) => {
+                
+                setDiceIndex([message.first, message.second]);
+                setTimeout(() => {
+
+                setPlayer1Position(message.position);
+                }
+                , 1000);
+                // console.log("Dice roll result: ", indexPlayer1);
+            });
+        }, 1000);
     }, []);
+
 
     return (
         <div>
@@ -409,9 +427,9 @@ export default function GameScene() {
                                     propertyName={["BOARDWALK"]}
                                     propertyValue="$ 400"
                                 />
-                                <Player playerIndex={0} />
-                                <Player playerIndex={1} />
-                                <Dice />
+                                <Player playerIndex={0} position={player1Position} />
+                                <Player playerIndex={1} position={0}/>
+                                <Dice diceIndex={diceIndex} />
                             </Suspense>
                         </shadowGenerator>
                     </directionalLight>

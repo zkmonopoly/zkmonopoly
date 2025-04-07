@@ -4,6 +4,7 @@ import { LuChevronRight } from "react-icons/lu";
 import { Button } from "react-aria-components";
 import { SelectItem, SelectWrapper } from "./core/wrappers/select-wrapper";
 import { buttonStyles } from "./core/styles/button";
+import { set } from "react-hook-form";
 
 interface InteractiveConsoleProps {
     className?: string;
@@ -15,9 +16,28 @@ const consoleButtonHeight: number = 24;
 export function InteractiveConsole(props: InteractiveConsoleProps) {
     const [consoleOpen, setConsoleOpen] = useState(false);
 
+    const [selectedCommand, setSelectedCommand] = useState<string>("Item 1");
+
+    const [logs, setLogs] = useState<{ command: string }[]>([]);
+
     // TODO: add shared state/service to manage console state (add new lines, clear, etc)
 
-    return(
+    function runCommand(command: string) {
+        switch (command) {
+            case "item-1":
+                console.log("Item 1 executed!");
+                break;
+            case "item-2":
+                console.log("Item 2 executed!");
+                break;
+            default:
+                console.warn("Unknown command:", command);
+        }
+
+        setLogs((prevLogs) => [...prevLogs, { command }]);
+    }
+
+    return (
         <div
             className={twMerge(
                 props.className,
@@ -28,15 +48,17 @@ export function InteractiveConsole(props: InteractiveConsoleProps) {
                 consoleOpen ? "overflow-y-auto" : "overflow-y-hidden",
                 consoleOpen ? "bg-black/20" : "bg-transparent"
             )}
-        >   
+        >
             <div className="relative">
                 <span
                     className={twJoin(
                         "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
                         consoleOpen ? "" : "hidden"
                     )}
-                >CONSOLE</span>
-                <Button 
+                >
+                    CONSOLE
+                </span>
+                <Button
                     className="float-end w-8 inline-flex justify-center self-end hover:bg-black/10 py-1"
                     onPress={() => setConsoleOpen(!consoleOpen)}
                 >
@@ -46,25 +68,47 @@ export function InteractiveConsole(props: InteractiveConsoleProps) {
                             "transition-[rotate] duration-300",
                             consoleOpen ? "rotate-0" : "-rotate-180"
                         )}
-                    />    
+                    />
                 </Button>
             </div>
-            <pre className={twJoin(
-                "scrollbar-thin scrollbar-black text-xs w-full h-full px-2 overflow-y-scroll [&_p]:my-1 [&_p]:text-wrap [&_p]:break-all",
-                consoleOpen ? "" : "hidden"
-            )}>
-                <p>console.log()</p>
+            <pre
+                className={twJoin(
+                    "scrollbar-thin scrollbar-black text-xs w-full h-full px-2 overflow-y-scroll [&_p]:my-1 [&_p]:text-wrap [&_p]:break-all",
+                    consoleOpen ? "" : "hidden"
+                )}
+            >
+                {logs.map((log, i) => (
+                    <p key={i}>
+                        <span className="text-rose-400">$ {log.command}</span>
+                        <br />
+                    </p>
+                ))}
             </pre>
-            <div className={twJoin("m-2 flex justify-between", consoleOpen ? "" : "hidden")}>
-                <SelectWrapper className="min-w-32" label="Command">
-                    <SelectItem>Item 1</SelectItem>
+            <div
+                className={twJoin(
+                    "m-2 flex justify-between",
+                    consoleOpen ? "" : "hidden"
+                )}
+            >
+                <SelectWrapper
+                    className="min-w-32"
+                    label="Command"
+                    onSelectionChange={(key) =>
+                        setSelectedCommand(key as string)
+                    }
+                >
+                    <SelectItem id="item-1">Item 1</SelectItem>
                 </SelectWrapper>
-                <Button className={twMerge(
-                    buttonStyles,
-                    "text-xs h-fit place-self-end"
-                )}>Send</Button>
+                <Button
+                    className={twMerge(
+                        buttonStyles,
+                        "text-xs h-fit place-self-end"
+                    )}
+                    onPress={() => runCommand(selectedCommand)}
+                >
+                    Send
+                </Button>
             </div>
-           
         </div>
-    )
+    );
 }

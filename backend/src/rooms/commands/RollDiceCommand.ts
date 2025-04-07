@@ -20,21 +20,26 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             this.client.sessionId
         );
         if (!player) return;
-        if (this.monopolyRoom.state.currentTurn !== this.client.sessionId) {
-            return;
-        }
+        // if (this.monopolyRoom.state.currentTurn !== this.client.sessionId) {
+        //     return;
+        // }
 
         let first;
         let second;
 
-        try {
-            const responseFirst = await this.monopolyRoom.zkService.rollDice();
-            const responseSecond = await this.monopolyRoom.zkService.rollDice();
-            first = responseFirst.result;
-            second = await responseSecond.result;
-        } catch (error) {
-            console.log(error);
-        }
+        // Use the zkService to roll the dice
+        // try {
+        //     const responseFirst = await this.monopolyRoom.zkService.rollDice();
+        //     const responseSecond = await this.monopolyRoom.zkService.rollDice();
+        //     first = responseFirst.result;
+        //     second = await responseSecond.result;
+        // } catch (error) {
+        //     console.log(error);
+        // }
+
+        first = Math.floor(Math.random() * 6) + 1;
+        second = Math.floor(Math.random() * 6) + 1;
+
 
         let sum = first + second;
         let newPosition = player.position + sum;

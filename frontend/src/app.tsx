@@ -11,7 +11,6 @@ const Game = lazy(() => import("@/pages/game"));
 
 export default function App() {
     return (
-        <GameProvider>
             <Routes>
                 <Route element={<HomeLayout />}>
                     <Route path="/" element={<Home />} />
@@ -33,6 +32,5 @@ export default function App() {
                     />
                 </Route>
             </Routes>
-        </GameProvider>
     );
 }
