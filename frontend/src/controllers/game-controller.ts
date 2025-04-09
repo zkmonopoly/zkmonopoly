@@ -6,7 +6,7 @@ type StateListener = (roomState: any, payload: any) => void;
 export class GameController {
     private static instance: GameController | null = null;
 
-    private network: Network;
+    network: Network;
     private listeners: StateListener[] = [];
     // private gameState: any = {}
     private payload: any = {};
@@ -35,6 +35,22 @@ export class GameController {
         this.onRegister(name);
         this.onReady();
 
+    }
+
+    // This function is used to simulate the game for player 1 and 2
+    registerPlayer1(){
+        console.log("Registering player 1...");
+        this.joinGame("Player 1");
+    }
+
+    registerPlayer2(){
+        console.log("Registering player 2...");
+        this.joinGame("Player 2");
+    }
+
+    readyPlay(){
+        console.log("Player ready...");
+        this.onReady();
     }
 
     onRegister(name: string) {

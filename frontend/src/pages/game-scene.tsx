@@ -21,7 +21,7 @@ import { NodePositions } from "@/components/game/core/constants/common";
 import { Dice } from "@/components/game/dice";
 import { TaxSymbolMaterial } from "@/components/game/core/materials/tax-symbol-material";
 import { useGameController } from "@/contexts/game-context";
-
+import { PlayerState } from "@/components/state/player-state";
 
 export default function GameScene() {
     const [HK, setHK] = useState<HavokPhysicsWithBindings>();
@@ -30,10 +30,35 @@ export default function GameScene() {
     const faLoaded = useRef(false);
     const context = useGameController();
 
-    let [player1Position, setPlayer1Position] = useState(0);
-    // let [indexPlayer2, setIndexPlayer2] = useState(0);
+    const convertToPlayerData = (playerSchema: PlayerState): PlayerState => {
+        return {
+            id: playerSchema.id,
+            username: playerSchema.username,
+            icon: playerSchema.icon,
+            position: playerSchema.position,
+            balance: playerSchema.balance,
+            properties: Array.from(playerSchema.properties || []),
+            isInJail: playerSchema.isInJail,
+            jailTurnsRemaining: playerSchema.jailTurnsRemaining,
+            getoutCards: playerSchema.getoutCards,
+            ready: playerSchema.ready,
+            isBankrupt: playerSchema.isBankrupt,
+        };
+    };
+
+    let [playerStates, setPlayerStates] = useState<PlayerState[]>([]);
+
 
     let [diceIndex, setDiceIndex] = useState([0, 0]);
+
+    const updatePlayerState = (state: any) => {
+        const playerArray: PlayerState[] = [];
+        state.players.forEach((playerSchema: any) => {
+            playerArray.push(convertToPlayerData(playerSchema));
+        });
+        setPlayerStates(playerArray);
+
+    };
 
     useEffect(() => {
         if (document.fonts.check("16px FontAwesome") === false) {
@@ -50,25 +75,27 @@ export default function GameScene() {
         HavokPhysics().then((havok) => {
             setHK(havok);
         });
+
         context.onStateUpdate((state) => {
-            console.log("State updated: ", state);
+
+                        setTimeout(() => {
+                updatePlayerState(state);
+            }, 100);
+            // updatePlayerState();
         });
 
-        setTimeout(() =>{
-            context.onDiceRollResultMessage((message) => {
-                
-                setDiceIndex([message.first, message.second]);
-                console.log("Dice roll result: ", message.first, message.second);
-                setTimeout(() => {
+        updatePlayerState(context.network.getRoomState());
 
-                setPlayer1Position(message.position);
-                }
-                , 1000);
-                // console.log("Dice roll result: ", indexPlayer1);
-            });
-        }, 1000);
+        context.onDiceRollResultMessage((message) => {
+            setDiceIndex([message.first, message.second]);
+            
+            
+            // setTimeout(() => {
+            //     updatePlayerState();
+            // }, 3000);
+            // console.log("Dice roll result: ", indexPlayer1);
+        });
     }, []);
-
 
     return (
         <div>
@@ -429,8 +456,19 @@ export default function GameScene() {
                                     propertyName={["BOARDWALK"]}
                                     propertyValue="$ 400"
                                 />
-                                <Player playerIndex={0} position={player1Position} />
-                                <Player playerIndex={1} position={0}/>
+                                {/* <Player
+                                    playerIndex={0}
+                                    playerState={player1Position}
+                                />
+                                <Player playerIndex={1} playerState={0} /> */}
+                                {...playerStates.map((playerState, index) => {
+                                    return (
+                                        <Player
+                                            playerIndex={index}
+                                            playerState={playerState}
+                                        />
+                                    );
+                                })}
                                 <Dice diceIndex={diceIndex} />
                             </Suspense>
                         </shadowGenerator>

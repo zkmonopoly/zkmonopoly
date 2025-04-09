@@ -4,12 +4,10 @@ import { useAssetManager, useBeforeRender, useScene } from "react-babylonjs";
 import { textureTasks } from "./core/assets/tasks";
 import { NodePositions, PlayerPositions } from "./core/constants/common";
 import { MonopolyColors } from "./core/constants/colors";
-
-import { useGameController } from "@/contexts/game-context";
-
+import { PlayerState } from "../state/player-state";
 interface PlayerProps {
     playerIndex: number;
-    position: number;
+    playerState: PlayerState;
 }
 
 export function Player(props: PlayerProps) {
@@ -90,8 +88,7 @@ export function Player(props: PlayerProps) {
     // DEBUG: Move player every 3 seconds
     useEffect(() => {
         const timer = setTimeout(() => {
-            console.log(`Player ${props.playerIndex} moved to cell ${props.position}`);
-            updateCellIndex(props.position);
+            updateCellIndex(props.playerState.position);
         }, 3000);
         return () => {
             clearTimeout(timer);
@@ -99,6 +96,7 @@ export function Player(props: PlayerProps) {
     }, [props]);
 
     useEffect(() => {
+        console.log(`Player ${props.playerIndex} position: ${props.playerState}`);
         const scalingFactor = 2;
         const scale = new Vector3(scalingFactor, scalingFactor, scalingFactor);
         // if player index is 0, use the original mesh, otherwise clone it

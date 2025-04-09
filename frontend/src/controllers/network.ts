@@ -45,6 +45,14 @@ export class Network {
         });
     }
 
+    onStateChange(callback: (state: any) => void) {
+        this.room?.onStateChange((state: any) => {
+            callback(state);
+            // console.log("State changed: ", state);
+        });
+    }
+
+
     getRoomState(){
         return this.room?.state;
     }

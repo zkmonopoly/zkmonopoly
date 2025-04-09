@@ -9,7 +9,7 @@ export class RegisterPlayerCommand extends Command<MonopolyRoom, { client: any; 
         player.username = name;
         player.balance = 1500;
         // Temporarily set position to the number of players in the room.
-        player.position = this.room.state.players.size;
+        player.icon = this.room.state.players.size;
 
         this.state.players.set(client.sessionId, player);
 
