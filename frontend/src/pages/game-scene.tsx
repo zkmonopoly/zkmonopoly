@@ -18,7 +18,7 @@ import { WaterCompanyMaterial } from "@/components/game/core/materials/water-com
 import { LuxuryTaxMaterial } from "@/components/game/core/materials/luxury-tax-material";
 import { Player } from "@/components/game/player";
 import { NodePositions } from "@/components/game/core/constants/common";
-import { Dice } from "@/components/game/dice";
+import { $dices, Dice } from "@/components/game/dice";
 import { TaxSymbolMaterial } from "@/components/game/core/materials/tax-symbol-material";
 import { useGameController } from "@/contexts/game-context";
 import { PlayerState } from "@/components/state/player-state";
@@ -47,9 +47,6 @@ export default function GameScene() {
     };
 
     let [playerStates, setPlayerStates] = useState<PlayerState[]>([]);
-
-
-    let [diceIndex, setDiceIndex] = useState([0, 0]);
 
     const updatePlayerState = (state: any) => {
         const playerArray: PlayerState[] = [];
@@ -87,7 +84,7 @@ export default function GameScene() {
         updatePlayerState(context.network.getRoomState());
 
         context.onDiceRollResultMessage((message) => {
-            setDiceIndex([message.first, message.second]);
+            $dices.set([message.first, message.second]);
             
             
             // setTimeout(() => {
@@ -469,7 +466,7 @@ export default function GameScene() {
                                         />
                                     );
                                 })}
-                                <Dice diceIndex={diceIndex} />
+                                <Dice />
                             </Suspense>
                         </shadowGenerator>
                     </directionalLight>
