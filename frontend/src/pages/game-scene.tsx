@@ -16,12 +16,11 @@ import { FreeParkingNode } from "@/components/game/map/free-parking-node";
 import { GoToJailNode } from "@/components/game/map/go-to-jail-node";
 import { WaterCompanyMaterial } from "@/components/game/core/materials/water-company-material";
 import { LuxuryTaxMaterial } from "@/components/game/core/materials/luxury-tax-material";
-import { Player } from "@/components/game/player";
 import { NodePositions } from "@/components/game/core/constants/common";
 import { $dices, Dice } from "@/components/game/dice";
 import { TaxSymbolMaterial } from "@/components/game/core/materials/tax-symbol-material";
 import { useGameController } from "@/contexts/game-context";
-import { PlayerState } from "@/components/state/player-state";
+import Players from "./players";
 
 export default function GameScene() {
     const [HK, setHK] = useState<HavokPhysicsWithBindings>();
@@ -29,33 +28,6 @@ export default function GameScene() {
 
     const faLoaded = useRef(false);
     const context = useGameController();
-
-    const convertToPlayerData = (playerSchema: PlayerState): PlayerState => {
-        return {
-            id: playerSchema.id,
-            username: playerSchema.username,
-            icon: playerSchema.icon,
-            position: playerSchema.position,
-            balance: playerSchema.balance,
-            properties: Array.from(playerSchema.properties || []),
-            isInJail: playerSchema.isInJail,
-            jailTurnsRemaining: playerSchema.jailTurnsRemaining,
-            getoutCards: playerSchema.getoutCards,
-            ready: playerSchema.ready,
-            isBankrupt: playerSchema.isBankrupt,
-        };
-    };
-
-    let [playerStates, setPlayerStates] = useState<PlayerState[]>([]);
-
-    const updatePlayerState = (state: any) => {
-        const playerArray: PlayerState[] = [];
-        state.players.forEach((playerSchema: any) => {
-            playerArray.push(convertToPlayerData(playerSchema));
-        });
-        setPlayerStates(playerArray);
-
-    };
 
     useEffect(() => {
         if (document.fonts.check("16px FontAwesome") === false) {
@@ -73,24 +45,8 @@ export default function GameScene() {
             setHK(havok);
         });
 
-        context.onStateUpdate((state) => {
-
-                        setTimeout(() => {
-                updatePlayerState(state);
-            }, 100);
-            // updatePlayerState();
-        });
-
-        updatePlayerState(context.network.getRoomState());
-
         context.onDiceRollResultMessage((message) => {
             $dices.set([message.first, message.second]);
-            
-            
-            // setTimeout(() => {
-            //     updatePlayerState();
-            // }, 3000);
-            // console.log("Dice roll result: ", indexPlayer1);
         });
     }, []);
 
@@ -453,19 +409,7 @@ export default function GameScene() {
                                     propertyName={["BOARDWALK"]}
                                     propertyValue="$ 400"
                                 />
-                                {/* <Player
-                                    playerIndex={0}
-                                    playerState={player1Position}
-                                />
-                                <Player playerIndex={1} playerState={0} /> */}
-                                {...playerStates.map((playerState, index) => {
-                                    return (
-                                        <Player
-                                            playerIndex={index}
-                                            playerState={playerState}
-                                        />
-                                    );
-                                })}
+                                <Players />
                                 <Dice />
                             </Suspense>
                         </shadowGenerator>
