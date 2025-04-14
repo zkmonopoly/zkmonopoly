@@ -24,16 +24,17 @@ export class GameController {
         // WAIT FOR 1 SECOND BEFORE JOINING THE GAME
 
 
-        this.joinGame("Simi");
+        // this.joinGame("Simi");
     }
 
-    async joinGame(name: string) {
+    async joinGame(name: string, callback: any) {
         const room = await this.network.joinRoom("my_room");
         console.log("Joined room with sessionId:", room);
 
         // this.network.send("register", name);
         this.onRegister(name);
         this.onReady();
+        callback();
 
     }
 
@@ -56,9 +57,17 @@ export class GameController {
     onRegister(name: string) {
         this.network.send("register", name);
         console.log("Registered player with name:", name);
-        this.network.onMessage("initials", (payload) => {
-            console.log("Game state register: ", payload);
-            this.payload = payload;
+        // this.network.onMessage("initials", (payload) => {
+        //     console.log("Game state: register: ", payload);
+        //     this.payload = payload;
+        // });
+    }
+
+    onInitialGameMessage(callback: (message: any) => void){
+        console.log("Listening for initial_player message");
+        this.network.onMessage("initial_player", (message) => {
+            console.log("Game state initial_player: ", message);
+            callback(message);
         });
     }
 
@@ -94,18 +103,7 @@ export class GameController {
     onRollDice() {
         console.log("Rolling dice...");
         this.network.send("roll_dice");
-        // this.network.onMessage("dice_roll_result", (payload) => {
-        //     console.log("Game state dice_roll_result: ", payload);
-        //     this.payload = payload;
-        //     // this.notifyListeners();
-        // });
 
-        // this.onDiceRollResultMessage((payload) => {
-        //     console.log("Game state dice_roll_result: ", payload);
-        //     this.payload = payload;
-        //     this.notifyListeners();
-        // }
-        // );
 
         this.network.onMessage("offer_buy_property", (payload) => {
             console.log("Game state offer_buy_property: ", payload);

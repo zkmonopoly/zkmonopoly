@@ -69,7 +69,8 @@ export class MonopolyRoom extends Room<RoomState> {
 
             const player = this.state.players.get(client.sessionId);
 
-            client.send("initials", {
+            client.send("initial_player", {
+                id: client.sessionId,
                 turn_id: this.state.currentTurn,
             });
 
