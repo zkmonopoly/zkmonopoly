@@ -32,15 +32,22 @@ const tabPanelStylesExtended = twJoin(
     "md:w-[370px] w-[270px] h-[210px]"
 );
 
+interface JoinFormData {
+    name: string;
+    code: string;
+}
+
+interface CreateFormData {
+    name: string;
+}
+
 export default function Home() {
     const navigate = useNavigate();
-    const [newGameName, setNewGameName] = useState<string>("");
 
     const gameController = GameController.getInstance();
 
-    let onSubmitNewGame = (e: { preventDefault: () => void }) => {
-        e.preventDefault();
-        gameController.joinGame(newGameName, () => {
+    let onSubmitNewGame = (formData: CreateFormData) => {
+        gameController.joinGame(formData.name, () => {
             gameController.onInitialGameMessage((payload: any) => {
                 console.log("Initial game message received:", payload);
                 navigate("/game/" + gameController.network.getRoom()?.roomId);
@@ -49,13 +56,13 @@ export default function Home() {
     };
 
     const [selectedKey, onSelectionChange] = useState<Key>("tabJoin");
-    const joinForm = useForm({
+    const joinForm = useForm<JoinFormData>({
         defaultValues: {
             name: "",
-            code: "",
-        },
+            code: ""
+        }
     });
-    const createForm = useForm({
+    const createForm = useForm<CreateFormData>({
         defaultValues: {
             name: "",
             // TODO: add bot option
@@ -134,7 +141,7 @@ export default function Home() {
                     </Form>
                 </TabPanel>
                 <TabPanel id="tabCreate" className={tabPanelStylesExtended}>
-                    <Form className={formStyles} onSubmit={onSubmitNewGame}>
+                    <Form className={formStyles} onSubmit={createForm.handleSubmit(onSubmitNewGame)}>
                         <Controller
                             control={createForm.control}
                             name="name"
@@ -146,7 +153,7 @@ export default function Home() {
                                 <TextField
                                     name={name}
                                     value={value}
-                                    onChange={setNewGameName}
+                                    onChange={onChange}
                                     onBlur={onBlur}
                                     isRequired
                                     validationBehavior="aria"
