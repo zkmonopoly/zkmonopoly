@@ -1,3 +1,6 @@
 [submodule "zkShuffle"]
 	path = zkShuffle
 	url = https://github.com/minhvip08/zkShuffle.git
+[submodule "MP-SPDZ"]
+	path = MP-SPDZ
+	url = https://github.com/minhvip08/MP-SPDZ.git
