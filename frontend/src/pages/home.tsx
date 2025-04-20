@@ -46,15 +46,24 @@ export default function Home() {
 
     const gameController = GameController.getInstance();
 
-    let onSubmitNewGame = (formData: CreateFormData) => {
-        gameController.joinGame(formData.name, () => {
+    let onSubmitJoinOrCreateRoom= (formData: CreateFormData) => {
+        gameController.joinOrCreateRoom(formData.name, () => {
             gameController.onInitialGameMessage((payload: any) => {
-                console.log("Initial game message received:", payload);
-                navigate("/game/" + gameController.network.getRoom()?.roomId);
+                console.log("Initial joinOrCreateRoom received:", payload);
+                navigate("/game/" + gameController.getNetwork().getRoom()?.roomId);
             });
         });
     };
 
+    let onSubmitJoinRoomById = (formData: JoinFormData) => {
+        gameController.joinRoomById(formData.code, formData.name, () => {
+            gameController.onInitialGameMessage((payload: any) => {
+                console.log("Initial joinRoomById received:", payload);
+                navigate("/game/" + gameController.getNetwork().getRoom()?.roomId);
+            });
+        });
+    }
+    
     const [selectedKey, onSelectionChange] = useState<Key>("tabJoin");
     const joinForm = useForm<JoinFormData>({
         defaultValues: {
@@ -86,7 +95,7 @@ export default function Home() {
                     </TooltipTriggerTab>
                 </TabList>
                 <TabPanel id="tabJoin" className={tabPanelStylesExtended}>
-                    <Form className={formStyles}>
+                    <Form className={formStyles} onSubmit={joinForm.handleSubmit(onSubmitJoinRoomById)}>
                         <Controller
                             control={joinForm.control}
                             name="name"
@@ -141,7 +150,7 @@ export default function Home() {
                     </Form>
                 </TabPanel>
                 <TabPanel id="tabCreate" className={tabPanelStylesExtended}>
-                    <Form className={formStyles} onSubmit={createForm.handleSubmit(onSubmitNewGame)}>
+                    <Form className={formStyles} onSubmit={createForm.handleSubmit(onSubmitJoinOrCreateRoom)}>
                         <Controller
                             control={createForm.control}
                             name="name"

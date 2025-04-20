@@ -5,7 +5,7 @@ import { GameController } from "@/controllers/game-controller";
 
 export default function Players() {
     const gameController = GameController.getInstance();
-    const [playerStates, setPlayerStates] = useState<PlayerState[]>([]); // <- reactive
+    const [playerStates, setPlayerStates] = useState<PlayerState[]>([]); 
 
     const convertToPlayerData = (p: any): PlayerState => ({
         id: p.id,
@@ -31,7 +31,7 @@ export default function Players() {
     };
 
     useEffect(() => {
-        const roomState = gameController.network.getRoomState();
+        const roomState = gameController.getNetwork().getRoomState();
         if (roomState) updatePlayerState(roomState);
 
         // Subscribe to future updates

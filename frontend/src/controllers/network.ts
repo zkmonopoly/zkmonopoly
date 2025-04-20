@@ -19,7 +19,7 @@ export class Network {
         
     }
 
-    async joinRoom(roomName: string, options?: any): Promise<Room<any>> {
+    async joinOrCreateRoom(roomName: string, options?: any): Promise<Room<any>> {
         this.roomName = roomName;
         console.log("Joining room: ", this.roomName, options);
         this.room = await this.client.joinOrCreate(this.roomName);
@@ -28,6 +28,12 @@ export class Network {
         //     // console.log("State changed: ");
         //     // this.gameController.notifyListeners(state, this.room?.sessionId);
         // });
+        return this.room;
+    }
+
+    async joinRoomById(roomId: string): Promise<Room<any>> {
+        console.log("Joining room by ID: ", roomId);
+        this.room = await this.client.joinById(roomId);
         return this.room;
     }
 

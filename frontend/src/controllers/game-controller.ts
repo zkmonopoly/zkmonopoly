@@ -6,7 +6,7 @@ type StateListener = (roomState: any, payload: any) => void;
 export class GameController {
     private static instance: GameController | null = null;
 
-    network: Network;
+    private network: Network;
     private listeners: StateListener[] = [];
     // private gameState: any = {}
     private payload: any = {};
@@ -27,8 +27,8 @@ export class GameController {
         // this.joinGame("Simi");
     }
 
-    async joinGame(name: string, callback: any) {
-        const room = await this.network.joinRoom("my_room");
+    async joinOrCreateRoom(name: string, callback: any) {
+        const room = await this.getNetwork().joinOrCreateRoom("my_room");
         console.log("Joined room with sessionId:", room);
 
         // this.network.send("register", name);
@@ -38,16 +38,20 @@ export class GameController {
 
     }
 
-    // This function is used to simulate the game for player 1 and 2
-    registerPlayer1(){
-        console.log("Registering player 1...");
-        this.joinGame("Player 1");
+    async joinRoomById(roomId: string, name: string, callback: any) {
+        const room = await this.getNetwork().joinRoomById(roomId);
+        console.log("Joined room with sessionId:", room);
+
+        this.onRegister(name);
+        this.onReady();
+        callback();
     }
 
-    registerPlayer2(){
-        console.log("Registering player 2...");
-        this.joinGame("Player 2");
+    getNetwork() {
+        return this.network;
     }
+
+
 
     readyPlay(){
         console.log("Player ready...");
@@ -84,6 +88,10 @@ export class GameController {
 
         this.network.onMessage("new-player", (payload) => {
             console.log("Game state new-player: ", payload);
+            this.payload = payload;
+        });
+        this.network.onMessage("disconnected-player", (payload) => {
+            console.log("Game state disconnected-player: ", payload);
             this.payload = payload;
         });
     }
