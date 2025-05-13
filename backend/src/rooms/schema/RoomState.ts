@@ -1,6 +1,7 @@
 import { Schema, type, MapSchema, ArraySchema } from "@colyseus/schema";
 import { Player } from "@rooms/state/PlayerState";
 import { Property } from "@rooms/state/PropertyState";
+import { Auction } from "@rooms/schema/AuctionState";
 
 export class RoomState extends Schema {
   @type({ map: Player })
@@ -17,5 +18,8 @@ export class RoomState extends Schema {
 
   @type("boolean")
   rolledDice: boolean = false;
+
+  @type(Auction) auction: Auction | null = null;
+
 
 }
