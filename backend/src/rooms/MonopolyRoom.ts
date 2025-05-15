@@ -9,7 +9,7 @@ import { RollDiceCommand } from "@rooms/commands/RollDiceCommand";
 import { MessageTypes } from "@/types/MessageTypes";
 import monopolyJSON from "@/assets/monopoly.json";
 import { ZKService } from "@/services/ZkService";
-
+import { AuctionCommand } from "@rooms/commands/AuctionCommand";
 
 // Reference from: https://github.com/itaylayzer/Monopoly/blob/main/src/assets/server.ts
 // https://github.com/itaylayzer/Monopoly/blob/main/src/assets/monopoly.json
@@ -138,6 +138,17 @@ export class MonopolyRoom extends Room<RoomState> {
                 this.broadcast("get_out_of_jail", {
                     to: client.sessionId,
                     option,
+                });
+            }
+        );
+
+        this.onMessage(MessageTypes.AUCTION_BID, 
+            (client, data: { propertyId: string; amount: number, action: string }) => {
+                this.dispatcher.dispatch(new AuctionCommand(), {
+                    action: data.action,
+                    propertyId: data.propertyId,
+                    bidderId: client.sessionId,
+                    amount: data.amount
                 });
             }
         );

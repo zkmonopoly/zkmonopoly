@@ -10,4 +10,5 @@ export enum MessageTypes {
     GET_OUT_OF_JAIL = "get_out_of_jail",
     BUY_PROPERTY = "buy_property",
     SELL_PROPERTY = "sell_property",
+    AUCTION_BID = "auction_bid",
 }

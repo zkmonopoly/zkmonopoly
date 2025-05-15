@@ -5,7 +5,7 @@ import { RoomState } from "@rooms/schema/RoomState";
 import { Auction } from "@rooms/schema/AuctionState";
 
 interface AuctionPayload {
-    action: "start" | "bid" | "end";
+    action: string;
     propertyId: string;
     bidders?: string[];
     duration?: number;
@@ -62,6 +62,9 @@ export class AuctionCommand extends Command<MonopolyRoom, AuctionPayload> {
                     propertyId: auction.propertyId,
                 });
                 // Optionally, handle property assignment here
+                break;
+            default:
+                console.error("Unknown auction action:", payload.action);
                 break;
         }
     }
