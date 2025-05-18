@@ -19,21 +19,21 @@ interface JsTextProps {
 }
 
 export function JsText({ yOffset = 0, xzOffset = 0, xzInvertOffset = 0, rotationIndex = 0, fontScale = 1, ...props }: JsTextProps) {
-    return (
-        props.text.map((line, index) => (
-            <babylon-text
-                key={index}
-                name={`${props.name}-${index}`}
-                text={line}
-                fontData={fontData}
-                size={0.24 * fontScale}
-                depth={0.05}
-                earcutInjection={earcut}
-                position={props.position.add(getTextOffset(index, rotationIndex, yOffset, xzOffset, xzInvertOffset))}
-                rotation={props.rotation ?? getTextRotation(rotationIndex)}
-            >
-                <TextMaterial color={props.color}/>
-            </babylon-text>
-        ))
-    );
+  return (
+    props.text.map((line, index) => (
+      <babylon-text
+        key={index}
+        name={`${props.name}-${index}`}
+        text={line}
+        fontData={fontData}
+        size={0.24 * fontScale}
+        depth={0.05}
+        earcutInjection={earcut}
+        position={props.position.add(getTextOffset(index, rotationIndex, yOffset, xzOffset, xzInvertOffset))}
+        rotation={props.rotation ?? getTextRotation(rotationIndex)}
+      >
+        <TextMaterial color={props.color}/>
+      </babylon-text>
+    ))
+  );
 }

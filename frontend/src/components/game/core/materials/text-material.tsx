@@ -5,12 +5,12 @@ interface TextMaterialProps {
 }
 
 export function TextMaterial({ color = Color3.Black() }: TextMaterialProps) {
-    return (
-        <standardMaterial
-            name="text-mat"
-            backFaceCulling
-            diffuseColor={color}
-            specularColor={Color3.Black()}
-        />
-    );
+  return (
+    <standardMaterial
+      name="text-mat"
+      backFaceCulling
+      diffuseColor={color}
+      specularColor={Color3.Black()}
+    />
+  );
 }

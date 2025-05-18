@@ -3,11 +3,11 @@ import GameScene from "./game-scene";
 import { GameProvider } from "@/contexts/game-context";
 
 export default function Game() {
-    return (
-        <GameProvider>
-            <GameEngine >
-                <GameScene />
-            </GameEngine>
-        </GameProvider>
-    );
+  return (
+    <GameProvider>
+      <GameEngine >
+        <GameScene />
+      </GameEngine>
+    </GameProvider>
+  );
 }

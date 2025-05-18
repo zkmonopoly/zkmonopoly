@@ -12,18 +12,18 @@ interface TooltipTriggerTabProps extends Omit<TabProps, "className"> {
 }
 
 export function TooltipTriggerTab({ className, children,  text, ...props}: TooltipTriggerTabProps) {
-    const state = useSlottedContext(TabsContext)!;
+  const state = useSlottedContext(TabsContext)!;
 
-    function onTooltipTriggerTabPress() {
+  function onTooltipTriggerTabPress() {
         state.onSelectionChange!(props.id);
-    }
+  }
 
-    return (
-        <Tab className={twMerge(tabStyles, className)} {...props}>
-            <TooltipTrigger>
-                <Button onPress={onTooltipTriggerTabPress}>{children}</Button>
-                <TooltipWrapper placement="left">{text}</TooltipWrapper>
-            </TooltipTrigger>
-        </Tab>
-    );
+  return (
+    <Tab className={twMerge(tabStyles, className)} {...props}>
+      <TooltipTrigger>
+        <Button onPress={onTooltipTriggerTabPress}>{children}</Button>
+        <TooltipWrapper placement="left">{text}</TooltipWrapper>
+      </TooltipTrigger>
+    </Tab>
+  );
 }

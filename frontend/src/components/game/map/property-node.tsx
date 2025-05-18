@@ -15,37 +15,37 @@ interface PropertyNodeProps {
 }
 
 export function PropertyNode({ rotationIndex = 0, ...props }: PropertyNodeProps) {
-    return (
-        <EdgeNode
-            name={props.name}
-            position={props.position}
-            rotation={getRotation(rotationIndex)}
-        >
-            <ground
-                name={`${props.name}-property-color`}
-                position={props.position.add(new Vector3(0, 0.5 + DefaultMeshOffset, -2).applyRotationQuaternion((getRotation(rotationIndex) ?? Vector3.Zero()).toQuaternion()))}
-                rotation={getRotation(rotationIndex)}
-                width={3}
-                height={1}
-            >
-                <NodeMaterial color={props.color}/>
-            </ground>
-            <JsText
-                name={`${props.name}-property-name`}
-                text={props.propertyName}
-                position={props.position}
-                yOffset={0.5}
-                xzOffset={-0.5}
-                rotationIndex={rotationIndex}
-            />
-            <JsText
-                name={`${props.name}-property-value`}
-                text={[props.propertyValue]}
-                position={props.position}
-                yOffset={0.5}
-                xzOffset={1.825}
-                rotationIndex={rotationIndex}
-            />
-        </EdgeNode>
-    );
+  return (
+    <EdgeNode
+      name={props.name}
+      position={props.position}
+      rotation={getRotation(rotationIndex)}
+    >
+      <ground
+        name={`${props.name}-property-color`}
+        position={props.position.add(new Vector3(0, 0.5 + DefaultMeshOffset, -2).applyRotationQuaternion((getRotation(rotationIndex) ?? Vector3.Zero()).toQuaternion()))}
+        rotation={getRotation(rotationIndex)}
+        width={3}
+        height={1}
+      >
+        <NodeMaterial color={props.color}/>
+      </ground>
+      <JsText
+        name={`${props.name}-property-name`}
+        text={props.propertyName}
+        position={props.position}
+        yOffset={0.5}
+        xzOffset={-0.5}
+        rotationIndex={rotationIndex}
+      />
+      <JsText
+        name={`${props.name}-property-value`}
+        text={[props.propertyValue]}
+        position={props.position}
+        yOffset={0.5}
+        xzOffset={1.825}
+        rotationIndex={rotationIndex}
+      />
+    </EdgeNode>
+  );
 }

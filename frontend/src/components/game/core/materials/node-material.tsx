@@ -9,23 +9,23 @@ interface NodeMaterialProps {
 }
 
 export function NodeMaterial({ color = NodeColor }: NodeMaterialProps) {
-    const textures = useAssetManager(textureTasks, {
-        useDefaultLoadingScreen: true
-    });
-    const frameBorderTexture = textures.taskNameMap["frame-border"] as TextureAssetTask;
+  const textures = useAssetManager(textureTasks, {
+    useDefaultLoadingScreen: true
+  });
+  const frameBorderTexture = textures.taskNameMap["frame-border"] as TextureAssetTask;
     
-    return (
-        <standardMaterial
-            name="node-mat"
-            backFaceCulling
-            diffuseColor={color}
-            specularColor={Color3.Black()}
-        >
-            <texture
-                assignTo="diffuseTexture"
-                fromInstance={frameBorderTexture.texture}
-                url={TextureRootUrl}
-            />
-        </standardMaterial>
-    );
+  return (
+    <standardMaterial
+      name="node-mat"
+      backFaceCulling
+      diffuseColor={color}
+      specularColor={Color3.Black()}
+    >
+      <texture
+        assignTo="diffuseTexture"
+        fromInstance={frameBorderTexture.texture}
+        url={TextureRootUrl}
+      />
+    </standardMaterial>
+  );
 }

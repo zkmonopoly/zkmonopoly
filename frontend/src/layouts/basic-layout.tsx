@@ -6,11 +6,11 @@ interface HomeLayoutProps {
 }
 
 export default function HomeLayout(props: HomeLayoutProps) {
-    return (
-        <div className={twMerge("min-h-screen flex flex-col antialiased", props.className)}>
-            <div className="my-auto">
-                <Outlet />
-            </div>
-        </div>
-    );
+  return (
+    <div className={twMerge("min-h-screen flex flex-col antialiased", props.className)}>
+      <div className="my-auto">
+        <Outlet />
+      </div>
+    </div>
+  );
 }

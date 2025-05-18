@@ -4,21 +4,21 @@ import { textureTasks } from "@/components/game/core/assets/tasks";
 import { TextureRootUrl } from "@/components/game/core/constants/common";
 
 export function GoArrowMaterial() {
-    const textures = useAssetManager(textureTasks, {
-        useDefaultLoadingScreen: true
-    });
-    const goArrowTexture = textures.taskNameMap["go-arrow"] as TextureAssetTask;
+  const textures = useAssetManager(textureTasks, {
+    useDefaultLoadingScreen: true
+  });
+  const goArrowTexture = textures.taskNameMap["go-arrow"] as TextureAssetTask;
 
-    return (
-        <standardMaterial
-            name="go-arrow-mat"
-        >
-            <texture
-                assignTo="diffuseTexture"
-                fromInstance={goArrowTexture.texture}
-                url={TextureRootUrl}
-                hasAlpha
-            />
-        </standardMaterial>
-    );
+  return (
+    <standardMaterial
+      name="go-arrow-mat"
+    >
+      <texture
+        assignTo="diffuseTexture"
+        fromInstance={goArrowTexture.texture}
+        url={TextureRootUrl}
+        hasAlpha
+      />
+    </standardMaterial>
+  );
 }

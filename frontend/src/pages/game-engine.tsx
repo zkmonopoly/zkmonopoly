@@ -7,16 +7,16 @@ type GameEngineProps = {
 };
 
 export default function GameEngine({ children }: GameEngineProps) {
-    return (
-        <Engine
-            antialias
-            adaptToDeviceRatio
-            canvasId="babylon-js"
-            renderOptions={{
-                whenVisibleOnly: true,
-            }}
-        >
-            {children}
-        </Engine>
-    );
+  return (
+    <Engine
+      antialias
+      adaptToDeviceRatio
+      canvasId="babylon-js"
+      renderOptions={{
+        whenVisibleOnly: true,
+      }}
+    >
+      {children}
+    </Engine>
+  );
 }

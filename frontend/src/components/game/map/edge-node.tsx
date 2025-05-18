@@ -9,17 +9,17 @@ export interface EdgeNodeProps extends PropsWithChildren {
 }
 
 export function EdgeNode(props: EdgeNodeProps) {
-    return (
-        <>
-            <box
-                name={props.name}
-                position={props.position}
-                rotation={props.rotation}
-                scaling={new Vector3(3, 1, 5)}
-            >
-                <NodeMaterial />
-            </box>
-            {props.children}
-        </>
-    );
+  return (
+    <>
+      <box
+        name={props.name}
+        position={props.position}
+        rotation={props.rotation}
+        scaling={new Vector3(3, 1, 5)}
+      >
+        <NodeMaterial />
+      </box>
+      {props.children}
+    </>
+  );
 }

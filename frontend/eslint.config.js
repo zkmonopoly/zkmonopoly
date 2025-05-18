@@ -23,7 +23,7 @@ export default tseslint.config(
                 "warn",
                 { allowConstantExport: true },
             ],
-            "indent": ["error", 4],
+            "indent": ["error", 2],
             "semi": ["error", "always"],
             "quotes": ["error", "double"],
         },
