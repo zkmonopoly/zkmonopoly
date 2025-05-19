@@ -112,7 +112,6 @@ export class GameController {
     console.log("Rolling dice...");
     this.network.send("roll_dice");
 
-
     this.network.onMessage("offer_buy_property", (payload) => {
       console.log("Game state offer_buy_property: ", payload);
       this.payload = payload;

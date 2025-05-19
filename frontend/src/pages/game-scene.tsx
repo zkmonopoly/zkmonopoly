@@ -20,7 +20,9 @@ import { NodePositions } from "@/components/game/core/constants/common";
 import { $dices, Dice } from "@/components/game/dice";
 import { TaxSymbolMaterial } from "@/components/game/core/materials/tax-symbol-material";
 import { useGameController } from "@/contexts/game-context";
+import * as MapData from "@/components/game/core/assets/map_data.json";
 import Players from "./players";
+import { $propertyInfo } from "@/models/property";
 
 export default function GameScene() {
   const [HK, setHK] = useState<HavokPhysicsWithBindings>();
@@ -47,7 +49,11 @@ export default function GameScene() {
 
     context.onDiceRollResultMessage((message) => {
       $dices.set([message.first, message.second]);
-       message.position
+      const property = MapData.properties.find((value) => value.position === message.position);
+      if (property) {
+        $propertyInfo.set(property);
+      }
+      
     });
   }, []);
 

@@ -1,11 +1,10 @@
 import { PropertyInfo } from "@/models/property";
 import { MonopolyCard } from "./shared/monopoly-card";
-import { Color3 } from "@babylonjs/core";
 import { MonopolyHouseIcon } from "../icons/monopoly-house-icon";
+import { fromString } from "@/components/game/core/constants/colors";
 
 interface PropertyCardProps {
-    propertyInfo: PropertyInfo;
-    color: Color3;
+  propertyInfo: PropertyInfo;
 }
 
 export function PropertyCard(props: PropertyCardProps) {
@@ -15,7 +14,7 @@ export function PropertyCard(props: PropertyCardProps) {
         <div 
           className="h-[72px] border border-black flex flex-col justify-center items-center gap-2"
           style={{
-            backgroundColor: props.color.toHexString()
+            backgroundColor: fromString(props.propertyInfo.group).toHexString()
           }}
         >
           <div className="text-monopoly-s">TITLE DEED</div>
@@ -28,7 +27,7 @@ export function PropertyCard(props: PropertyCardProps) {
           </div>
           <div className="flex justify-between">
             <div>Rent with color set</div>
-            <div>${props.propertyInfo.rentWithColorSet}</div>
+            <div>${props.propertyInfo.rent! * 2}</div>
           </div>
           <div className="flex justify-between">
             <div>{"Rent with "}
@@ -37,7 +36,7 @@ export function PropertyCard(props: PropertyCardProps) {
                 hexColor="#00c951"
               />
             </div>
-            <div>${props.propertyInfo.multipliedRents[0]}</div>
+            <div>${props.propertyInfo.multipliedRents![0]}</div>
           </div>
           <div className="flex justify-between">
             <div>{"Rent with "}
@@ -46,7 +45,7 @@ export function PropertyCard(props: PropertyCardProps) {
                 hexColor="#00c951"
               />
             </div>
-            <div>${props.propertyInfo.multipliedRents[1]}</div>
+            <div>${props.propertyInfo.multipliedRents![1]}</div>
           </div>
           <div className="flex justify-between">
             <div>{"Rent with "}
@@ -55,7 +54,7 @@ export function PropertyCard(props: PropertyCardProps) {
                 hexColor="#00c951"
               />
             </div>
-            <div>${props.propertyInfo.multipliedRents[2]}</div>
+            <div>${props.propertyInfo.multipliedRents![2]}</div>
           </div>
           <div className="flex justify-between">
             <div>{"Rent with "}
@@ -64,7 +63,7 @@ export function PropertyCard(props: PropertyCardProps) {
                 hexColor="#00c951"
               />
             </div>
-            <div>${props.propertyInfo.multipliedRents[3]}</div>
+            <div>${props.propertyInfo.multipliedRents![3]}</div>
           </div>
           <div className="flex justify-between">
             <div>{"Rent with "}
@@ -72,7 +71,7 @@ export function PropertyCard(props: PropertyCardProps) {
                 hexColor="#fb2c36"
               />
             </div>
-            <div>${props.propertyInfo.multipliedRents[4]}</div>
+            <div>${props.propertyInfo.multipliedRents![4]}</div>
           </div>
           <div className="h-[2px] bg-black"></div>
           <div className="flex justify-between">

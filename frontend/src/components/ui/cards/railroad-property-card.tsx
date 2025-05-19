@@ -2,7 +2,7 @@ import { RailroadPropertyInfo } from "@/models/property";
 import { MonopolyCard } from "./shared/monopoly-card";
 
 interface RailroadPropertyCardProps {
-    propertyInfo: RailroadPropertyInfo;
+  propertyInfo: RailroadPropertyInfo;
 }
 
 export function RailroadPropertyCard(props: RailroadPropertyCardProps) {
