@@ -8,7 +8,7 @@ interface NodeMaterialProps {
     color?: Color3
 }
 
-export function NodeMaterial({ color = NodeColor }: NodeMaterialProps) {
+export default function NodeMaterial({ color = NodeColor }: NodeMaterialProps) {
   const textures = useAssetManager(textureTasks, {
     useDefaultLoadingScreen: true
   });

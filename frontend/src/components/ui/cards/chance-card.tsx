@@ -1,6 +1,6 @@
-import { EventCard, EventCardWithoutNameProps } from "./shared/event-card";
+import EventCard, EventCardWithoutNameProps } from "./shared/event-card";
 
-export function ChanceCard(props: EventCardWithoutNameProps) {
+export default function ChanceCard(props: EventCardWithoutNameProps) {
   return (
     <EventCard name="CHANCE" {...props}/>
   );

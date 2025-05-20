@@ -4,7 +4,7 @@ interface TextMaterialProps {
     color?: Color3
 }
 
-export function TextMaterial({ color = Color3.Black() }: TextMaterialProps) {
+export default function TextMaterial({ color = Color3.Black() }: TextMaterialProps) {
   return (
     <standardMaterial
       name="text-mat"

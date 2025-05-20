@@ -1,13 +1,13 @@
 import { Vector3 } from "@babylonjs/core";
 import { DefaultMeshOffset } from "../core/constants/offsets";
-import { JsText } from "../core/texts/js-text";
+import JsText from "../core/texts/js-text";
 import { CornerNode, CornerNodeProps } from "./corner-node";
 import { RectangleDimensions } from "../core/constants/dimensions";
 import { GoToJailMaterial } from "../core/materials/go-to-jail-material";
 
 interface GoToJailNodeProps extends Omit<CornerNodeProps, "children"> {}
 
-export function GoToJailNode(props: GoToJailNodeProps) {
+export default function GoToJailNode(props: GoToJailNodeProps) {
   return (
     <CornerNode
       name={props.name}

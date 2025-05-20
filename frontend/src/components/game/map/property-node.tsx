@@ -1,8 +1,8 @@
 import { Color3, Vector3 } from "@babylonjs/core";
-import { NodeMaterial } from "@/components/game/core/materials/node-material";
+import NodeMaterial from "@/components/game/core/materials/node-material";
 import { DefaultMeshOffset } from "@/components/game/core/constants/offsets";
-import { JsText } from "../core/texts/js-text";
-import { EdgeNode } from "./edge-node";
+import JsText from "../core/texts/js-text";
+import EdgeNode from "./edge-node";
 import { getRotation } from "../core/constants/rotations";
 
 interface PropertyNodeProps {
@@ -14,7 +14,7 @@ interface PropertyNodeProps {
     propertyValue: string
 }
 
-export function PropertyNode({ rotationIndex = 0, ...props }: PropertyNodeProps) {
+export default function PropertyNode({ rotationIndex = 0, ...props }: PropertyNodeProps) {
   return (
     <EdgeNode
       name={props.name}

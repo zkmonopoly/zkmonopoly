@@ -3,7 +3,7 @@ import { useAssetManager } from "react-babylonjs";
 import { textureTasks } from "@/components/game/core/assets/tasks";
 import { TextureRootUrl } from "@/components/game/core/constants/common";
 
-export function PrisonMaterial() {
+export default function PrisonMaterial() {
   const textures = useAssetManager(textureTasks, {
     useDefaultLoadingScreen: true
   });

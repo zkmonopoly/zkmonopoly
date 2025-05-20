@@ -3,7 +3,7 @@ import { useAssetManager } from "react-babylonjs";
 import { textureTasks } from "../assets/tasks";
 import { TextureRootUrl } from "../constants/common";
 
-export function TaxSymbolMaterial() {
+export default function TaxSymbolMaterial() {
   const textures = useAssetManager(textureTasks, {
     useDefaultLoadingScreen: true
   });

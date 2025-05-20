@@ -1,11 +1,11 @@
-import { MonopolyCard } from "./monopoly-card";
+import MonopolyCard from "./monopoly-card";
 
 interface UtilityPropertyCardProps {
     name: string;
     iconUrl: string;
 }
 
-export function UtilityPropertyCard(props: UtilityPropertyCardProps) {
+export default function UtilityPropertyCard(props: UtilityPropertyCardProps) {
   return (
     <MonopolyCard>
       <div className="p-[7.5px] h-full">

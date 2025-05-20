@@ -10,7 +10,7 @@ export const GameContext = createContext<GameContextValue | null>(null);
 
 const gameController = GameController.getInstance();
 
-export function GameProvider({ children }: { children: React.ReactNode }) {
+export default function GameProvider({ children }: { children: React.ReactNode }) {
   const [controller] = useState(() => gameController);
 
   return (

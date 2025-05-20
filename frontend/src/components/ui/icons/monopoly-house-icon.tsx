@@ -6,7 +6,7 @@ interface MonopolyHouseIconProps {
     hexColor: string;
 }
 
-export function MonopolyHouseIcon(props: MonopolyHouseIconProps) {
+export default function MonopolyHouseIcon(props: MonopolyHouseIconProps) {
   return (
     <div className="inline-block relative size-[18px] align-top">
       <LuHouse size={18} className="z-0 absolute inline" color={props.hexColor} fill={props.hexColor}/>

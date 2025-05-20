@@ -1,13 +1,13 @@
 import { PropertyInfo } from "@/models/property";
-import { MonopolyCard } from "./shared/monopoly-card";
-import { MonopolyHouseIcon } from "../icons/monopoly-house-icon";
+import MonopolyCard from "./shared/monopoly-card";
+import MonopolyHouseIcon from "../icons/monopoly-house-icon";
 import { fromString } from "@/components/game/core/constants/colors";
 
 interface PropertyCardProps {
   propertyInfo: PropertyInfo;
 }
 
-export function PropertyCard(props: PropertyCardProps) {
+export default function PropertyCard(props: PropertyCardProps) {
   return (
     <MonopolyCard>
       <div className="p-[7.5px]">

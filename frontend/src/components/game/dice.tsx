@@ -7,7 +7,7 @@ import { DiceRollerFactory } from "./core/utils/dice-roller";
 
 export const $dices = atom<number[]>([]);
 
-export function Dice() {
+export default function Dice() {
   const scene = useScene();
   const textures = useAssetManager(textureTasks, {
     useDefaultLoadingScreen: true,

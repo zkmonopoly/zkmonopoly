@@ -2,7 +2,7 @@ import { useState } from "react";
 import { twJoin, twMerge } from "tailwind-merge";
 import { LuChevronRight } from "react-icons/lu";
 import { Button } from "react-aria-components";
-import { SelectItem, SelectWrapper } from "./core/wrappers/select-wrapper";
+import SelectWrapper, { SelectItem } from "./core/wrappers/select-wrapper";
 import { buttonStyles } from "./core/styles/button";
 import { GameController } from "@/controllers/game-controller";
 
@@ -13,7 +13,7 @@ interface InteractiveConsoleProps {
 // animation styling
 const consoleButtonHeight: number = 24;
 
-export function InteractiveConsole(props: InteractiveConsoleProps) {
+export default function InteractiveConsole(props: InteractiveConsoleProps) {
   const [consoleOpen, setConsoleOpen] = useState(false);
 
   const [selectedCommand, setSelectedCommand] = useState<string>("Item 1");

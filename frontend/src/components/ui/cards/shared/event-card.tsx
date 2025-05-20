@@ -5,7 +5,7 @@ type EventCardProps = {
 
 export type EventCardWithoutNameProps = Omit<EventCardProps, "name">
 
-export function EventCard(props: EventCardProps) {
+export default function EventCard(props: EventCardProps) {
   return (
     <div className="bg-white p-[12px] w-full h-[240px]">
       <div className="border h-full w-full border-black text-black grid">

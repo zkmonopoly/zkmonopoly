@@ -1,11 +1,11 @@
 import { RailroadPropertyInfo } from "@/models/property";
-import { MonopolyCard } from "./shared/monopoly-card";
+import MonopolyCard from "./shared/monopoly-card";
 
 interface RailroadPropertyCardProps {
   propertyInfo: RailroadPropertyInfo;
 }
 
-export function RailroadPropertyCard(props: RailroadPropertyCardProps) {
+export default function RailroadPropertyCard(props: RailroadPropertyCardProps) {
   return (
     <MonopolyCard>
       <div className="p-[7.5px] h-full">

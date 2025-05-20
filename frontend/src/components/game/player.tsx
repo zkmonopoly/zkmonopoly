@@ -17,7 +17,7 @@ interface PlayerProps {
     playerState: PlayerState;
 }
 
-export function Player(props: PlayerProps) {
+export default function Player(props: PlayerProps) {
   const scene = useScene();
   const textures = useAssetManager(textureTasks, {
     useDefaultLoadingScreen: true,

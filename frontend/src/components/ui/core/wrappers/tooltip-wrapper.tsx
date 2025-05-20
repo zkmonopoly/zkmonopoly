@@ -7,7 +7,7 @@ interface TooltipWrapperProps extends Omit<TooltipProps, "children" | "className
     className?: string;
 }
 
-export function TooltipWrapper({ className, ...props }: TooltipWrapperProps) {
+export default function TooltipWrapper({ className, ...props }: TooltipWrapperProps) {
   return (
     <Tooltip className={twMerge(tooltipStyles, className)} {...props}>
       <OverlayArrow>

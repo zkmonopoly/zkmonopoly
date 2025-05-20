@@ -1,12 +1,12 @@
 import { ColorGroupSet } from "@/components/game/core/constants/colors";
-import { ElectricCompanyCard } from "@/components/ui/cards/electric-company-card";
-import { PropertyCard } from "@/components/ui/cards/property-card";
-import { RailroadPropertyCard } from "@/components/ui/cards/railroad-property-card";
-import { InteractiveConsole } from "@/components/ui/interactive-console";
+import ElectricCompanyCard from "@/components/ui/cards/electric-company-card";
+import PropertyCard from "@/components/ui/cards/property-card";
+import RailroadPropertyCard from "@/components/ui/cards/railroad-property-card";
+import InteractiveConsole from "@/components/ui/interactive-console";
 import { Outlet } from "react-router";
 import { useStore } from "@nanostores/react";
 import { $propertyInfo } from "@/models/property";
-import { WaterCompanyCard } from "@/components/ui/cards/water-company-card";
+import WaterCompanyCard from "@/components/ui/cards/water-company-card";
 
 export default function GameLayout() {
   const propertyInfo = useStore($propertyInfo);
@@ -17,6 +17,7 @@ export default function GameLayout() {
         <div className="w-full grid md:grid-cols-12 relative">
           <div className="md:col-span-3 hidden md:block">
             <div className="flex flex-col justify-center">
+              
               {propertyInfo.group === "railroad" ?
                 <RailroadPropertyCard propertyInfo={{
                   name: propertyInfo.name

@@ -9,7 +9,7 @@ interface SelectWrapperProps extends PropsWithChildren {
     onSelectionChange?: (key: React.Key) => void; 
 }
 
-export function SelectWrapper(props: SelectWrapperProps) {
+export default function SelectWrapper(props: SelectWrapperProps) {
   return (
     <Select
       className={twMerge(
@@ -52,7 +52,10 @@ export function SelectItem(props: ListBoxItemProps & { children: ReactNode }) {
   );
 }
 
-function Status({ className }: { className: string }) {
+ /** 
+  * * @deprecated should not be used
+  */
+export function Status({ className }: { className: string }) {
   return (
     <span
       className={`w-3 h-3 rounded-full border border-solid border-white ${className}`}

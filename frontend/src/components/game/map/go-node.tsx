@@ -1,13 +1,13 @@
 import { Vector3 } from "@babylonjs/core";
 import { CornerNode, CornerNodeProps } from "./corner-node";
-import { JsText } from "../core/texts/js-text";
+import JsText from "../core/texts/js-text";
 import { GoArrowMaterial } from "../core/materials/go-arrow-material";
 import { RectangleDimensions } from "../core/constants/dimensions";
 import { DefaultMeshOffset } from "../core/constants/offsets";
 
 interface GoNodeProps extends Omit<CornerNodeProps, "children"> {}
 
-export function GoNode(props: GoNodeProps) {
+export default function GoNode(props: GoNodeProps) {
   return (
     <CornerNode {...props}>
       <JsText

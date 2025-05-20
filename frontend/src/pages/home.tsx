@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Tabs,
@@ -23,7 +23,7 @@ import {
 import { buttonStyles } from "@/components/ui/core/styles/button";
 import { textFieldsStyles } from "@/components/ui/core/styles/text-field";
 import { formStyles } from "@/components/ui/core/styles/form";
-import { TooltipTriggerTab } from "@/components/ui/tooltip-trigger-tab";
+import TooltipTriggerTab from "@/components/ui/tooltip-trigger-tab";
 import { useNavigate } from "react-router";
 import { GameController } from "@/controllers/game-controller";
 

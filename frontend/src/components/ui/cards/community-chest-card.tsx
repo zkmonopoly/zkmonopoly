@@ -1,6 +1,6 @@
-import { EventCard, EventCardWithoutNameProps } from "./shared/event-card";
+import EventCard, EventCardWithoutNameProps } from "./shared/event-card";
 
-export function CommunityChestCard(props: EventCardWithoutNameProps) {
+export default function CommunityChestCard(props: EventCardWithoutNameProps) {
   return (
     <EventCard name="COMMUNITY CHEST" {...props}/>
   );

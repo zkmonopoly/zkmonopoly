@@ -1,6 +1,6 @@
 import { Color3 } from "@babylonjs/core";
-import { EdgeNodeProps, EdgeNode } from "./edge-node";
-import { JsText } from "../core/texts/js-text";
+import EdgeNode, { EdgeNodeProps } from "./edge-node";
+import JsText from "../core/texts/js-text";
 import { getRotation } from "../core/constants/rotations";
 
 interface ChanceNodeProps extends Omit<EdgeNodeProps, "children" | "rotation"> {
@@ -8,7 +8,7 @@ interface ChanceNodeProps extends Omit<EdgeNodeProps, "children" | "rotation"> {
     color?: Color3;
 }
 
-export function ChanceNode({ rotationIndex = 0,  ...props}: ChanceNodeProps) {
+export default function ChanceNode({ rotationIndex = 0,  ...props}: ChanceNodeProps) {
   return (
     <EdgeNode 
       name={props.name}

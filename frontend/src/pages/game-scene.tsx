@@ -24,6 +24,10 @@ import * as MapData from "@/components/game/core/assets/map_data.json";
 import Players from "./players";
 import { $propertyInfo } from "@/models/property";
 
+const PropertiesMap = new Map(
+  MapData.properties.map((property) => [property.position, property])
+);
+
 export default function GameScene() {
   const [HK, setHK] = useState<HavokPhysicsWithBindings>();
   const [, setFontsReady] = useState(false);
@@ -49,11 +53,10 @@ export default function GameScene() {
 
     context.onDiceRollResultMessage((message) => {
       $dices.set([message.first, message.second]);
-      const property = MapData.properties.find((value) => value.position === message.position);
+      const property = PropertiesMap.get(message.position);
       if (property) {
         $propertyInfo.set(property);
       }
-      
     });
   }, []);
 

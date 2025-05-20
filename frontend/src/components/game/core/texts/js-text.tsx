@@ -1,7 +1,7 @@
 import { Color3, Vector3 } from "@babylonjs/core";
 import earcut from "earcut";
 import * as fontData from "@/components/game/core/assets/josefin_sans_regular.json";
-import { TextMaterial } from "@/components/game/core/materials/text-material";
+import TextMaterial from "@/components/game/core/materials/text-material";
 import { getTextOffset, getTextRotation } from "../constants/rotations";
 
 interface JsTextProps {
@@ -18,7 +18,7 @@ interface JsTextProps {
     fontScale?: number
 }
 
-export function JsText({ yOffset = 0, xzOffset = 0, xzInvertOffset = 0, rotationIndex = 0, fontScale = 1, ...props }: JsTextProps) {
+export default function JsText({ yOffset = 0, xzOffset = 0, xzInvertOffset = 0, rotationIndex = 0, fontScale = 1, ...props }: JsTextProps) {
   return (
     props.text.map((line, index) => (
       <babylon-text

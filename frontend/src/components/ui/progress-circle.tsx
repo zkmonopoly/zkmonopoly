@@ -5,7 +5,7 @@ interface ProgressCircleProps extends Omit<ProgressBarProps, "children" | "aria-
     strokeWidth?: number;
 }
 
-export function ProgressCircle({ size = 48, strokeWidth = 4, ...props }: ProgressCircleProps) {
+export default function ProgressCircle({ size = 48, strokeWidth = 4, ...props }: ProgressCircleProps) {
   // SVG parameters
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
