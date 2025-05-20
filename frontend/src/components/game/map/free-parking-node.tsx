@@ -1,8 +1,8 @@
 import { Vector3 } from "@babylonjs/core";
 import { DefaultMeshOffset } from "../core/constants/offsets";
 import JsText from "../core/texts/js-text";
-import { CornerNode, CornerNodeProps } from "./corner-node";
-import { FreeParkingMaterial } from "../core/materials/free-parking-material";
+import CornerNode, { CornerNodeProps } from "./corner-node";
+import FreeParkingMaterial from "../core/materials/free-parking-material";
 import { RectangleDimensions } from "../core/constants/dimensions";
 
 interface FreeParkingNodeProps extends Omit<CornerNodeProps, "children"> {}

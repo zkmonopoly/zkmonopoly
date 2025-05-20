@@ -1,7 +1,7 @@
 import { Vector3 } from "@babylonjs/core";
-import { CornerNode, CornerNodeProps } from "./corner-node";
+import CornerNode, { CornerNodeProps } from "./corner-node";
 import JsText from "../core/texts/js-text";
-import { GoArrowMaterial } from "../core/materials/go-arrow-material";
+import GoArrowMaterial from "../core/materials/go-arrow-material";
 import { RectangleDimensions } from "../core/constants/dimensions";
 import { DefaultMeshOffset } from "../core/constants/offsets";
 

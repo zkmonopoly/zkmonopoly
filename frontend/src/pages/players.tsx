@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { Player } from "@/components/game/player";
+import { useEffect, useState } from "react";
+import Player from "@/components/game/player";
 import { PlayerState } from "@/components/state/player-state";
 import { GameController } from "@/controllers/game-controller";
 

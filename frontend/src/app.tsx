@@ -5,7 +5,7 @@ import BasicLayout from "./layouts/basic-layout";
 import Home from "@/pages/home";
 import Error from "@/pages/error";
 import GameLayout from "./layouts/game-layout";
-import { ProgressCircle } from "./components/ui/progress-circle";
+import ProgressCircle from "./components/ui/progress-circle";
 const Game = lazy(() => import("@/pages/game"));
 
 export default function App() {

@@ -1,10 +1,10 @@
 import { Vector3 } from "@babylonjs/core";
-import { CornerNode, CornerNodeProps } from "./corner-node";
+import CornerNode, { CornerNodeProps } from "./corner-node";
 import { DefaultMeshOffset } from "../core/constants/offsets";
 import NodeMaterial from "../core/materials/node-material";
 import { MonopolyColors } from "../core/constants/colors";
 import JsText from "../core/texts/js-text";
-import { PrisonMaterial } from "../core/materials/prison-material";
+import PrisonMaterial from "../core/materials/prison-material";
 
 export default function JailNode(props: CornerNodeProps) {
   return (
