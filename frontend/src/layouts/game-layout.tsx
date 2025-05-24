@@ -3,26 +3,36 @@ import GameMenu from "@/components/ui/game-menu";
 import Auction from "@/components/ui/auction";
 import { Outlet, useLocation } from "react-router";
 import { useEffect, useMemo } from "react";
-import AuctionController from "@/controllers/auction-controller";
+import AuctionController, { AuctionCallname, AuctionCallnameList } from "@/controllers/auction-controller";
 
 export default function GameLayout() {
   const location = useLocation();
   const pathname = useMemo(() => {
     return location.pathname.split("/").at(2);
   }, [location]);
-  const auctionController = new AuctionController();
 
   useEffect(() => {
     if (pathname) {
       const party = prompt("party:") || "alice";
-      auctionController.connect(pathname, party as "alice" | "bob").then(() => {
+      const auctionController = new AuctionController(
+        { 
+          name: pathname,
+          size: 3
+        },
+        party as AuctionCallname
+      );
+      auctionController.connect().then(() => {
+        console.log("auction: connected")
         let x;
         if (party === "alice") {
-          x = auctionController.mpcLargest(99);
-        } else {
           x = auctionController.mpcLargest(10);
+        } else if (party === "bob") {
+          x = auctionController.mpcLargest(15);
+        } else {
+          x = auctionController.mpcLargest(24);
         }
-        x.then((res) => alert(res === 1 ? "alice" : (res === 2 ? "bob" : "equal")));
+        console.log("auction: wait");
+        x.then((res) => alert(`winner: ${AuctionCallnameList[res.winner as number]}`));
       });
     }
   }, [pathname]);

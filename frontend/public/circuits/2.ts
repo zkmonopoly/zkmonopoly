@@ -3,7 +3,7 @@ function isEqual(a: number, b: number): boolean {
   return a === b;
 }
 
-function isLarger(a: number, b: number): boolean {
+function isGreater(a: number, b: number): boolean {
   return a > b;
 }
 
@@ -11,15 +11,15 @@ export default (io: Summon.IO) => {
   const a = io.input('alice', 'a', summon.number());
   const b = io.input('bob', 'b', summon.number());
 
-  let result;
+  let winner;
 
   if (isEqual(a, b)) {
-    result = 0;
-  } else if (isLarger(a, b)) {
-    result = 1;
+    winner = 0;
+  } else if (isGreater(a, b)) {
+    winner = 1;
   } else {
-    result = 2;
+    winner = 2;
   }
 
-  io.outputPublic('winner', result);
+  io.outputPublic('winner', winner);
 }
