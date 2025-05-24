@@ -3,8 +3,9 @@ import AsyncQueue from '@/utils/async-queue';
 import generateProtocol from '@/utils/generate-protocol';
 import assert from '@/utils/assert';
 
-export const AuctionCallnameList = <const>['none', 'alice', 'bob', 'charlie', 'eve'];
+export const AuctionCallnameList = <const>['none', 'alice', 'bob', 'charlie', 'david'];
 export type AuctionCallname = typeof AuctionCallnameList[number];
+export type AuctionInput =  { a: number } | { b: number } | { c: number } | { d: number };
 
 interface RtcPair {
   other: AuctionCallname;
@@ -103,12 +104,12 @@ export default class AuctionController {
     ));
   }
 
-  private getInput(value: number) {
+  private getInput(value: number): AuctionInput  {
     return this.party === 'alice' ?
       { a: value } : (
         this.party === 'bob' ?
         { b: value } : (
-          this.party === 'charlie' ? { c: value } : { e: value }
+          this.party === 'charlie' ? { c: value } : { d: value }
         )
       );
   }
