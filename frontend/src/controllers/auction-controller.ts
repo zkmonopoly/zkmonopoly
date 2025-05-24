@@ -8,7 +8,6 @@ export type AuctionCallname = typeof AuctionCallnameList[number];
 export type AuctionInput =  { a: number } | { b: number } | { c: number } | { d: number };
 
 interface RtcPair {
-  other: AuctionCallname;
   socket: RtcPairSocket;
   queue: AsyncQueue<unknown>;
 }
@@ -21,14 +20,14 @@ export interface AuctionNetwork {
 export default class AuctionController {
   name: string;
   size: number;
-  pairs: RtcPair[];
+  pairs: Map<AuctionCallname, RtcPair>;
   party: AuctionCallname;
 
   constructor(network: AuctionNetwork, party: AuctionCallname) {
     this.name = network.name;
     this.party = party;
     this.size = network.size;
-    this.pairs = new Array();
+    this.pairs = new Map();
     // Managable so manual coding it is
     // 2: 1
     // 3: 3
@@ -36,52 +35,39 @@ export default class AuctionController {
     switch (this.size) {
       case 2:
         const other = this.party === 'alice' ? 'bob' : 'alice';
-        this.pairs = [{
-          other: other,
+        this.pairs.set(other, {
           socket: new RtcPairSocket(`${this.name}_alice_bob`, this.party as 'alice' | 'bob'),
           queue: new AsyncQueue<unknown>()
-        }]
+        });
         break;
       case 3:
         if (this.party === 'alice') {
-          this.pairs = [
-            {
-              other: 'bob',
-              socket: new RtcPairSocket(`${this.name}_alice_bob`, 'alice'),
-              queue: new AsyncQueue<unknown>()
-            },
-            {
-              other: 'charlie',
-              socket: new RtcPairSocket(`${this.name}_alice_charlie`, 'alice'),
-              queue: new AsyncQueue<unknown>()
-            }
-          ];
+          this.pairs.set('bob', {
+            socket: new RtcPairSocket(`${this.name}_alice_bob`, 'alice'),
+            queue: new AsyncQueue<unknown>()
+          });
+          this.pairs.set('charlie', {
+            socket: new RtcPairSocket(`${this.name}_alice_charlie`, 'alice'),
+            queue: new AsyncQueue<unknown>()
+          });
         } else if (this.party === 'bob') {
-          this.pairs = [
-            {
-              other: 'alice',
-              socket: new RtcPairSocket(`${this.name}_alice_bob`, 'bob'),
-              queue: new AsyncQueue<unknown>()
-            },
-            {
-              other: 'charlie',
-              socket: new RtcPairSocket(`${this.name}_bob_charlie`, 'alice'),
-              queue: new AsyncQueue<unknown>()
-            }
-          ];
+          this.pairs.set('alice', {
+            socket: new RtcPairSocket(`${this.name}_alice_bob`, 'bob'),
+            queue: new AsyncQueue<unknown>()
+          });
+          this.pairs.set('charlie', {
+            socket: new RtcPairSocket(`${this.name}_bob_charlie`, 'alice'),
+            queue: new AsyncQueue<unknown>()
+          });
         } else {
-          this.pairs = [
-            {
-              other: 'bob',
-              socket: new RtcPairSocket(`${this.name}_bob_charlie`, 'bob'),
-              queue: new AsyncQueue<unknown>()
-            },
-            {
-              other: 'alice',
-              socket: new RtcPairSocket(`${this.name}_alice_charlie`, 'bob'),
-              queue: new AsyncQueue<unknown>()
-            }
-          ];
+          this.pairs.set('bob', {
+            socket: new RtcPairSocket(`${this.name}_bob_charlie`, 'bob'),
+            queue: new AsyncQueue<unknown>()
+          });
+          this.pairs.set('alice', {
+            socket: new RtcPairSocket(`${this.name}_alice_charlie`, 'bob'),
+            queue: new AsyncQueue<unknown>()
+          });
         }
         break;
       default:
@@ -96,7 +82,7 @@ export default class AuctionController {
       });
     });
 
-    await Promise.all(this.pairs.map((pair) => 
+    await Promise.all(Array.from(this.pairs.values()).map((pair) => 
       new Promise<void>((resolve, reject) => {
         pair.socket.on('open', resolve);
         pair.socket.on('error', reject);
@@ -125,18 +111,22 @@ export default class AuctionController {
     const protocol = await generateProtocol(this.size);
     const session = protocol.join(party, this.getInput(value), (to, msg) => {
       totalByteSent += msg.byteLength;
-      // TODO: replace with map
-      this.pairs[this.pairs.findIndex((pair) => pair.other === to)].socket.send(msg);
+      const pair = this.pairs.get(to as AuctionCallname);
+      if (pair) {
+        pair.socket.send(msg);
+      } else {
+        throw new Error("Unknown party");
+      }
     });
 
-    this.pairs.forEach((pair) => {
+    this.pairs.forEach((pair, other) => {
       pair.queue.stream((msg) => {
         if (!(msg instanceof Uint8Array)) {
           throw new Error('Unexpected message type');
         }
         totalByteSent += msg.byteLength;
         console.log(totalByteSent);
-        session.handleMessage(pair.other, msg);
+        session.handleMessage(other, msg);
       })
     });
     const output = await session.output();;
