@@ -1,5 +1,5 @@
 import { RtcPairSocket } from 'rtc-pair-socket';
-import AsyncQueue from '@/utils/async-queue';
+import { AsyncQueue} from '@/utils/async-queue';
 import generateProtocol from '@/utils/generate-protocol';
 import assert from '@/utils/assert';
 
@@ -125,7 +125,7 @@ export default class AuctionController {
           throw new Error('Unexpected message type');
         }
         totalByteSent += msg.byteLength;
-        console.log(totalByteSent);
+        console.log(`auction: progress ${Math.floor(totalByteSent / 10000)}`);
         session.handleMessage(other, msg);
       })
     });
