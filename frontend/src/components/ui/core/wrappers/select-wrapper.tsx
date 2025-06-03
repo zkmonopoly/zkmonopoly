@@ -20,7 +20,7 @@ export default function SelectWrapper(props: SelectWrapperProps) {
       isDisabled={props.children == null}>
       {props.label && <Label className="text-xs cursor-default">{props.label}</Label>}
       <Button className="flex items-center cursor-default rounded-lg border-0 bg-black/90 pressed:bg-black transition py-2 pl-5 pr-2 text-base text-left leading-normal shadow-md text-white focus:outline-hidden ">
-        <SelectValue className="flex-1 truncate placeholder-shown:italic text-xs"  />
+        <SelectValue className="flex-1 truncate text-xs"  />
         <LuChevronsDownUp />
       </Button>
       <Popover className="max-h-60 w-(--trigger-width) overflow-auto rounded-md bg-black text-base shadow-lg ring-1 ring-white/5 entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">

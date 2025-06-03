@@ -22,12 +22,14 @@ export default class AuctionController {
   size: number;
   pairs: Map<AuctionCallname, RtcPair>;
   party: AuctionCallname;
+  onProgress?: (progress: number) => void;
 
-  constructor(network: AuctionNetwork, party: AuctionCallname) {
+  constructor(network: AuctionNetwork, party: AuctionCallname, onProgress?: (progress: number) => void) {
     this.name = network.name;
     this.party = party;
     this.size = network.size;
     this.pairs = new Map();
+    this.onProgress = onProgress;
     // Managable so manual coding it is
     // 2: 1
     // 3: 3
@@ -125,11 +127,13 @@ export default class AuctionController {
           throw new Error('Unexpected message type');
         }
         totalByteSent += msg.byteLength;
-        console.log(`auction: progress ${Math.floor(totalByteSent / 10000)}`);
+        if (this.onProgress) {
+          this.onProgress(Math.floor(totalByteSent / 1024));
+        }
         session.handleMessage(other, msg);
       })
     });
-    const output = await session.output();;
+    const output = await session.output();
     console.log(`auction: ${totalByteSent}`);
     return output;
   }
