@@ -32,10 +32,12 @@ export default function SelectWrapper(props: SelectWrapperProps) {
   );
 }
   
-export function SelectItem(props: ListBoxItemProps & { children: ReactNode }) {
+export function SelectItem({id, ...props}: ListBoxItemProps & { children: ReactNode }) {
   return (
     <ListBoxItem
       {...props}
+      id={id}
+      textValue={id?.toString()}
       className="group flex items-center gap-2 cursor-default select-none py-2 px-4 outline-hidden rounded-sm text-white focus:bg-rose-600"
     >
       {({ isSelected }) => (

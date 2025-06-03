@@ -55,7 +55,7 @@ export default function GameLayout() {
               />
               <SelectWrapper
                 className="min-w-32 ml-2 mt-2"
-                label="Command"
+                label="Callname"
                 onSelectionChange={(key) =>
                   setSelectedCommand(key)
                 }
