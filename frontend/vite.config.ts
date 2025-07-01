@@ -18,5 +18,8 @@ export default defineConfig({
     exclude: [
       "@babylonjs/havok"
     ]
+  },
+  server: {
+    allowedHosts: ["zkmonopoly.trietng.ovh"]
   }
 });
