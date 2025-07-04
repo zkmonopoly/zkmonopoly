@@ -35,7 +35,7 @@ export default function Players() {
     if (roomState) updatePlayerState(roomState);
 
     // Subscribe to future updates
-    gameController.onStateUpdate((roomState, payload) => {
+    gameController.onStateUpdate((roomState) => {
       setTimeout(() => {
         updatePlayerState(roomState);
       }, 1000); // Delay to allow for smoother updates
