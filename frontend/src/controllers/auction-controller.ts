@@ -34,11 +34,26 @@ export default class AuctionController {
     // 2: 1
     // 3: 3
     // 4: 6
+    const config = {
+      config: {
+        iceServers: [
+          // Google's free stun server. It's important to include this one.
+          { urls: "stun:stun.l.google.com:19302" },
+
+          // Your turn server. Replace each field with values specific to your setup.
+          {
+            urls: "relay1.expressturn.com:3480",
+            username: "efPVTROUWWJ55A39IT",
+            credential: "yP21Uvqy20rU7Zgj"
+          },
+        ],
+      },
+    };
     switch (this.size) {
       case 2:
         const other = this.party === 'alice' ? 'bob' : 'alice';
         this.pairs.set(other, {
-          socket: new RtcPairSocket(`${this.name}_alice_bob`, this.party as 'alice' | 'bob'),
+          socket: new RtcPairSocket(`${this.name}_alice_bob`, this.party as 'alice' | 'bob', config),
           queue: new AsyncQueue<unknown>()
         });
         break;
