@@ -37,14 +37,11 @@ export default class AuctionController {
     const config = {
       config: {
         iceServers: [
-          // Google's free stun server. It's important to include this one.
           { urls: "stun:stun.l.google.com:19302" },
-
-          // Your turn server. Replace each field with values specific to your setup.
           {
-            urls: "relay1.expressturn.com:3480",
-            username: "efPVTROUWWJ55A39IT",
-            credential: "yP21Uvqy20rU7Zgj"
+            urls: "turn:relay1.expressturn.com:3480",
+            username: "000000002066986343",
+            credential: "moEYtz9ckGJMjbuVo0+VcTclubA="
           },
         ],
       },
