@@ -132,9 +132,12 @@ export default class AuctionController {
         throw new Error("Unknown party");
       }
     });
-
+    type StreamHandler = {
+      stop: () => void;
+    }
+    const streamHandlers: StreamHandler[] = [];
     this.pairs.forEach((pair, other) => {
-      pair.queue.stream((msg) => {
+      streamHandlers.push(pair.queue.stream((msg) => {
         if (!(msg instanceof Uint8Array)) {
           throw new Error('Unexpected message type');
         }
@@ -143,9 +146,10 @@ export default class AuctionController {
           this.onProgress(Math.floor(totalByteSent / 1024));
         }
         session.handleMessage(other, msg);
-      })
+      }))
     });
     const output = await session.output();
+    streamHandlers.forEach(handler => handler.stop());
     console.log(`auction: ${totalByteSent}`);
     return output;
   }
