@@ -38,7 +38,7 @@ export default class AuctionController {
     const peerConfig = {
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'turn:turn.trietng.ovh', username: 'any', credential: 'any' }
+        { urls: 'turn:turn.trietng.ovh:3478', username: 'any', credential: 'any' }
       ]
     }
     switch (this.size) {
