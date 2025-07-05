@@ -38,7 +38,7 @@ export default class AuctionController {
     const peerConfig = {
       iceServers: [
         { urls: 'stun:freestun.net:3478' },
-        { yrls: 'turn:freestun.net:3478', username: 'free', credential: 'free' }
+        { urls: 'turn:freestun.net:3478', username: 'free', credential: 'free' }
       ]
     }
     switch (this.size) {
