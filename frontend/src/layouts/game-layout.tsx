@@ -69,7 +69,7 @@ export default function GameLayout() {
             </div>
           </div>
           <div>
-            {/* <Outlet /> */}
+            <Outlet />
           </div>
           <InteractiveConsole className="h-full z-10 absolute right-0 top-0 bottom-0" />
         </div>

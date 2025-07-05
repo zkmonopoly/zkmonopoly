@@ -38,7 +38,7 @@ export default class AuctionController {
       case 2:
         const other = this.party === 'alice' ? 'bob' : 'alice';
         this.pairs.set(other, {
-          socket: new RtcPairSocket(`${this.name}_alice_bob`, this.party as 'alice' | 'bob'),
+          socket: new RtcPairSocket(`${this.name}_alice_bob`, this.party as 'alice' | 'bob', { debug: 3 }),
           queue: new AsyncQueue<unknown>()
         });
         break;
