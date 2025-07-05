@@ -6,7 +6,7 @@ zkMonopoly is an experimental implementation of the Monopoly board game that use
 
 - **frontend/** – React + Vite client used to render the game board and interface.
 - **backend/** – Colyseus server handling game rooms and ZK interactions.
-- **zkShuffle** and **MP-SPDZ** – external projects required for zero-knowledge and MPC functionality. They are included as git submodules.
+- **zkShuffle** – external projects required for zero-knowledge and MPC functionality. They are included as git submodules.
 - **gimp/** – source images for the board and tokens.
 
 ## Getting started
@@ -29,9 +29,7 @@ The submodules are defined in `.gitmodules`:
 [submodule "zkShuffle"]
         path = zkShuffle
         url = https://github.com/minhvip08/zkShuffle.git
-[submodule "MP-SPDZ"]
-        path = MP-SPDZ
-        url = https://github.com/minhvip08/MP-SPDZ.git
+
 ```
 
 ### Install dependencies
