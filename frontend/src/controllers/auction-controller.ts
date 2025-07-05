@@ -37,8 +37,8 @@ export default class AuctionController {
     // 4: 6
     const peerConfig = {
       iceServers: [
-        { urls: 'stun:freestun.net:3478' },
-        { urls: 'turn:freestun.net:3478', username: 'free', credential: 'free' }
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'turn:turn.trietng.ovh', username: 'any', credential: 'any' }
       ]
     }
     switch (this.size) {
@@ -56,34 +56,34 @@ export default class AuctionController {
       case 3:
         if (this.party === 'alice') {
           this.pairs.set('bob', {
-            socket: new RtcPairSocket(`${this.name}_alice_bob`, 'alice'),
+            socket: new RtcPairSocket(`${this.name}_alice_bob`, 'alice', { config: peerConfig }),
             queue: new AsyncQueue<unknown>(),
             isConnected: false
           });
           this.pairs.set('charlie', {
-            socket: new RtcPairSocket(`${this.name}_alice_charlie`, 'alice'),
+            socket: new RtcPairSocket(`${this.name}_alice_charlie`, 'alice', { config: peerConfig }),
             queue: new AsyncQueue<unknown>(),
             isConnected: false
           });
         } else if (this.party === 'bob') {
           this.pairs.set('alice', {
-            socket: new RtcPairSocket(`${this.name}_alice_bob`, 'bob'),
+            socket: new RtcPairSocket(`${this.name}_alice_bob`, 'bob', { config: peerConfig }),
             queue: new AsyncQueue<unknown>(),
             isConnected: false
           });
           this.pairs.set('charlie', {
-            socket: new RtcPairSocket(`${this.name}_bob_charlie`, 'alice'),
+            socket: new RtcPairSocket(`${this.name}_bob_charlie`, 'alice', { config: peerConfig }),
             queue: new AsyncQueue<unknown>(),
             isConnected: false
           });
         } else {
           this.pairs.set('bob', {
-            socket: new RtcPairSocket(`${this.name}_bob_charlie`, 'bob'),
+            socket: new RtcPairSocket(`${this.name}_bob_charlie`, 'bob', { config: peerConfig }),
             queue: new AsyncQueue<unknown>(),
             isConnected: false
           });
           this.pairs.set('alice', {
-            socket: new RtcPairSocket(`${this.name}_alice_charlie`, 'bob'),
+            socket: new RtcPairSocket(`${this.name}_alice_charlie`, 'bob', { config: peerConfig }),
             queue: new AsyncQueue<unknown>(),
             isConnected: false
           });
