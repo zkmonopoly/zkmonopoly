@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Scene } from "react-babylonjs";
 import { HavokPlugin, PhysicsShapeType, Vector3 } from "@babylonjs/core";
 import HavokPhysics, { HavokPhysicsWithBindings } from "@babylonjs/havok";
@@ -30,23 +30,10 @@ const PropertiesMap = new Map(
 
 export default function GameScene() {
   const [HK, setHK] = useState<HavokPhysicsWithBindings>();
-  const [, setFontsReady] = useState(false);
 
-  const faLoaded = useRef(false);
   const context = useGameController();
 
   useEffect(() => {
-    if (document.fonts.check("16px FontAwesome") === false) {
-      document.fonts.load("16px FontAwesome").then(() => {
-        if (faLoaded.current !== true) {
-          faLoaded.current = true;
-          setFontsReady(true);
-        }
-      });
-    } else if (faLoaded.current !== true) {
-      faLoaded.current = true;
-      setFontsReady(true);
-    }
     HavokPhysics().then((havok) => {
       setHK(havok);
     });

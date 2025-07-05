@@ -1,5 +1,5 @@
 import { RtcPairSocket } from 'rtc-pair-socket';
-import { AsyncQueue} from '@/utils/async-queue';
+import { AsyncQueue } from '@/utils/async-queue';
 import generateProtocol from '@/utils/generate-protocol';
 import assert from '@/utils/assert';
 
@@ -34,23 +34,11 @@ export default class AuctionController {
     // 2: 1
     // 3: 3
     // 4: 6
-    const config = {
-      config: {
-        iceServers: [
-          { urls: "stun:stun.l.google.com:19302" },
-          {
-            urls: "turn:relay1.expressturn.com:3480",
-            username: "000000002066986343",
-            credential: "moEYtz9ckGJMjbuVo0+VcTclubA="
-          },
-        ],
-      },
-    };
     switch (this.size) {
       case 2:
         const other = this.party === 'alice' ? 'bob' : 'alice';
         this.pairs.set(other, {
-          socket: new RtcPairSocket(`${this.name}_alice_bob`, this.party as 'alice' | 'bob', config),
+          socket: new RtcPairSocket(`${this.name}_alice_bob`, this.party as 'alice' | 'bob'),
           queue: new AsyncQueue<unknown>()
         });
         break;
@@ -137,7 +125,7 @@ export default class AuctionController {
     }
     const streamHandlers: StreamHandler[] = [];
     this.pairs.forEach((pair, other) => {
-      streamHandlers.push(pair.queue.stream((msg) => {
+      pair.queue.stream((msg) => {
         if (!(msg instanceof Uint8Array)) {
           throw new Error('Unexpected message type');
         }
@@ -146,7 +134,7 @@ export default class AuctionController {
           this.onProgress(Math.floor(totalByteSent / 1024));
         }
         session.handleMessage(other, msg);
-      }))
+      })
     });
     const output = await session.output();
     streamHandlers.forEach(handler => handler.stop());
