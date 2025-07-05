@@ -38,7 +38,15 @@ export default class AuctionController {
       case 2:
         const other = this.party === 'alice' ? 'bob' : 'alice';
         this.pairs.set(other, {
-          socket: new RtcPairSocket(`${this.name}_alice_bob`, this.party as 'alice' | 'bob', { debug: 3 }),
+          socket: new RtcPairSocket(`${this.name}_alice_bob`, this.party as 'alice' | 'bob', {
+            debug: 3,
+            config: {
+              iceServers: [
+                { urls: 'stun:freestun.net:3478' },
+                { urls: 'turn:freestun.net:3478', username: 'free', credential: 'free' }
+              ]
+            }
+          }),
           queue: new AsyncQueue<unknown>()
         });
         break;
