@@ -1,4 +1,4 @@
-import { RtcPairSocket } from 'rtc-pair-socket';
+import { UnsecuredRtcPairSocket } from '@/models/unsecured-rtc-pair-socket';
 import { AsyncQueue} from '@/utils/async-queue';
 import generateProtocol from '@/utils/generate-protocol';
 import assert from '@/utils/assert';
@@ -8,7 +8,7 @@ export type AuctionCallname = typeof AuctionCallnameList[number];
 export type AuctionInput =  { a: number } | { b: number } | { c: number } | { d: number };
 
 interface RtcPair {
-  socket: RtcPairSocket;
+  socket: UnsecuredRtcPairSocket;
   queue: AsyncQueue<unknown>;
 }
 
@@ -50,36 +50,36 @@ export default class AuctionController {
       case 2:
         const other = this.party === 'alice' ? 'bob' : 'alice';
         this.pairs.set(other, {
-          socket: new RtcPairSocket(`${this.name}_alice_bob`, this.party as 'alice' | 'bob', config),
+          socket: new UnsecuredRtcPairSocket(`${this.name}_alice_bob`, this.party as 'alice' | 'bob', config),
           queue: new AsyncQueue<unknown>()
         });
         break;
       case 3:
         if (this.party === 'alice') {
           this.pairs.set('bob', {
-            socket: new RtcPairSocket(`${this.name}_alice_bob`, 'alice'),
+            socket: new UnsecuredRtcPairSocket(`${this.name}_alice_bob`, 'alice'),
             queue: new AsyncQueue<unknown>()
           });
           this.pairs.set('charlie', {
-            socket: new RtcPairSocket(`${this.name}_alice_charlie`, 'alice'),
+            socket: new UnsecuredRtcPairSocket(`${this.name}_alice_charlie`, 'alice'),
             queue: new AsyncQueue<unknown>()
           });
         } else if (this.party === 'bob') {
           this.pairs.set('alice', {
-            socket: new RtcPairSocket(`${this.name}_alice_bob`, 'bob'),
+            socket: new UnsecuredRtcPairSocket(`${this.name}_alice_bob`, 'bob'),
             queue: new AsyncQueue<unknown>()
           });
           this.pairs.set('charlie', {
-            socket: new RtcPairSocket(`${this.name}_bob_charlie`, 'alice'),
+            socket: new UnsecuredRtcPairSocket(`${this.name}_bob_charlie`, 'alice'),
             queue: new AsyncQueue<unknown>()
           });
         } else {
           this.pairs.set('bob', {
-            socket: new RtcPairSocket(`${this.name}_bob_charlie`, 'bob'),
+            socket: new UnsecuredRtcPairSocket(`${this.name}_bob_charlie`, 'bob'),
             queue: new AsyncQueue<unknown>()
           });
           this.pairs.set('alice', {
-            socket: new RtcPairSocket(`${this.name}_alice_charlie`, 'bob'),
+            socket: new UnsecuredRtcPairSocket(`${this.name}_alice_charlie`, 'bob'),
             queue: new AsyncQueue<unknown>()
           });
         }
