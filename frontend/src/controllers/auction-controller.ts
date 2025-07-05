@@ -35,12 +35,19 @@ export default class AuctionController {
     // 2: 1
     // 3: 3
     // 4: 6
+    const peerConfig = {
+      iceServers: [
+        { urls: 'stun:freestun.net:3478' },
+        { yrls: 'turn:freestun.net:3478', username: 'free', credential: 'free' }
+      ]
+    }
     switch (this.size) {
       case 2:
         const other = this.party === 'alice' ? 'bob' : 'alice';
         this.pairs.set(other, {
           socket: new RtcPairSocket(`${this.name}_alice_bob`, this.party as 'alice' | 'bob', {
-            debug: 3
+            debug: 3,
+            config: peerConfig
           }),
           queue: new AsyncQueue<unknown>(),
           isConnected: false
@@ -100,7 +107,7 @@ export default class AuctionController {
       new Promise<void>((resolve, reject) => {
         const timeout = setTimeout(() => {
           reject(new Error(`Connection timeout for ${name}`));
-        }, 30000); // 30 second timeout
+        }, 30000);
 
         pair.socket.on('open', () => {
           clearTimeout(timeout);
@@ -148,7 +155,7 @@ export default class AuctionController {
       await new Promise<void>((resolve, reject) => {
         const timeout = setTimeout(() => {
           reject(new Error(`Connection timeout for ${pairName}`));
-        }, 10000);
+        }, 120000);
 
         if (pair.isConnected) {
           clearTimeout(timeout);
