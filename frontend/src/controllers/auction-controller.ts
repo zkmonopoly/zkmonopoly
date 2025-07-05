@@ -107,7 +107,7 @@ export default class AuctionController {
       new Promise<void>((resolve, reject) => {
         const timeout = setTimeout(() => {
           reject(new Error(`Connection timeout for ${name}`));
-        }, 30000);
+        }, 120000);
 
         pair.socket.on('open', () => {
           clearTimeout(timeout);
