@@ -19,15 +19,17 @@ export class Network {
         
   }
 
-  async joinOrCreateRoom(roomName: string, options?: any): Promise<Room<any>> {
+  async createRoom(roomName: string): Promise<Room<any>> {
     this.roomName = roomName;
-    console.log("Joining room: ", this.roomName, options);
+    console.log("Creating room: ", this.roomName);
+    this.room = await this.client.create(this.roomName);
+    return this.room;
+  }
+
+  async joinOrCreateRoom(roomName: string): Promise<Room<any>> {
+    this.roomName = roomName;
+    console.log("Joining room: ", this.roomName);
     this.room = await this.client.joinOrCreate(this.roomName);
-    // this.room.onStateChange((state: any) => {
-    //     console.log("State changed: ", state);
-    //     // console.log("State changed: ");
-    //     // this.gameController.notifyListeners(state, this.room?.sessionId);
-    // });
     return this.room;
   }
 

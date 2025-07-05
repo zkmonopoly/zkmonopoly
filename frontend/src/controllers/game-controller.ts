@@ -5,6 +5,7 @@ type StateListener = (roomState: any, payload: any) => void;
 
 export class GameController {
   private static instance: GameController | null = null;
+  static ROOM_NAME:string = "my_room";
 
   private network: Network;
   private listeners: StateListener[] = [];
@@ -27,11 +28,17 @@ export class GameController {
     // this.joinGame("Simi");
   }
 
-  async joinOrCreateRoom(name: string, callback: any) {
-    const room = await this.getNetwork().joinOrCreateRoom("my_room");
-    console.log("Joined room with sessionId:", room);
+  async createRoom(name: string, callback: any) {
+    const room = await this.getNetwork().createRoom(GameController.ROOM_NAME);
+    console.log("Created room with sessionId:", room);
+    this.onRegister(name);
+    this.onReady();
+    callback();
+  }
 
-    // this.network.send("register", name);
+  async joinOrCreateRoom(name: string, callback: any) {
+    const room = await this.getNetwork().joinOrCreateRoom(GameController.ROOM_NAME);
+    console.log("Joined room with sessionId:", room);
     this.onRegister(name);
     this.onReady();
     callback();

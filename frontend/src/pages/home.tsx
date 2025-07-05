@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, set } from "react-hook-form";
 import {
   Tabs,
   TabList,
@@ -55,6 +55,20 @@ export default function Home() {
     });
   };
 
+  const onSubmitCreateRoom = (formData: CreateFormData) => {
+    gameController.createRoom(formData.name, () => {
+      gameController.onInitialGameMessage((payload: any) => {
+        console.log("Initial createRoom received:", payload);
+        navigate("/game/" + gameController.getNetwork().getRoom()?.roomId);
+      });
+    });
+    setIsDisabledCreateRoom(true);
+    setTimeout(() => {
+      setIsDisabledCreateRoom(false);
+      console.log("Create room button re-enabled");
+    }, 6000);
+  }
+
   const onSubmitJoinRoomById = (formData: JoinFormData) => {
     gameController.joinRoomById(formData.code, formData.name, () => {
       gameController.onInitialGameMessage((payload: any) => {
@@ -62,8 +76,14 @@ export default function Home() {
         navigate("/game/" + gameController.getNetwork().getRoom()?.roomId);
       });
     });
+    setIsDisabledJoinRoom(true);
+    setTimeout(() => {
+      setIsDisabledJoinRoom(false);
+    }, 6000);
+
   };
-    
+  const [isDisabledCreateRoom, setIsDisabledCreateRoom] = useState(false);
+  const [isDisabledJoinRoom, setIsDisabledJoinRoom] = useState(false);
   const [selectedKey, onSelectionChange] = useState<Key>("tabJoin");
   const joinForm = useForm<JoinFormData>({
     defaultValues: {
@@ -144,13 +164,13 @@ export default function Home() {
                 </TextField>
               )}
             />
-            <Button type="submit" className={buttonStyles}>
+            <Button type="submit" isDisabled={isDisabledJoinRoom} className={buttonStyles}>
                             Submit
             </Button>
           </Form>
         </TabPanel>
         <TabPanel id="tabCreate" className={tabPanelStylesExtended}>
-          <Form className={formStyles} onSubmit={createForm.handleSubmit(onSubmitJoinOrCreateRoom)}>
+          <Form className={formStyles} onSubmit={createForm.handleSubmit(onSubmitCreateRoom)}>
             <Controller
               control={createForm.control}
               name="name"
@@ -175,7 +195,7 @@ export default function Home() {
                 </TextField>
               )}
             />
-            <Button type="submit" className={buttonStyles}>
+            <Button type="submit" isDisabled={isDisabledCreateRoom} className={buttonStyles}>
                             Submit
             </Button>
           </Form>
