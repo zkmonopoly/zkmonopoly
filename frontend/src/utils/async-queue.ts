@@ -43,21 +43,27 @@ export class AsyncQueue<T> {
     const { signal } = abortController;
 
     const loop = async () => {
-      try {
-        const msg = await this.shift(signal);
-        handler(msg);
-        loop();
-      } catch (err) {
-        if (err instanceof Error && err.message === 'Stream stopped') {
-          // Exit the loop gracefully
-        } else {
-          // Handle other potential errors
-          throw err;
+      while (!signal.aborted) {
+        try {
+          const msg = await this.shift(signal);
+          handler(msg);
+        } catch (err) {
+          if (err instanceof Error && err.message === 'Stream stopped') {
+            // Exit the loop gracefully
+            break;
+          } else {
+            // Handle other potential errors
+            console.error('AsyncQueue stream error:', err);
+            break;
+          }
         }
       }
     };
 
-    loop();
+    // Start the loop but don't await it (fire and forget is intentional here)
+    loop().catch(err => {
+      console.error('AsyncQueue stream loop error:', err);
+    });
 
     return {
       stop() {

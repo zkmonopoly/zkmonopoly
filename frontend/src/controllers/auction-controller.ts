@@ -109,10 +109,14 @@ export default class AuctionController {
     assert(party !== undefined, 'Party must be set');
     assert(pairs !== undefined, 'Pairs must be set');
     let totalByteSent = 0;
+    let totalByteReceived = 0;
     
     const protocol = await generateProtocol(this.size);
     const session = protocol.join(party, this.getInput(value), (to, msg) => {
       totalByteSent += msg.byteLength;
+      if (this.onProgress) {
+        this.onProgress(Math.floor((totalByteSent + totalByteReceived) / 1024));
+      }
       const pair = this.pairs.get(to as AuctionCallname);
       if (pair) {
         pair.socket.send(msg);
@@ -129,16 +133,16 @@ export default class AuctionController {
         if (!(msg instanceof Uint8Array)) {
           throw new Error('Unexpected message type');
         }
-        totalByteSent += msg.byteLength;
+        totalByteReceived += msg.byteLength;
         if (this.onProgress) {
-          this.onProgress(Math.floor(totalByteSent / 1024));
+          this.onProgress(Math.floor((totalByteSent + totalByteReceived) / 1024));
         }
         session.handleMessage(other, msg);
       })
     });
     const output = await session.output();
     streamHandlers.forEach(handler => handler.stop());
-    console.log(`auction: ${totalByteSent}`);
+    console.log(`auction: sent ${totalByteSent}, received ${totalByteReceived}, total ${totalByteSent + totalByteReceived}`);
     return output;
   }
 }
