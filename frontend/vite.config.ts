@@ -20,6 +20,6 @@ export default defineConfig({
     ]
   },
   server: {
-    allowedHosts: ["zkmonopoly.trietng.ovh"]
+    allowedHosts: ["zkmonopoly.trietng.ovh", "vite.trietng.ovh"]
   }
 });

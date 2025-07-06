@@ -10,7 +10,6 @@ export type AuctionInput =  { a: number } | { b: number } | { c: number } | { d:
 interface RtcPair {
   socket: RtcPairSocket;
   queue: AsyncQueue<unknown>;
-  isConnected: boolean; // Add connection state tracking
 }
 
 export interface AuctionNetwork {
@@ -35,57 +34,41 @@ export default class AuctionController {
     // 2: 1
     // 3: 3
     // 4: 6
-    const peerConfig = {
-      iceServers: [
-        { urls: 'stun:freestun.net:3478' },
-        { urls: 'turn:freestun.net:3478', username: 'free', credential: 'free' }
-      ]
-    }
     switch (this.size) {
       case 2:
         const other = this.party === 'alice' ? 'bob' : 'alice';
         this.pairs.set(other, {
-          socket: new RtcPairSocket(`${this.name}_alice_bob`, this.party as 'alice' | 'bob', {
-            debug: 3,
-            config: peerConfig
-          }),
-          queue: new AsyncQueue<unknown>(),
-          isConnected: false
+          socket: this.createSocket(`${this.name}_alice_bob`, this.party as 'alice' | 'bob'),
+          queue: new AsyncQueue<unknown>()
         });
         break;
       case 3:
         if (this.party === 'alice') {
           this.pairs.set('bob', {
-            socket: new RtcPairSocket(`${this.name}_alice_bob`, 'alice', { config: peerConfig }),
-            queue: new AsyncQueue<unknown>(),
-            isConnected: false
+            socket: this.createSocket(`${this.name}_alice_bob`, 'alice'),
+            queue: new AsyncQueue<unknown>()
           });
           this.pairs.set('charlie', {
-            socket: new RtcPairSocket(`${this.name}_alice_charlie`, 'alice', { config: peerConfig }),
-            queue: new AsyncQueue<unknown>(),
-            isConnected: false
+            socket: this.createSocket(`${this.name}_alice_charlie`, 'alice'),
+            queue: new AsyncQueue<unknown>()
           });
         } else if (this.party === 'bob') {
           this.pairs.set('alice', {
-            socket: new RtcPairSocket(`${this.name}_alice_bob`, 'bob', { config: peerConfig }),
-            queue: new AsyncQueue<unknown>(),
-            isConnected: false
+            socket: this.createSocket(`${this.name}_alice_bob`, 'bob'),
+            queue: new AsyncQueue<unknown>()
           });
           this.pairs.set('charlie', {
-            socket: new RtcPairSocket(`${this.name}_bob_charlie`, 'alice', { config: peerConfig }),
-            queue: new AsyncQueue<unknown>(),
-            isConnected: false
+            socket: this.createSocket(`${this.name}_bob_charlie`, 'alice'),
+            queue: new AsyncQueue<unknown>()
           });
         } else {
           this.pairs.set('bob', {
-            socket: new RtcPairSocket(`${this.name}_bob_charlie`, 'bob', { config: peerConfig }),
-            queue: new AsyncQueue<unknown>(),
-            isConnected: false
+            socket: this.createSocket(`${this.name}_bob_charlie`, 'bob'),
+            queue: new AsyncQueue<unknown>()
           });
           this.pairs.set('alice', {
-            socket: new RtcPairSocket(`${this.name}_alice_charlie`, 'bob', { config: peerConfig }),
-            queue: new AsyncQueue<unknown>(),
-            isConnected: false
+            socket: this.createSocket(`${this.name}_alice_charlie`, 'bob'),
+            queue: new AsyncQueue<unknown>()
           });
         }
         break;
@@ -94,14 +77,17 @@ export default class AuctionController {
     }
   }
 
-  async connect() {
-    // Set up message handlers first
-    this.pairs.forEach((pair) => {
-      pair.socket.on('message', (msg: unknown) => {
-        pair.queue.push(msg);
-      });
-    });
+  private createSocket(pairingCode: string, role: 'alice' | 'bob') {
+    const peerConfig = {
+      iceServers: [
+        { urls: 'stun:103.186.65.202:3478' },
+        { urls: 'turn:103.186.65.202:3478?transport=tcp', username: 'zkmonopoly', credential: '7GhW6VK0t44f' }
+      ]
+    };
+    return new RtcPairSocket(pairingCode, role, peerConfig);
+  }
 
+  private async connect() {
     // Wait for all connections to be established
     await Promise.all(Array.from(this.pairs.entries()).map(([name, pair]) => 
       new Promise<void>((resolve, reject) => {
@@ -111,7 +97,10 @@ export default class AuctionController {
 
         pair.socket.on('open', () => {
           clearTimeout(timeout);
-          pair.isConnected = true;
+          pair.socket.removeAllListeners('message');
+          pair.socket.on('message', (msg: unknown) => {
+            pair.queue.push(msg);
+          });
           resolve();
         });
         
@@ -119,18 +108,8 @@ export default class AuctionController {
           clearTimeout(timeout);
           reject(error);
         });
-
-        pair.socket.on('close', () => {
-          pair.isConnected = false;
-        });
       })
     ));
-
-    // Verify all connections are ready
-    const allConnected = Array.from(this.pairs.values()).every(pair => pair.isConnected);
-    if (!allConnected) {
-      throw new Error('Not all connections established successfully');
-    }
   }
 
   private getInput(value: number): AuctionInput  {
@@ -143,75 +122,27 @@ export default class AuctionController {
       );
   }
 
-  // Helper method to ensure connection is ready before sending
-  private async ensureConnectionReady(pairName: AuctionCallname): Promise<void> {
-    const pair = this.pairs.get(pairName);
-    if (!pair) {
-      throw new Error(`Unknown party: ${pairName}`);
-    }
-
-    if (!pair.isConnected) {
-      // Wait for connection to be established
-      await new Promise<void>((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          reject(new Error(`Connection timeout for ${pairName}`));
-        }, 120000);
-
-        if (pair.isConnected) {
-          clearTimeout(timeout);
-          resolve();
-          return;
-        }
-
-        const onOpen = () => {
-          clearTimeout(timeout);
-          pair.socket.off('open', onOpen);
-          pair.socket.off('error', onError);
-          pair.isConnected = true;
-          resolve();
-        };
-
-        const onError = (error: Error) => {
-          clearTimeout(timeout);
-          pair.socket.off('open', onOpen);
-          pair.socket.off('error', onError);
-          reject(error);
-        };
-
-        pair.socket.on('open', onOpen);
-        pair.socket.on('error', onError);
-      });
-    }
-  }
-
   async mpcLargest(
     value: number,
   ): Promise<Record<string, unknown>> {
     const { party, pairs } = this;
     assert(party !== undefined, 'Party must be set');
     assert(pairs !== undefined, 'Pairs must be set');
-    
-    // Ensure all connections are ready before starting
-    await Promise.all(Array.from(this.pairs.keys()).map(pairName => 
-      this.ensureConnectionReady(pairName)
-    ));
 
     let totalByteSent = 0;
     let totalByteReceived = 0;
+
+    await this.connect();
     
     const protocol = await generateProtocol(this.size);
+
     const session = protocol.join(party, this.getInput(value), async (to, msg) => {
       totalByteSent += msg.byteLength;
       if (this.onProgress) {
         this.onProgress(Math.floor((totalByteSent + totalByteReceived) / 1024));
       }
-      
       const pair = this.pairs.get(to as AuctionCallname);
       if (pair) {
-        // Double-check connection is ready before sending
-        if (!pair.isConnected) {
-          await this.ensureConnectionReady(to as AuctionCallname);
-        }
         pair.socket.send(msg);
       } else {
         throw new Error("Unknown party");
