@@ -10,4 +10,5 @@ export interface PlayerState {
     getoutCards: number;
     ready: boolean;
     isBankrupt: boolean;
+    aliasName: string; 
   }

@@ -5,11 +5,13 @@ import { MonopolyRoom } from "@rooms/MonopolyRoom";
 import { Property } from "@rooms/state/PropertyState";
 
 import monopolyJSON from "@/assets/monopoly.json";
+import { RoomState } from "../schema/RoomState";
+export const AuctionCallnameList = <const>['alice', 'bob', 'charlie', 'david'];
 
 export class RollDiceCommand extends Command<MonopolyRoom> {
     constructor(
         private readonly monopolyRoom: MonopolyRoom,
-        private readonly client: Client<any, any>
+        private readonly client: Client<any, any>,
     ) {
         super();
     }
@@ -37,9 +39,11 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         //     console.log(error);
         // }
 
-        first = Math.floor(Math.random() * 6) + 1;
-        second = Math.floor(Math.random() * 6) + 1;
+        // first = Math.floor(Math.random() * 6) + 1;
+        // second = Math.floor(Math.random() * 6) + 1;
 
+        first = 2;
+        second = 3;
 
         let sum = first + second;
         let newPosition = player.position + sum;
@@ -77,8 +81,10 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             return;
         }
 
+        this.handleAuctionProperties(player, tilePosition);
+
         if (property.ownedby === "") {
-            this.client.send("offer_buy_property", {
+            this.monopolyRoom.broadcast("offer_buy_property", {
                 property,
                 playerId: player.id,
             });
@@ -102,6 +108,26 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
                     playerId: player.id,
                 });
             }
+        }
+    }
+
+    private handleAuctionProperties(player: Player, position: number) {
+        switch (position){
+            case 12:
+            case 28:
+            case 5:
+            case 15:
+            case 25:
+            case 35:
+                var currentPlayer = 0;
+                for (var player of this.state.players.values()) {
+                    if (!player.isBankrupt) {
+                        player.aliasName = AuctionCallnameList[
+                            currentPlayer % AuctionCallnameList.length
+                        ];
+                        currentPlayer++;
+                    }
+                }
         }
     }
 
@@ -132,6 +158,23 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             case 36: // Chance
                 this.drawChanceOrChestCard(player, true);
                 break;
+            // for case Utilities and Railroads, we assign alias names
+            // case 12:
+            // case 28:
+            // case 5:
+            // case 15:
+            // case 25:
+            // case 35:
+            //     var currentPlayer = 0;
+            //     for (var player of this.state.players.values()) {
+            //         if (!player.isBankrupt && player.ready) {
+            //             player.aliasName = AuctionCallnameList[
+            //                 currentPlayer % AuctionCallnameList.length
+            //             ];
+            //             currentPlayer++;
+            //         }
+            //     }
+
             default:
                 console.log(
                     `${player.username} landed on a non-property tile.`

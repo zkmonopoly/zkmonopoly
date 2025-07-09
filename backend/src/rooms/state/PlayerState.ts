@@ -34,6 +34,9 @@ export class Player extends Schema {
 
     @type("boolean")
     isBankrupt: boolean = false;
+
+    @type("string")
+    aliasName: string = "";
   
   }
   

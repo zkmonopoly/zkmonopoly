@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import Player from "@/components/game/player";
 import { PlayerState } from "@/components/state/player-state";
 import { GameController } from "@/controllers/game-controller";
+import { useStore } from "@nanostores/react";
+import { $playerStates } from "@/models/player";
 
 export default function Players() {
   const gameController = GameController.getInstance();
-  const [playerStates, setPlayerStates] = useState<PlayerState[]>([]); 
+  // const [playerStates, setPlayerStates] = useState<PlayerState[]>([]); 
+  const playerStates = useStore($playerStates);
+
 
   const convertToPlayerData = (p: any): PlayerState => ({
     id: p.id,
@@ -19,6 +23,7 @@ export default function Players() {
     getoutCards: p.getoutCards,
     ready: p.ready,
     isBankrupt: p.isBankrupt,
+    aliasName: p.aliasName || ""
   });
 
   const updatePlayerState = (state: any) => {
@@ -27,7 +32,8 @@ export default function Players() {
       playerArray.push(convertToPlayerData(playerSchema));
     });
     console.log("Player states playerArray: ", playerArray);
-    setPlayerStates(playerArray);
+    // setPlayerStates(playerArray);
+    $playerStates.set(playerArray);
   };
 
   useEffect(() => {
@@ -35,7 +41,7 @@ export default function Players() {
     if (roomState) updatePlayerState(roomState);
 
     // Subscribe to future updates
-    gameController.onStateUpdate((roomState) => {
+    gameController.onStateUpdate((roomState: any) => {
       setTimeout(() => {
         updatePlayerState(roomState);
       }, 1000); // Delay to allow for smoother updates

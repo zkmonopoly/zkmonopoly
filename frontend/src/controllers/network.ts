@@ -1,5 +1,8 @@
 import { Client, Room } from "colyseus.js";
 import { GameController } from "./game-controller";
+import { PlayerState } from "@/components/state/player-state";
+import { $playerStates } from "@/models/player";
+
 // import dotenv from "dotenv";
 // dotenv.config();
 
@@ -47,6 +50,7 @@ export class Network {
 
   onMessage(type: string, callback: (message: any) => void) {
     this.room?.onMessage(type, (message: any) => {
+          console.log( "onStateChange", this.updatePlayerState(this.room?.state));
       callback(message);
       this.gameController.notifyListeners();
       // console.log("Message received: ", message);
@@ -54,6 +58,7 @@ export class Network {
   }
 
   onStateChange(callback: (state: any) => void) {
+    // console.log( "onStateChange", this.updatePlayerState(this.room?.state));
     this.room?.onStateChange((state: any) => {
       callback(state);
       // console.log("State changed: ", state);
@@ -65,6 +70,33 @@ export class Network {
     return this.room?.state;
   }
 
+    convertToPlayerData(p: any): PlayerState {
+      return {
+        id: p.id,
+        username: p.username,
+        icon: p.icon,
+        position: p.position,
+        balance: p.balance,
+        properties: Array.from(p.properties ?? []),
+        isInJail: p.isInJail,
+        jailTurnsRemaining: p.jailTurnsRemaining,
+        getoutCards: p.getoutCards,
+        ready: p.ready,
+        isBankrupt: p.isBankrupt,
+        aliasName: p.aliasName || ""
+      };
+    }
+  
+    updatePlayerState (state: any): PlayerState[] {
+      const playerArray: PlayerState[] = [];
+      state.players.forEach((playerSchema: any) => {
+        playerArray.push(this.convertToPlayerData(playerSchema));
+      });
+      console.log("Player states playerArray: ", playerArray);
+      $playerStates.set(playerArray);
+      return playerArray;
+    };
+  
 
 
   getRoom(): Room<any> | null {
