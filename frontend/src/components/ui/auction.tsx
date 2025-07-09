@@ -55,7 +55,7 @@ export default function Auction(props: DebugModel) {
           Execution time: {executionTime} s
         </div>
         <div className={twMerge(textFieldsStyles, "flex-row max-w-[256px]")}>
-          <Input className="!rounded-e-none min-w-0"/>
+          <Input type="number" min={0} className="!rounded-e-none min-w-0"/>
           <Button onPress={() => { /* send value */ }} className={twMerge(buttonStyles, "rounded-s-none min-w-fit" )}>
             <LuCheck className="mb-1 inline"/> Submit
           </Button>
