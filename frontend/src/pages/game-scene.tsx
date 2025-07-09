@@ -23,6 +23,7 @@ import { useGameController } from "@/contexts/game-context";
 import * as MapData from "@/components/game/core/assets/map_data.json";
 import Players from "./players";
 import { $propertyInfo } from "@/models/property";
+import JsText from "@/components/game/core/texts/js-text";
 
 const PropertiesMap = new Map(
   MapData.properties.map((property) => [property.position, property])
@@ -89,6 +90,7 @@ export default function GameScene() {
               shadowCastChildren
             >
               <Suspense fallback={null}>
+                <JsText name="textDecor1" text={["zkMONOPOLY"]} position={new Vector3(17.5, 0, -14.5)} fontScale={10}/>
                 <GoNode name="go" position={NodePositions[0]} />
                 <PropertyNode
                   name="mediterraneanAvenue"

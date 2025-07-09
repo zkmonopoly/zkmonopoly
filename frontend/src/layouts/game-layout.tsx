@@ -10,7 +10,7 @@ export default function GameLayout() {
       <div className='flex flex-grow'>
         <div className="w-full flex relative">
           <div className="hidden md:block">
-            <div className="min-w-[256px] h-full flex flex-col justify-start">
+            <div className="w-[272px] h-full flex flex-col justify-start">
               <GameMenu />
               <Control />
             </div>
