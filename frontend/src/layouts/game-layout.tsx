@@ -1,10 +1,10 @@
 import InteractiveConsole from "@/components/ui/interactive-console";
 import GameMenu from "@/components/ui/game-menu";
-import Auction from "@/components/ui/auction";
 import { Outlet, useLocation } from "react-router";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import AuctionController, { AuctionCallname, AuctionCallnameList } from "@/controllers/auction-controller";
 import SelectWrapper, { SelectItem } from "@/components/ui/core/wrappers/select-wrapper";
+import Inviter from "@/components/ui/inviter";
 
 type ConnectionStatus = "idle" | "connecting" | "in-progress" | "error"; 
 
@@ -90,11 +90,14 @@ export default function GameLayout() {
           <div className="hidden md:block">
             <div className="min-w-[256px] h-full flex flex-col justify-start">
               <GameMenu />
-              <Auction 
+              {/* <Auction 
                 auction={{
                   bets: [{name: "Alice", status: true}]
                 }}
-              />
+              /> */}
+              <div className="flex">
+                <Inviter/>
+              </div>
               <SelectWrapper
                 className="min-w-32 ml-2 mt-2"
                 label="Callname"

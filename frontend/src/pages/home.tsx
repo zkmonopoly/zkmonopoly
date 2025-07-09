@@ -12,9 +12,10 @@ import {
   TextField,
   TabsContext,
   Key,
+  Select,
 } from "react-aria-components";
 import { twJoin } from "tailwind-merge";
-import { LuDoorOpen, LuPlus } from "react-icons/lu";
+import { LuDoorOpen, LuGlobe, LuNetwork, LuPlus } from "react-icons/lu";
 import {
   tabListStyles,
   tabPanelStyles,
@@ -24,8 +25,10 @@ import { buttonStyles } from "@/components/ui/core/styles/button";
 import { textFieldsStyles } from "@/components/ui/core/styles/text-field";
 import { formStyles } from "@/components/ui/core/styles/form";
 import TooltipTriggerTab from "@/components/ui/tooltip-trigger-tab";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { GameController } from "@/controllers/game-controller";
+import SelectWrapper, { SelectItem } from "@/components/ui/core/wrappers/select-wrapper";
+import { GameMode } from "@/models/game";
 
 const tabPanelStylesExtended = twJoin(
   tabPanelStyles,
@@ -37,11 +40,14 @@ interface JoinFormData {
     code: string;
 }
 
+
 interface CreateFormData {
     name: string;
+    mode: GameMode;
 }
 
 export default function Home() {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const gameController = GameController.getInstance();
@@ -88,13 +94,12 @@ export default function Home() {
   const joinForm = useForm<JoinFormData>({
     defaultValues: {
       name: "",
-      code: ""
+      code: searchParams.get("code") ?? ""
     }
   });
   const createForm = useForm<CreateFormData>({
     defaultValues: {
       name: "",
-      // TODO: add bot option
     },
   });
 
@@ -195,8 +200,26 @@ export default function Home() {
                 </TextField>
               )}
             />
+            <Controller
+              control={createForm.control}
+              name="mode"
+              rules={{ required: "Mode is required." }}
+              render={({
+                field: { onChange },
+                fieldState: { error },
+              }) => (
+                <>
+                  <Label>Mode</Label>
+                  <SelectWrapper onSelectionChange={onChange} className="pt-1 border rounded-md w-[200px] h-[38px] border-neutral-500" defaultSelectedKey="lan">
+                    <SelectItem id="lan"><LuNetwork className="mb-1"/> LAN</SelectItem>
+                    <SelectItem id="online"><LuGlobe className="mb-1"/> Online</SelectItem>
+                  </SelectWrapper>
+                  <FieldError>{error?.message}</FieldError>
+                </>
+              )}
+            />
             <Button type="submit" isDisabled={isDisabledCreateRoom} className={buttonStyles}>
-                            Submit
+              Submit
             </Button>
           </Form>
         </TabPanel>
