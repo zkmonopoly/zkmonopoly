@@ -25,9 +25,6 @@ export default function GameMenu() {
         <TooltipTriggerTab id="tabCard" text="Card">
           <LuSpade size={16} />
         </TooltipTriggerTab>
-        <TooltipTriggerTab id="tabCreate" text="New game">
-          <LuPlus size={16} />
-        </TooltipTriggerTab>
       </TabList>
       <TabPanel id="tabCard" className={twMerge(
         tabPanelStyles,

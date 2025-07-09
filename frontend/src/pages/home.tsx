@@ -100,6 +100,7 @@ export default function Home() {
   const createForm = useForm<CreateFormData>({
     defaultValues: {
       name: "",
+      mode: "lan"
     },
   });
 
@@ -205,12 +206,12 @@ export default function Home() {
               name="mode"
               rules={{ required: "Mode is required." }}
               render={({
-                field: { onChange },
+                field: { value, onChange },
                 fieldState: { error },
               }) => (
                 <>
                   <Label>Mode</Label>
-                  <SelectWrapper onSelectionChange={onChange} className="pt-1 border rounded-md w-[200px] h-[38px] border-neutral-500" defaultSelectedKey="lan">
+                  <SelectWrapper onSelectionChange={onChange} className="pt-1 border rounded-md w-[200px] h-[38px] border-neutral-500" selectedKey={value}>
                     <SelectItem id="lan"><LuNetwork className="mb-1"/> LAN</SelectItem>
                     <SelectItem id="online"><LuGlobe className="mb-1"/> Online</SelectItem>
                   </SelectWrapper>

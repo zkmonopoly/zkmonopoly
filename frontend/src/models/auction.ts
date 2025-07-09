@@ -8,7 +8,6 @@ export interface AuctionResult {
 }
 
 export interface Auction {
+  index: number;
   propertyName?: string;
-  bets: PlayerBet[];
-  result?: AuctionResult;
 }

@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useState } from "react";
-import { Scene } from "react-babylonjs";
-import { HavokPlugin, PhysicsShapeType, Vector3 } from "@babylonjs/core";
+import { Scene, Skybox } from "react-babylonjs";
+import { Color3, HavokPlugin, Material, PhysicsShapeType, Vector3 } from "@babylonjs/core";
 import HavokPhysics, { HavokPhysicsWithBindings } from "@babylonjs/havok";
 import PropertyNode from "@/components/game/map/property-node";
 import JailNode from "@/components/game/map/jail-node";
@@ -51,6 +51,7 @@ export default function GameScene() {
     <div>
       {HK ? (
         <Scene enablePhysics={[null, new HavokPlugin(false, HK)]}>
+          <Skybox size={1000} rootUrl="/assets/game/2d/skybox.dds" />
           <universalCamera
             name="camera1"
             position={new Vector3(17.25, 30, 20)}
@@ -60,13 +61,9 @@ export default function GameScene() {
             keysLeft={[65]}
             keysRight={[68]}
           />
-          <hemisphericLight
-            name="light1"
-            intensity={0.7}
-            direction={Vector3.Up()}
-          />
           <ground
             name="ground1"
+            material={new Material("groundMaterial")}
             position={new Vector3(17.25, 0, -17.25)}
             width={39.5}
             height={39.5}
@@ -80,14 +77,9 @@ export default function GameScene() {
           </ground>
           <directionalLight
             name="dl"
-            intensity={0.6}
-            direction={
-              new Vector3(
-                (-5 * Math.PI) / 4,
-                (-5 * Math.PI) / 4,
-                -Math.PI
-              )
-            }
+            intensity={1.2}
+            diffuse={new Color3(1.0, 0.95, 0.8)}
+            direction={new Vector3(Math.sin(Math.PI/4), -Math.cos(Math.PI/4), 0.0)}
             position={new Vector3(0, 4, 16)}
           >
             <shadowGenerator

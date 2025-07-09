@@ -48,7 +48,7 @@ export default function InteractiveConsole(props: InteractiveConsoleProps) {
         "scrollbar-none",
         consoleOpen ? "w-72" : "w-8",
         consoleOpen ? "overflow-y-auto" : "overflow-y-hidden",
-        consoleOpen ? "bg-black/20" : "bg-transparent"
+        consoleOpen ? "bg-black/50" : "bg-transparent"
       )}
     >
       <div className="relative">
