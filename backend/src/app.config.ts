@@ -1,6 +1,7 @@
 import config from "@colyseus/tools";
 import { monitor } from "@colyseus/monitor";
 import { playground } from "@colyseus/playground";
+import { exec } from "child_process";
 
 /**
  * Import your Room files
@@ -30,9 +31,7 @@ export default config({
          * Use @colyseus/playground
          * (It is not recommended to expose this route in a production environment)
          */
-        if (process.env.NODE_ENV !== "production") {
-            app.use("/", playground());
-        }
+        app.use("/", playground());
 
         /**
          * Use @colyseus/monitor
@@ -40,6 +39,23 @@ export default config({
          * Read more: https://docs.colyseus.io/tools/monitor/#restrict-access-to-the-panel-using-a-password
          */
         app.use("/monitor", monitor());
+
+        app.get("/version", (_, res) => {
+            exec("git log -1", (_, stdout) => {
+                res.send(
+                    `<!DOCTYPE html>
+                    <html lang="en">
+                        <head>
+                            <meta charset="utf-8">
+                            <title>Instance Version</title>
+                        </head>
+                    <body style="background-color: rgb(18, 18, 18); color: white;">
+                        <pre>${stdout}</pre>
+                    </body>
+                    </html>`
+                )
+            })
+        });
     },
 
 
