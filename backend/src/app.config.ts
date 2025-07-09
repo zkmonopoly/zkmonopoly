@@ -42,6 +42,7 @@ export default config({
 
         app.get("/version", (_, res) => {
             exec("git log -1", (_, stdout) => {
+                const censored = stdout.replace(/<[\w!#$%&'*+\-\/=?^`{|}~.]+@[\w!#$%&'*+\-\/=?^`{|}~.]+>/, "[REDACTED]")
                 res.send(
                     `<!DOCTYPE html>
                     <html lang="en">
@@ -50,7 +51,7 @@ export default config({
                             <title>Instance Version</title>
                         </head>
                     <body style="background-color: rgb(18, 18, 18); color: white;">
-                        <pre>${stdout}</pre>
+                        <pre>${censored}</pre>
                     </body>
                     </html>`
                 )
