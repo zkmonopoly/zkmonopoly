@@ -84,7 +84,7 @@ export default class AuctionController {
         { urls: 'turn:103.186.65.202:3478?transport=tcp', username: 'zkmonopoly', credential: '7GhW6VK0t44f' }
       ]
     };
-    return new RtcPairSocket(pairingCode, role, {config: peerConfig, debug:3});
+    return new RtcPairSocket(pairingCode, role, peerConfig);
   }
 
   private async connect() {
