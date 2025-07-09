@@ -79,7 +79,7 @@ export default function GameScene() {
             name="dl"
             intensity={1.2}
             diffuse={new Color3(1.0, 0.95, 0.8)}
-            direction={new Vector3(Math.sin(Math.PI/4), -Math.cos(Math.PI/4), 0.0)}
+            direction={new Vector3(-Math.sin(Math.PI/4), -Math.cos(Math.PI/4), 0.0)}
             position={new Vector3(0, 4, 16)}
           >
             <shadowGenerator

@@ -1,7 +1,7 @@
 import InteractiveConsole from "@/components/ui/interactive-console";
 import GameMenu from "@/components/ui/game-menu";
 import { Outlet } from "react-router";
-import Censored from "@/components/ui/core/dev/censored";
+import Censored from "@/components/ui/core/debug/censored";
 import Control from "@/components/ui/control";
 
 export default function GameLayout() {

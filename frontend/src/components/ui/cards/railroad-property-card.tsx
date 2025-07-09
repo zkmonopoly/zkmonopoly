@@ -19,15 +19,15 @@ export default function RailroadPropertyCard(props: RailroadPropertyCardProps) {
             <div>$25</div>
           </div>
           <div className="flex justify-between tracking-tighter">
-            <div>If 2 stations are owned</div>
+            <div>Owned 2 stations</div>
             <div>$50</div>
           </div>
           <div className="flex justify-between tracking-tighter">
-            <div>If 3 stations are owned</div>
+            <div>Owned 3 stations</div>
             <div>$100</div>
           </div>
           <div className="flex justify-between tracking-tighter">
-            <div>If 4 stations are owned</div>
+            <div>Owned 4 stations</div>
             <div>$200</div>
           </div>
         </div>
