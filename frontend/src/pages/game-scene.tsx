@@ -1,6 +1,6 @@
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Scene, Skybox } from "react-babylonjs";
-import { Color3, HavokPlugin, Material, PhysicsShapeType, Vector3 } from "@babylonjs/core";
+import { Color3, HavokPlugin, Material, PhysicsShapeType, UniversalCamera, Vector3 } from "@babylonjs/core";
 import HavokPhysics, { HavokPhysicsWithBindings } from "@babylonjs/havok";
 import PropertyNode from "@/components/game/map/property-node";
 import JailNode from "@/components/game/map/jail-node";
@@ -28,8 +28,14 @@ import JsText from "@/components/game/core/texts/js-text";
 const PropertiesMap = new Map(
   MapData.properties.map((property) => [property.position, property])
 );
+const cameraSpecs = {
+  birdview: new Vector3(17.25, 37, -17.25),
+  position: new Vector3(17.25, 30, 20),
+  target: new Vector3(17.25, 0, -17.25),
+}
 
 export default function GameScene() {
+  const ref = useRef<UniversalCamera>(null)
   const [HK, setHK] = useState<HavokPhysicsWithBindings>();
 
   const context = useGameController();
@@ -40,11 +46,19 @@ export default function GameScene() {
     });
 
     context.onDiceRollResultMessage((message) => {
+      ref.current?.position.set(cameraSpecs.birdview.x, cameraSpecs.birdview.y, cameraSpecs.birdview.z);
+      ref.current?.setTarget(cameraSpecs.target);
+      setTimeout(() => {
+        ref.current?.position.set(cameraSpecs.position.x, cameraSpecs.position.y, cameraSpecs.position.z);
+        ref.current?.setTarget(cameraSpecs.target);
+        setTimeout(() => {
+          const property = PropertiesMap.get(message.position);
+          if (property) {
+            $propertyInfo.set(property);
+          }
+        }, 1000)
+      }, 5500)
       $dices.set([message.first, message.second]);
-      const property = PropertiesMap.get(message.position);
-      if (property) {
-        $propertyInfo.set(property);
-      }
     });
   }, []);
 
@@ -55,12 +69,13 @@ export default function GameScene() {
           <Skybox size={1000} rootUrl="/assets/game/2d/skybox.dds" />
           <universalCamera
             name="camera1"
-            position={new Vector3(17.25, 30, 20)}
-            setTarget={[new Vector3(17.25, 0, -17.25)]}
+            position={cameraSpecs.position}
+            setTarget={[cameraSpecs.target]}
             keysDown={[83]}
             keysUp={[87]}
             keysLeft={[65]}
             keysRight={[68]}
+            ref={ref}
           />
           <ground
             name="ground1"
@@ -90,7 +105,7 @@ export default function GameScene() {
               shadowCastChildren
             >
               <Suspense fallback={null}>
-                <JsText name="textDecor1" text={["zkMONOPOLY"]} position={new Vector3(17.5, 0, -14.5)} fontScale={10}/>
+                <JsText name="textDecor1" text={["zkMONOPOLY"]} position={new Vector3(17.25, 0, -17.25)} fontScale={10}/>
                 <GoNode name="go" position={NodePositions[0]} />
                 <PropertyNode
                   name="mediterraneanAvenue"
