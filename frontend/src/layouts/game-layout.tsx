@@ -3,6 +3,7 @@ import GameMenu from "@/components/ui/game-menu";
 import { Outlet } from "react-router";
 import Censored from "@/components/ui/core/debug/censored";
 import Control from "@/components/ui/control";
+import PlayerInfo from "@/components/ui/player-info";
 
 export default function GameLayout() {
   return (
@@ -15,7 +16,8 @@ export default function GameLayout() {
               <Control />
             </div>
           </div>
-          <div>
+          <div className="relative">
+            <PlayerInfo/>
             <Outlet />
             {/* <Censored/> */}
           </div>

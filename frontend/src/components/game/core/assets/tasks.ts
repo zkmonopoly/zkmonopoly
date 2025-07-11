@@ -68,5 +68,11 @@ export const textureTasks: Task[] = [
     name: "dice",
     rootUrl: "/assets/game/3d/dice/",
     sceneFilename: "dice.gltf"
+  },
+  {
+    taskType: TaskType.Mesh,
+    name: "house",
+    rootUrl: "/assets/game/3d/house/",
+    sceneFilename: "house.gltf"
   }
 ];

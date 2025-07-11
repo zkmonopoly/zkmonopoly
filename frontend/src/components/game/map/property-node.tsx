@@ -1,9 +1,12 @@
-import { Color3, Vector3 } from "@babylonjs/core";
+import { AbstractMesh, Color3, MeshAssetTask, Vector3 } from "@babylonjs/core";
 import NodeMaterial from "@/components/game/core/materials/node-material";
 import { DefaultMeshOffset } from "@/components/game/core/constants/offsets";
 import JsText from "../core/texts/js-text";
 import EdgeNode from "./edge-node";
 import { getRotation } from "../core/constants/rotations";
+import { useEffect, useRef } from "react";
+import { useAssetManager } from "react-babylonjs";
+import { textureTasks } from "../core/assets/tasks";
 
 interface PropertyNodeProps {
     name: string
@@ -12,9 +15,26 @@ interface PropertyNodeProps {
     color: Color3
     propertyName: string[]
     propertyValue: string
+    houses: number
 }
 
-export default function PropertyNode({ rotationIndex = 0, ...props }: PropertyNodeProps) {
+export default function PropertyNode({ rotationIndex = 0, houses = 0, ...props }: PropertyNodeProps) {
+  const textures = useAssetManager(textureTasks, {
+    useDefaultLoadingScreen: true,
+  });
+  const houseTexture = textures.taskNameMap["house"] as MeshAssetTask;
+  const houseRef = useRef<AbstractMesh[]>([]);
+
+  useEffect(() => {
+    houseRef.current = []
+    for (let i = 0; i < houses; ++i) {
+      const clone = houseTexture.loadedMeshes[0].clone(`${props.propertyName}_house_${i}`, null)!;
+      clone.scaling = new Vector3(2, 2, 2);
+      clone.position = props.position.add(new Vector3(1 - i * 0.5, 0.5, -2).applyRotationQuaternion((getRotation(rotationIndex) ?? Vector3.Zero()).toQuaternion()));
+      houseRef.current.push(clone)
+    }
+  }, [houses]);
+
   return (
     <EdgeNode
       name={props.name}
