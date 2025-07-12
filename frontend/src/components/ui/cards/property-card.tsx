@@ -78,11 +78,11 @@ export default function PropertyCard(props: PropertyCardProps) {
             <div>Houses cost</div>
             <div>${props.propertyInfo.houseCost} each</div>
           </div>
-          <div className="flex justify-between">
+          {/* <div className="flex justify-between">
             <div>Hotels cost</div>
             <div>${props.propertyInfo.hotelCost} each</div>
           </div>
-          <div className="float-end text-xs">(plus 4 houses)</div>
+          <div className="float-end text-xs">(plus 4 houses)</div> */}
         </div>
       </div>
     </MonopolyCard>
