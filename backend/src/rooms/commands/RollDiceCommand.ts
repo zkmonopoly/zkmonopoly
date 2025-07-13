@@ -6,12 +6,12 @@ import { Property } from "@rooms/state/PropertyState";
 
 import monopolyJSON from "@/assets/monopoly.json";
 import { RoomState } from "../schema/RoomState";
-export const AuctionCallnameList = <const>['alice', 'bob', 'charlie', 'david'];
+export const AuctionCallnameList = <const>["alice", "bob", "charlie", "david"];
 
 export class RollDiceCommand extends Command<MonopolyRoom> {
     constructor(
         private readonly monopolyRoom: MonopolyRoom,
-        private readonly client: Client<any, any>,
+        private readonly client: Client<any, any>
     ) {
         super();
     }
@@ -21,8 +21,18 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         const player = this.monopolyRoom.state.players.get(
             this.client.sessionId
         );
+        var isGameReady = true;
+
+        this.monopolyRoom.state.players.forEach((p) => {
+            if (!p.ready) {
+                isGameReady = false;
+            }
+        });
         if (!player) return;
-        if (this.monopolyRoom.state.currentTurn !== this.client.sessionId) {
+        if (
+            this.monopolyRoom.state.currentTurn !== this.client.sessionId ||
+            !isGameReady
+        ) {
             return;
         }
 
@@ -111,7 +121,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
     }
 
     private handleAuctionProperties(player: Player, position: number) {
-        switch (position){
+        switch (position) {
             case 12:
             case 28:
             case 5:
@@ -122,9 +132,10 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
                 this.state.numberOfAuctions++;
                 for (var player of this.state.players.values()) {
                     if (!player.isBankrupt) {
-                        player.aliasName = AuctionCallnameList[
-                            currentPlayer % AuctionCallnameList.length
-                        ];
+                        player.aliasName =
+                            AuctionCallnameList[
+                                currentPlayer % AuctionCallnameList.length
+                            ];
                         currentPlayer++;
                     }
                 }

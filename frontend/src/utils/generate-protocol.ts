@@ -8,7 +8,7 @@ export default async function generateProtocol(size: number, minValue: number) {
 
   const { circuit } = summon.compile({
     path: `/circuits/${size}.ts`,
-    boolifyWidth: 8,
+    boolifyWidth: 16,
     files: await getCircuitFiles(size, minValue)
   });
 

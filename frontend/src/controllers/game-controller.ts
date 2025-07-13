@@ -218,6 +218,8 @@ export class GameController {
         var currentPlayer = playerStates.find(
             (player) => player.id === this.network.getRoom()?.sessionId
         );
+        $auctionIndex.set(GameController.getInstance().getNetwork().getRoomState()?.numberOfAuctions || 0);
+
 
         this.auctionConfig.selectedCommand =
             (currentPlayer?.aliasName as AuctionCallname) || "alice"; // Default to "alice" if not found
