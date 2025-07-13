@@ -50,12 +50,13 @@ export class Network {
 
   onMessage(type: string, callback: (message: any) => void) {
     this.room?.onMessage(type, (message: any) => {
-          console.log( "onStateChange", this.updatePlayerState(this.room?.state));
       callback(message);
       this.gameController.notifyListeners();
       // console.log("Message received: ", message);
     });
   }
+
+  
 
   onStateChange(callback: (state: any) => void) {
     // console.log( "onStateChange", this.updatePlayerState(this.room?.state));

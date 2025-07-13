@@ -20,6 +20,6 @@ export class RoomState extends Schema {
   rolledDice: boolean = false;
 
   @type(Auction) auction: Auction | null = null;
-
-
+  @type("number")
+  numberOfAuctions: number = 0;
 }

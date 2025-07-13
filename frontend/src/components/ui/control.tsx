@@ -4,7 +4,9 @@ import { twMerge } from "tailwind-merge";
 import { buttonStyles } from "./core/styles/button";
 import { LuDices } from "react-icons/lu";
 import { GameController } from "@/controllers/game-controller";
+
 import Auction from "./auction";
+import Ready from "./ready";
 
 export default function Control() {
   const context = GameController.getInstance();
@@ -17,14 +19,15 @@ export default function Control() {
         className={twMerge(buttonStyles, "bg-red-500 pressed:bg-red-400")}>
         <LuDices className="inline-block mb-1"/>  Roll dice
       </Button>
-      <div>
-        {/* dummy */}
-      </div>
+      <Ready />
       <Inviter/>
       <div>
         {/* dummy */}
       </div>
       <Auction />
+      <div>
+        {/* dummy */}
+      </div>
     </div>
   )
 }

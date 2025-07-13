@@ -6,10 +6,11 @@ import { BuyPropertyCommand } from "@rooms/commands/BuyPropertyCommand";
 import { SellPropertyCommand } from "@rooms/commands/SellPropertyCommand";
 import { Dispatcher } from "@colyseus/command";
 import { RollDiceCommand } from "@rooms/commands/RollDiceCommand";
-import { MessageTypes } from "@/types/MessageTypes";
+import { MessageRequestTypes } from "@/types/MessageRequestTypes";
 import monopolyJSON from "@/assets/monopoly.json";
 import { ZKService } from "@/services/ZkService";
 import { AuctionCommand } from "@rooms/commands/AuctionCommand";
+import { MessageResponseTypes } from "@/types/MessageResponseTypes";
 
 // Reference from: https://github.com/itaylayzer/Monopoly/blob/main/src/assets/server.ts
 // https://github.com/itaylayzer/Monopoly/blob/main/src/assets/monopoly.json
@@ -48,7 +49,7 @@ export class MonopolyRoom extends Room<RoomState> {
             this.state.properties.set(String(prop.id), newProp);
         });
 
-        this.onMessage(MessageTypes.REGISTER, (client, name: string) => {
+        this.onMessage(MessageRequestTypes.REGISTER, (client, name: string) => {
             // RegisterPlayerCommand
 
             this.dispatcher.dispatch(new RegisterPlayerCommand(), {
@@ -75,10 +76,10 @@ export class MonopolyRoom extends Room<RoomState> {
             });
 
             // Notify all other players of the new player.
-            this.broadcast("new-player", player, { except: client });
+            this.broadcast("new_player", player);
         });
 
-        this.onMessage(MessageTypes.READY, (client) => {
+        this.onMessage(MessageRequestTypes.READY, (client) => {
             const player = this.state.players.get(client.sessionId);
             if (player) {
                 player.ready = true;
@@ -104,20 +105,29 @@ export class MonopolyRoom extends Room<RoomState> {
                     console.log(
                         "Game has Started, No more Players can join the Server"
                     );
-                    this.broadcast("start-game", {});
+                    this.broadcast("start_game", {});
+                    // if (client.sessionId === this.state.currentTurn) {
+                    //     client.send(MessageRequestTypes.YOUR_TURN, {});
+                    // }
+                    // replace foreach to find current turn
+
+                    this.clients.forEach((c) => {
+                        if (c.sessionId === this.state.currentTurn) {
+                            c.send(MessageRequestTypes.YOUR_TURN, {});
+                        }
+                    });
                 }
             }
         });
 
         // Message: "roll_dice" – roll dice, update player position, and broadcast the result.
         // Temporary random dice roll implementation, will be replaced with ZK-Shuffle.
-        this.onMessage(MessageTypes.ROLL_DICE, (client) => {
-
+        this.onMessage(MessageRequestTypes.ROLL_DICE, (client) => {
             this.dispatcher.dispatch(new RollDiceCommand(this, client));
         });
 
         this.onMessage(
-            MessageTypes.GET_OUT_OF_JAIL,
+            MessageRequestTypes.GET_OUT_OF_JAIL,
             (client, option: "card" | "pay") => {
                 const player = this.state.players.get(client.sessionId);
                 if (!player) return;
@@ -142,18 +152,22 @@ export class MonopolyRoom extends Room<RoomState> {
             }
         );
 
-        this.onMessage(MessageTypes.AUCTION_BID, 
-            (client, data: { propertyId: string; amount: number, action: string }) => {
+        this.onMessage(
+            MessageRequestTypes.AUCTION_BID,
+            (
+                client,
+                data: { propertyId: string; amount: number; action: string }
+            ) => {
                 this.dispatcher.dispatch(new AuctionCommand(), {
                     action: data.action,
                     propertyId: data.propertyId,
                     bidderId: client.sessionId,
-                    amount: data.amount
+                    amount: data.amount,
                 });
             }
         );
 
-        this.onMessage(MessageTypes.FINISH_TURN, (client) => {
+        this.onMessage(MessageRequestTypes.FINISH_TURN, (client) => {
             this.state.rolledDice = false;
             const player = this.state.players.get(client.sessionId);
             if (player) {
@@ -176,16 +190,22 @@ export class MonopolyRoom extends Room<RoomState> {
                 let currentIndex = playerIds.indexOf(client.sessionId);
                 currentIndex = (currentIndex + 1) % playerIds.length;
                 this.state.currentTurn = playerIds[currentIndex];
-                this.broadcast("turn-finished", {
+                this.broadcast(MessageResponseTypes.PLAYER_FINISHED_TURN, {
                     from: client.sessionId,
                     turnId: this.state.currentTurn,
                     pJson: player,
                 });
+                const currentClient = this.clients.find(
+                    (c) => c.sessionId === this.state.currentTurn
+                );
+                if (currentClient) {
+                    currentClient.send(MessageRequestTypes.YOUR_TURN, {});
+                }
             }
         });
 
         this.onMessage(
-            MessageTypes.EXCHANGE,
+            MessageRequestTypes.EXCHANGE,
             (client, args: { balance: number; from: string; to: string }) => {
                 const fromPlayer = this.state.players.get(args.from);
                 const toPlayer = this.state.players.get(args.to);
@@ -206,7 +226,7 @@ export class MonopolyRoom extends Room<RoomState> {
         );
 
         this.onMessage(
-            MessageTypes.BUY_PROPERTY,
+            MessageRequestTypes.BUY_PROPERTY,
             (client, data: { propertyId: string }) => {
                 this.dispatcher.dispatch(new BuyPropertyCommand(), {
                     client: client,
@@ -217,7 +237,7 @@ export class MonopolyRoom extends Room<RoomState> {
         );
 
         this.onMessage(
-            MessageTypes.SELL_PROPERTY,
+            MessageRequestTypes.SELL_PROPERTY,
             (
                 client,
                 data: {

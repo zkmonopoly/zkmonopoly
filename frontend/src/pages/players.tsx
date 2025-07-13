@@ -43,6 +43,7 @@ export default function Players() {
     // Subscribe to future updates
     gameController.onStateUpdate((roomState: any) => {
       setTimeout(() => {
+        console.log("Updating player states with new room state " + roomState);
         updatePlayerState(roomState);
       }, 1000); // Delay to allow for smoother updates
     });

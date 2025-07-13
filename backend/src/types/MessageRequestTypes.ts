@@ -1,6 +1,6 @@
-export enum MessageTypes {
+export enum MessageRequestTypes {
     EXCHANGE = "exchange",
-    FINISH_TURN = "finish-turn",
+    FINISH_TURN = "finish_turn",
     REGISTER = "register",
     PAY_BANK = "pay_bank",
     PLAYER_UPDATE = "player_update",
@@ -11,4 +11,5 @@ export enum MessageTypes {
     BUY_PROPERTY = "buy_property",
     SELL_PROPERTY = "sell_property",
     AUCTION_BID = "auction_bid",
+    YOUR_TURN = "your_turn",
 }

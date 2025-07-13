@@ -17,14 +17,14 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
     }
 
     async execute() {
-        // if (this.monopolyRoom.state.rolledDice) return;
+        if (this.monopolyRoom.state.rolledDice) return;
         const player = this.monopolyRoom.state.players.get(
             this.client.sessionId
         );
         if (!player) return;
-        // if (this.monopolyRoom.state.currentTurn !== this.client.sessionId) {
-        //     return;
-        // }
+        if (this.monopolyRoom.state.currentTurn !== this.client.sessionId) {
+            return;
+        }
 
         let first;
         let second;
@@ -89,7 +89,6 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
                 playerId: player.id,
             });
         } else if (property.ownedby !== player.id && !property.mortgaged) {
-            // Owned by another player → Pay rent
             const rentAmount = this.calculateRent(property);
             player.balance -= rentAmount;
 
@@ -120,6 +119,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             case 25:
             case 35:
                 var currentPlayer = 0;
+                this.state.numberOfAuctions++;
                 for (var player of this.state.players.values()) {
                     if (!player.isBankrupt) {
                         player.aliasName = AuctionCallnameList[
@@ -158,22 +158,6 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             case 36: // Chance
                 this.drawChanceOrChestCard(player, true);
                 break;
-            // for case Utilities and Railroads, we assign alias names
-            // case 12:
-            // case 28:
-            // case 5:
-            // case 15:
-            // case 25:
-            // case 35:
-            //     var currentPlayer = 0;
-            //     for (var player of this.state.players.values()) {
-            //         if (!player.isBankrupt && player.ready) {
-            //             player.aliasName = AuctionCallnameList[
-            //                 currentPlayer % AuctionCallnameList.length
-            //             ];
-            //             currentPlayer++;
-            //         }
-            //     }
 
             default:
                 console.log(
