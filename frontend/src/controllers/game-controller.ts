@@ -1,10 +1,9 @@
 // src/game-controller/GameController.ts
 import { Network } from "./network";
 import AuctionController, { AuctionCallname, AuctionCallnameList } from "@/controllers/auction-controller";
-import { useStore } from "@nanostores/react";
 import { $playerStates } from "@/models/player";
 import { Room } from "colyseus.js";
-import { timeStamp } from "console";
+import { $auctionIndex, $auctionModalOpen, $dataCount, $executionTime, $winner } from "@/models/auction";
 
 type StateListener = (roomState: any, payload: any) => void;
 
@@ -142,11 +141,9 @@ export class GameController {
         // Auction config
         this.auctionConfig = {
           pathname: GameController.room?.roomId ?? "",
-          auctionIndex: 0,
+          auctionIndex: $auctionIndex.get(),
           selectedCommand: "alice", 
-          setDataCount: (n: number) => {
-            console.log("Data count set to:", n, new Date());
-          }
+          setDataCount: $dataCount.set
         };
         console.log("Auction config set:", this.auctionConfig);
 
@@ -170,24 +167,26 @@ export class GameController {
             size: totalPlayers
           },
           selectedCommand,
+          this.payload.property.price,
           setDataCount
         );
 
         console.log("AuctionController initialized with config:", auctionController);
-        let bidValue = 10;
-        if (selectedCommand === "bob") bidValue = 15;
-        if (selectedCommand === "charlie") bidValue = 24;
+        let bidValue = 210;
+        if (selectedCommand === "bob") bidValue = 220;
+        if (selectedCommand === "charlie") bidValue = 230;
+        $auctionModalOpen.set(true);
+        const start = Date.now();
         auctionController.mpcLargest(bidValue).then((result) => {
           // Handle auction result (e.g., update winner, notify UI)
           console.log("Auction result:", result);
           this.onAuctionResult(result);
-          
-          if (this.auctionConfig) {
-            this.auctionConfig.auctionIndex++;
-          }
+          const end = Date.now();
+          const executionTime = end - start;
+          $executionTime.set(Math.round(executionTime / 1000));
         }).catch((err) => {
           console.error("Auction error:", err);
-        });
+        })
       }
     });
   }
@@ -200,7 +199,7 @@ export class GameController {
 
   onAuctionResult(result: any) {
     console.log("Auction result received:", result);
-
+    $winner.set(result.winner); 
   }
 
   onBuyProperty(payload: any) {

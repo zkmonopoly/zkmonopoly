@@ -23,12 +23,14 @@ export default class AuctionController {
   pairs: Map<AuctionCallname, RtcPair>;
   party: AuctionCallname;
   onProgress?: (progress: number) => void;
+  minValue: number;
 
-  constructor(network: AuctionNetwork, party: AuctionCallname, onProgress?: (progress: number) => void) {
+  constructor(network: AuctionNetwork, party: AuctionCallname, minValue: number, onProgress?: (progress: number) => void) {
     this.name = network.name;
     this.party = party;
     this.size = network.size;
     this.pairs = new Map();
+    this.minValue = minValue;
     this.onProgress = onProgress;
     // Managable so manual coding it is
     // 2: 1
@@ -134,7 +136,7 @@ export default class AuctionController {
 
     await this.connect();
     
-    const protocol = await generateProtocol(this.size);
+    const protocol = await generateProtocol(this.size, this.minValue);
 
     const session = protocol.join(party, this.getInput(value), async (to, msg) => {
       totalByteSent += msg.byteLength;

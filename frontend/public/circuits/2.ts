@@ -8,8 +8,16 @@ function isGreater(a: number, b: number): boolean {
 }
 
 export default (io: Summon.IO) => {
-  const a = io.input('alice', 'a', summon.number());
-  const b = io.input('bob', 'b', summon.number());
+  let a = io.input('alice', 'a', summon.number());
+  let b = io.input('bob', 'b', summon.number());
+  const m = $1;
+
+  if (isGreater(m, a)) {
+    a = 0;
+  }
+  if (isGreater(m, b)) {
+    b = 0;
+  }
 
   let winner;
 

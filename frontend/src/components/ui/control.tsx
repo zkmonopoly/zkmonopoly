@@ -5,10 +5,8 @@ import { buttonStyles } from "./core/styles/button";
 import { LuDices } from "react-icons/lu";
 import { GameController } from "@/controllers/game-controller";
 import Auction from "./auction";
-import { useState } from "react";
 
 export default function Control() {
-  const [open, setOpen] = useState(false);
   const context = GameController.getInstance();
   
   return (
@@ -26,12 +24,7 @@ export default function Control() {
       <div>
         {/* dummy */}
       </div>
-      <Button 
-        onPress={() => setOpen(true)}
-        className={twMerge(buttonStyles, "bg-pink-500 pressed:bg-pink-400")}>
-        [DEBUG] Auction
-      </Button>
-      <Auction open={open}/>
+      <Auction />
     </div>
   )
 }
