@@ -11,7 +11,7 @@ export function ModalWrapper({className, children, ...props}: ModalWrapperProps)
   return (
     <ModalOverlay className={className} {...props}>
       <Modal>
-        <Dialog>
+        <Dialog aria-label="modal">
           {children}
         </Dialog>
       </Modal>

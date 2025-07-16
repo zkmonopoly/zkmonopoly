@@ -15,6 +15,7 @@ import {
 } from "@/models/auction";
 import { MessageRequestType } from "@/components/type/message-request-type";
 import { MessageResponseType } from "@/components/type/message-response-type";
+import { flushSync } from "react-dom";
 type StateListener = (roomState: any, payload: any) => void;
 
 interface AuctionConfig {
@@ -158,7 +159,7 @@ export class GameController {
                 this.auctionConfig = {
                     pathname: GameController.room?.roomId ?? "",
                     selectedCommand: "alice",
-                    setDataCount: $dataCount.set,
+                    setDataCount: (n) => flushSync(() => $dataCount.set(n))
                 };
                 console.log("Auction config set:", this.auctionConfig);
 
