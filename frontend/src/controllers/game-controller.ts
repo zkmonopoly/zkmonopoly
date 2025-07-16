@@ -153,7 +153,7 @@ export class GameController {
                 payload.property.group === "Utilities" ||
                 payload.property.group === "Railroad"
             ) {
-                await this.delay(6000);
+                // await this.delay(6000);
                 // Auction config
                 this.auctionConfig = {
                     pathname: GameController.room?.roomId ?? "",

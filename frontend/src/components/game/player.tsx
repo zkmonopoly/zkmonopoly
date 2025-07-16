@@ -89,7 +89,6 @@ export default function Player(props: PlayerProps) {
           console.log(
             `Player ${props.playerIndex} moved to cell ${movement}`
           );
-          console.log(movementSequenceRef.current.length);
           positionRef.current = NodePositions[movement].add(
             new Vector3(
               PlayerPositions[props.playerIndex].x,

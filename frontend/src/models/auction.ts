@@ -14,6 +14,9 @@ export interface Auction {
   propertyName?: string;
 }
 
+export type AuctionConnectionStatus = "idle" | "connecting" | "in-progress" | "error" | "completed";
+
+export const $connectionStatus = atom<AuctionConnectionStatus>("idle");
 export const $auctionIndex = atom<number>(1);
 export const $auctionModalOpen = atom<boolean>(false);
 export const $dataCount = atom<number>(0);

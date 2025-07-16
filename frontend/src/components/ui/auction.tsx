@@ -1,6 +1,7 @@
 import {
     $auctionIndex,
     $auctionModalOpen,
+    $connectionStatus,
     $dataCount,
     $executionTime,
     $winner,
@@ -17,7 +18,7 @@ import { textFieldsStyles } from "./core/styles/text-field";
 import { useStore } from "@nanostores/react";
 import { GameController } from "@/controllers/game-controller";
 
-type ConnectionStatus = "idle" | "connecting" | "in-progress" | "error";
+
 
 export default function Auction() {
     const auctionModalOpen = useStore($auctionModalOpen);
@@ -25,19 +26,20 @@ export default function Auction() {
     const executionTime = useStore($executionTime);
     const winner = useStore($winner);
     const auctionIndex = useStore($auctionIndex);
-    const [connectionStatus, setConnectionStatus] =
-        useState<ConnectionStatus>("idle");
+    const connectionStatus = useStore($connectionStatus);
     const [error, setError] = useState<string>();
     const [bidValue, setBidValue] = useState<number>(0);
 
     function StatusIndicator() {
         switch (connectionStatus) {
             case "idle":
-                return <span className="text-gray-600">Not connected</span>;
+                return <span className="text-gray-600">Idle</span>;
             case "connecting":
-                return <span className="text-yellow-600">Connecting</span>;
+                return <span className="text-blue-600">Connecting</span>;
             case "in-progress":
-                return <span className="text-green-600">In progress</span>;
+                return <span className="text-yellow-600">In progress</span>;
+            case "completed":
+                return <span className="text-green-600">Completed</span>;
             case "error":
                 return <span className="text-red-600">Error - {error}</span>;
         }
@@ -50,8 +52,9 @@ export default function Auction() {
                 $dataCount.set(0);
                 $executionTime.set(0);
                 $winner.set("");
-                $auctionIndex.set(0);
-                $auctionIndex.set($auctionIndex.get() + 1);
+                $connectionStatus.set("idle");
+                // $auctionIndex.set(0);
+                // $auctionIndex.set($auctionIndex.get() + 1);
             }
         });
     }, []);
@@ -61,12 +64,13 @@ export default function Auction() {
             isOpen={auctionModalOpen}
             className={modalStyles}
             onOpenChange={$auctionModalOpen.set}
-            isDismissable
+            isDismissable={connectionStatus !== "idle" && connectionStatus !== "completed"}
         >
             <div className="flex flex-col rounded-md gap-2 w-[260px] relative">
                 <Button
                     className="absolute right-0 -top-1 hover:bg-white/20 p-2 rounded-full"
                     onPress={() => $auctionModalOpen.set(false)}
+                    isDisabled={connectionStatus !== "idle" && connectionStatus !== "completed"}
                 >
                     <LuX />
                 </Button>
@@ -93,12 +97,14 @@ export default function Auction() {
                         type="number"
                         min={0}
                         className="!rounded-e-none min-w-0"
+                        disabled={connectionStatus !== "idle" && connectionStatus !== "completed"}
                         onChange={(e) => setBidValue(Number(e.target.value))}
                     />
                     <Button
                         onPress={() => {
                             GameController.getInstance().sendAuction(bidValue);
                         }}
+                        isDisabled={connectionStatus !== "idle" && connectionStatus !== "completed"}
                         className={twMerge(
                             buttonStyles,
                             "rounded-s-none min-w-fit"
@@ -112,6 +118,7 @@ export default function Auction() {
                     onPress={() => {
                         GameController.getInstance().sendAuction(0);
                     }}
+                    isDisabled={connectionStatus !== "idle" && connectionStatus !== "completed"}
                 >
                     <LuSkipForward className="mb-1 inline" /> Skip
                 </Button>

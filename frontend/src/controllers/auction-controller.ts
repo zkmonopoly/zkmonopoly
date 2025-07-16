@@ -2,6 +2,7 @@ import { RtcPairSocket } from 'rtc-pair-socket';
 import { AsyncQueue } from '@/utils/async-queue';
 import generateProtocol from '@/utils/generate-protocol';
 import assert from '@/utils/assert';
+import { $connectionStatus } from '@/models/auction';
 
 export const AuctionCallnameList = <const>['none', 'alice', 'bob', 'charlie', 'david'];
 export type AuctionCallname = typeof AuctionCallnameList[number];
@@ -74,6 +75,61 @@ export default class AuctionController {
           });
         }
         break;
+      case 4:
+        if (this.party === 'alice') {
+          this.pairs.set('bob', {
+            socket: this.createSocket(`${this.name}_alice_bob`, 'alice'),
+            queue: new AsyncQueue<unknown>()
+          });
+          this.pairs.set('charlie', {
+            socket: this.createSocket(`${this.name}_alice_charlie`, 'alice'),
+            queue: new AsyncQueue<unknown>()
+          });
+          this.pairs.set('david', {
+            socket: this.createSocket(`${this.name}_alice_david`, 'alice'),
+            queue: new AsyncQueue<unknown>()
+          });
+        } else if (this.party === 'bob') {
+          this.pairs.set('alice', {
+            socket: this.createSocket(`${this.name}_alice_bob`, 'bob'),
+            queue: new AsyncQueue<unknown>()
+          });
+          this.pairs.set('charlie', {
+            socket: this.createSocket(`${this.name}_bob_charlie`, 'alice'),
+            queue: new AsyncQueue<unknown>()
+          });
+          this.pairs.set('david', {
+            socket: this.createSocket(`${this.name}_bob_david`, 'alice'),
+            queue: new AsyncQueue<unknown>()
+          });
+        } else if (this.party === 'charlie') {
+          this.pairs.set('alice', {
+            socket: this.createSocket(`${this.name}_alice_charlie`, 'bob'),
+            queue: new AsyncQueue<unknown>()
+          });
+          this.pairs.set('bob', {
+            socket: this.createSocket(`${this.name}_bob_charlie`, 'bob'),
+            queue: new AsyncQueue<unknown>()
+          });
+          this.pairs.set('david', {
+            socket: this.createSocket(`${this.name}_charlie_david`, 'alice'),
+            queue: new AsyncQueue<unknown>()
+          });
+        } else {
+          this.pairs.set('alice', {
+            socket: this.createSocket(`${this.name}_alice_david`, 'bob'),
+            queue: new AsyncQueue<unknown>()
+          });
+          this.pairs.set('bob', {
+            socket: this.createSocket(`${this.name}_bob_david`, 'bob'),
+            queue: new AsyncQueue<unknown>()
+          });
+          this.pairs.set('charlie', {
+            socket: this.createSocket(`${this.name}_charlie_david`, 'bob'),
+            queue: new AsyncQueue<unknown>()
+          });
+        }
+        break;
       default:
         throw new Error("Unsupported network size");
     }
@@ -134,11 +190,12 @@ export default class AuctionController {
     let totalByteSent = 0;
     let totalByteReceived = 0;
 
+    $connectionStatus.set("connecting");
     await this.connect();
     
     const protocol = await generateProtocol(this.size, this.minValue);
 
-    const session = protocol.join(party, this.getInput(value), async (to, msg) => {
+    const session = protocol.join(party, this.getInput(value), (to, msg) => {
       totalByteSent += msg.byteLength;
       if (this.onProgress) {
         this.onProgress(Math.floor((totalByteSent + totalByteReceived) / 1024));
@@ -169,7 +226,9 @@ export default class AuctionController {
       streamHandlers.push(handler);
     });
     
+    $connectionStatus.set("in-progress");
     const output = await session.output();
+    $connectionStatus.set("completed");
     streamHandlers.forEach(handler => handler.stop());
     console.log(`auction: sent ${totalByteSent}, received ${totalByteReceived}, total ${totalByteSent + totalByteReceived}`);
     return output;
