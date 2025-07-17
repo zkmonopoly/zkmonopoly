@@ -9,19 +9,16 @@ import { Room } from "colyseus.js";
 import {
     $auctionIndex,
     $auctionModalOpen,
-    $dataCount,
     $executionTime,
     $winner,
 } from "@/models/auction";
 import { MessageRequestType } from "@/components/type/message-request-type";
 import { MessageResponseType } from "@/components/type/message-response-type";
-import { flushSync } from "react-dom";
 type StateListener = (roomState: any, payload: any) => void;
 
 interface AuctionConfig {
     pathname: string;
     selectedCommand: AuctionCallname;
-    setDataCount: (n: number) => void;
 }
 
 export class GameController {
@@ -158,8 +155,7 @@ export class GameController {
                 // Auction config
                 this.auctionConfig = {
                     pathname: GameController.room?.roomId ?? "",
-                    selectedCommand: "alice",
-                    setDataCount: (n) => flushSync(() => $dataCount.set(n))
+                    selectedCommand: "alice"
                 };
                 console.log("Auction config set:", this.auctionConfig);
 
@@ -225,7 +221,7 @@ export class GameController {
         this.auctionConfig.selectedCommand =
             (currentPlayer?.aliasName as AuctionCallname) || "alice"; // Default to "alice" if not found
 
-        const { pathname, selectedCommand, setDataCount } = this.auctionConfig;
+        const { pathname, selectedCommand } = this.auctionConfig;
 
         const auctionController = new AuctionController(
             {
@@ -233,8 +229,7 @@ export class GameController {
                 size: totalPlayers,
             },
             selectedCommand,
-            this.payload.property.price,
-            setDataCount
+            this.payload.property.price
         );
 
         // let bidValue = 210;

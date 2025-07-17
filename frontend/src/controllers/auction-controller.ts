@@ -2,7 +2,7 @@ import { RtcPairSocket } from 'rtc-pair-socket';
 import { AsyncQueue } from '@/utils/async-queue';
 import generateProtocol from '@/utils/generate-protocol';
 import assert from '@/utils/assert';
-import { $connectionStatus } from '@/models/auction';
+import { $connectionStatus, $dataCount } from '@/models/auction';
 
 export const AuctionCallnameList = <const>['none', 'alice', 'bob', 'charlie', 'david'];
 export type AuctionCallname = typeof AuctionCallnameList[number];
@@ -23,7 +23,6 @@ export default class AuctionController {
   size: number;
   pairs: Map<AuctionCallname, RtcPair>;
   party: AuctionCallname;
-  onProgress?: (progress: number) => void;
   minValue: number;
 
   constructor(network: AuctionNetwork, party: AuctionCallname, minValue: number, onProgress?: (progress: number) => void) {
@@ -32,7 +31,6 @@ export default class AuctionController {
     this.size = network.size;
     this.pairs = new Map();
     this.minValue = minValue;
-    this.onProgress = onProgress;
     // Managable so manual coding it is
     // 2: 1
     // 3: 3
@@ -197,9 +195,9 @@ export default class AuctionController {
 
     const session = protocol.join(party, this.getInput(value), (to, msg) => {
       totalByteSent += msg.byteLength;
-      if (this.onProgress) {
-        this.onProgress(Math.floor((totalByteSent + totalByteReceived) / 1024));
-      }
+      // if (this.onProgress) {
+      //   this.onProgress(Math.floor((totalByteSent + totalByteReceived) / 1024));
+      // }
       const pair = this.pairs.get(to as AuctionCallname);
       if (pair) {
         pair.socket.send(msg);
@@ -218,16 +216,16 @@ export default class AuctionController {
           throw new Error('Unexpected message type');
         }
         totalByteReceived += msg.byteLength;
-        if (this.onProgress) {
-          this.onProgress(Math.floor((totalByteSent + totalByteReceived) / 1024));
-        }
+        // if (this.onProgress) {
+        //   this.onProgress(Math.floor((totalByteSent + totalByteReceived) / 1024));
+        // }
         session.handleMessage(other, msg);
       });
       streamHandlers.push(handler);
     });
-    
     $connectionStatus.set("in-progress");
     const output = await session.output();
+    $dataCount.set(Math.floor((totalByteReceived + totalByteSent) / 1024));
     $connectionStatus.set("completed");
     streamHandlers.forEach(handler => handler.stop());
     console.log(`auction: sent ${totalByteSent}, received ${totalByteReceived}, total ${totalByteSent + totalByteReceived}`);
