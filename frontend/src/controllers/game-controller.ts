@@ -14,6 +14,15 @@ import {
 } from "@/models/auction";
 import { MessageRequestType } from "@/components/type/message-request-type";
 import { MessageResponseType } from "@/components/type/message-response-type";
+import { playerRun } from "@/utils/zkshuffle";
+import { ethers } from "ethers";
+
+declare global {
+    interface Window {
+        ethereum?: any;
+    }
+}
+
 type StateListener = (roomState: any, payload: any) => void;
 
 interface AuctionConfig {
@@ -261,6 +270,10 @@ export class GameController {
     onRollDice() {
         console.log("Rolling dice...");
         this.network.send("roll_dice");
+        // const shuffleManagerContract = remote.shuffleManagerContract;
+        // const provider = new ethers.providers.JsonRpcProvider(import.meta.env.VITE_HARDHAT_ENDPOINT || "http://127.0.0.1:8545");
+        // const owner = provider.getSigner(index);
+        // playerRun(shuffleManagerContract, owner, this.network.getRoom()?.roomId)
     }
 
     onAuctionResult(result: any) {
