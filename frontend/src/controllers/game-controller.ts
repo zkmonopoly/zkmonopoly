@@ -16,6 +16,7 @@ import { MessageRequestType } from "@/components/type/message-request-type";
 import { MessageResponseType } from "@/components/type/message-response-type";
 import { playerRun } from "@/utils/zkshuffle";
 import { ethers } from "ethers";
+import { $isPaused } from "@/models/game";
 
 declare global {
     interface Window {
@@ -252,6 +253,7 @@ export class GameController {
             "for player:",
             this.auctionConfig.selectedCommand
         );
+        $isPaused.set(true);
         auctionController
             .mpcLargest(bidValue)
             .then((result) => {
@@ -264,7 +266,9 @@ export class GameController {
             })
             .catch((err) => {
                 console.error("Auction error:", err);
-            });
+            }).finally(() => {
+                $isPaused.set(false);
+            })
     }
 
     onRollDice() {
