@@ -67,4 +67,4 @@ Adjust `WS_URL` if your zero‑knowledge service runs on a different address.
 
 ## License
 
-This project is released under the ISC license.
+This project is released under the MIT license.
