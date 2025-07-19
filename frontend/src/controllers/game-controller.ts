@@ -15,15 +15,16 @@ import {
 import { MessageRequestType } from "@/components/type/message-request-type";
 import { MessageResponseType } from "@/components/type/message-response-type";
 import { playerRun } from "@/utils/zkshuffle";
-import { ethers } from "ethers";
+// import { ethers } from "ethers";
 import { $isPaused } from "@/models/game";
 
-declare global {
-    interface Window {
-        ethereum?: any;
-    }
-}
+// declare global {
+//     interface Window {
+//         ethereum?: any;
+//     }
+// }
 
+import { PlayerState } from "@/components/state/player-state";
 type StateListener = (roomState: any, payload: any) => void;
 
 interface AuctionConfig {
@@ -175,44 +176,7 @@ export class GameController {
                 }
                 $auctionModalOpen.set(true);
 
-                // this.auctionConfig.selectedCommand = $playerStates.get()[0].aliasName as AuctionCallname; // Default to first player alias
-                // get current player by using session id
-                // const playerStates = $playerStates.get();
-                // var currentPlayer = playerStates.find(
-                //     (player) => player.id === this.network.getRoom()?.sessionId
-                // );
-                // console.log("Current player:", currentPlayer);
-                // const totalPlayers = playerStates.filter(player => !player.isBankrupt).length;
-                // this.auctionConfig.selectedCommand = currentPlayer?.aliasName as AuctionCallname || "alice"; // Default to "alice" if not found
-                // // total players that not bankrupt
-                // $auctionIndex.set(GameController.getInstance().getNetwork().getRoomState()?.numberOfAuctions || 0);
-                // const { pathname, selectedCommand, setDataCount } = this.auctionConfig;
-                // const auctionController = new AuctionController(
-                //   {
-                //     name: pathname + "_" + $auctionIndex.get(),
-                //     size: totalPlayers
-                //   },
-                //   selectedCommand,
-                //   this.payload.property.price,
-                //   setDataCount
-                // );
 
-                // console.log("AuctionController initialized with config:", auctionController);
-                // let bidValue = 210;
-                // if (selectedCommand === "bob") bidValue = 220;
-                // if (selectedCommand === "charlie") bidValue = 230;
-                // $auctionModalOpen.set(true);
-                // const start = Date.now();
-                // auctionController.mpcLargest(bidValue).then((result) => {
-                //   // Handle auction result (e.g., update winner, notify UI)
-                //   console.log("Auction result:", result);
-                //   this.onAuctionResult(result);
-                //   const end = Date.now();
-                //   const executionTime = end - start;
-                //   $executionTime.set(Math.round(executionTime / 1000));
-                // }).catch((err) => {
-                //   console.error("Auction error:", err);
-                // })
             }
         });
     }
@@ -259,10 +223,13 @@ export class GameController {
             .then((result) => {
                 // Handle auction result (e.g., update winner, notify UI)
                 console.log("Auction result:", result);
-                this.onAuctionResult(result);
+                
+                this.onAuctionResult(result, currentPlayer, bidValue);
                 const end = Date.now();
                 const executionTime = end - start;
                 $executionTime.set(Math.round(executionTime / 1000));
+
+                
             })
             .catch((err) => {
                 console.error("Auction error:", err);
@@ -280,13 +247,37 @@ export class GameController {
         // playerRun(shuffleManagerContract, owner, this.network.getRoom()?.roomId)
     }
 
-    onAuctionResult(result: any) {
+    onAuctionResult(result: any, currentPlayer?: PlayerState, bidValue?: number) {
         console.log("Auction result received:", result);
-        $winner.set(result.winner);
+        if (result.winner === 0) {
+            $winner.set("No winner");
+            return;
+        }
+        const aliasName = AuctionCallnameList[result.winner];
+        const playerWinner = $playerStates.get().find((player) => {
+            return player.aliasName === aliasName;
+        }
+        );
+        if (playerWinner) {
+            $winner.set(playerWinner.username);
+            // only winner send the property to the GameController
+            if (currentPlayer?.aliasName === aliasName) {
+                console.log("Winner is current player:", playerWinner.username);
+                GameController.getInstance().onBuyProperty({
+                    propertyId: this.payload.property.id,
+                    bidValue: bidValue,
+                });
+            }
+        } else {
+            $winner.set("Unknown Player");
+        }
+        // return playerWinner;
+
     }
 
     onBuyProperty(payload: any) {
         this.network.send("buy_property", payload);
+        console.log("Buying property with payload:", payload);
         this.network.onMessage("property_purchased", (payload) => {
             console.log("Game state property_purchased: ", payload);
             this.payload = payload;

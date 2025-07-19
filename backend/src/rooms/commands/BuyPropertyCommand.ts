@@ -1,12 +1,14 @@
 import { Command } from "@colyseus/command";
 import { MonopolyRoom } from "@rooms/MonopolyRoom";
+import { Client } from "colyseus";
 
 interface Data {
     propertyId: string;
+    bidValue: number;
 }
 
-export class BuyPropertyCommand extends Command<MonopolyRoom, { client: any; monopolyRoom: MonopolyRoom; data: Data }> {
-    execute({ client, monopolyRoom, data }: { client: any; monopolyRoom: MonopolyRoom; data: Data }) {
+export class BuyPropertyCommand extends Command<MonopolyRoom, { client: Client; monopolyRoom: MonopolyRoom; data: Data }> {
+    execute({ client, monopolyRoom, data }: { client: Client; monopolyRoom: MonopolyRoom; data: Data }) {
         const player = this.state.players.get(client.sessionId);
         if (!player) {
             console.warn(
@@ -41,15 +43,14 @@ export class BuyPropertyCommand extends Command<MonopolyRoom, { client: any; mon
                 property.buildings++;
                 player.balance -= property.housecost;
 
-                monopolyRoom.broadcast("property_updating", {
+                monopolyRoom.broadcast("buy_property", {
                     propertyId,
                     newBuildings: property.buildings,
-                    newBalance: player.balance,
                 });
                 return;
             } else {
                 client.send("buy_property_fail", {
-                    reason: "Cannot buy more buildings on this property.",
+                    message: "Cannot buy more buildings on this property.",
                 });
             }
             return;
@@ -57,16 +58,24 @@ export class BuyPropertyCommand extends Command<MonopolyRoom, { client: any; mon
 
         if (player.balance < property.price) {
             client.send("buy_property_fail", {
-                reason: "Not enough balance to purchase this property.",
+                message: "Not enough balance to purchase this property.",
             });
             return;
         }
+        if (property.group === "Utilities" || property.group === "Railroad") {
+            const {bidValue} = data;
+            property.rent = bidValue;
+            player.balance -= bidValue;
+        }
+        else {
+            player.balance -= property.price;
+        }
 
-        player.balance -= property.price;
         property.ownedby = client.sessionId;
+        player.properties.push(propertyId);
 
         monopolyRoom.broadcast("property_purchased", {
-            propertyId,
+            propertyId: propertyId,
             ownerId: client.sessionId,
             newBalance: player.balance,
         });

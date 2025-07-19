@@ -7,8 +7,19 @@ interface Data {
     buildingsToSell: number;
 }
 
-export class SellPropertyCommand extends Command<MonopolyRoom, { client: any; monopolyRoom: MonopolyRoom; data: Data }> {
-    execute({ client, monopolyRoom, data }: { client: any; monopolyRoom: MonopolyRoom; data: Data }) {
+export class SellPropertyCommand extends Command<
+    MonopolyRoom,
+    { client: any; monopolyRoom: MonopolyRoom; data: Data }
+> {
+    execute({
+        client,
+        monopolyRoom,
+        data,
+    }: {
+        client: any;
+        monopolyRoom: MonopolyRoom;
+        data: Data;
+    }) {
         const player = this.state.players.get(client.sessionId);
         if (!player) {
             console.warn(
@@ -17,20 +28,15 @@ export class SellPropertyCommand extends Command<MonopolyRoom, { client: any; mo
             return;
         }
 
-        const property = this.state.properties.get(
-            String(data.propertyId)
-        );
+        const property = this.state.properties.get(String(data.propertyId));
         if (!property) {
-            console.warn(
-                "sell_property: Property not found:",
-                data.propertyId
-            );
+            console.warn("sell_property: Property not found:", data.propertyId);
             return;
         }
 
         if (property.ownedby !== client.sessionId) {
             client.send("sell_property_fail", {
-                reason: "You do not own this property.",
+                message: "You do not own this property.",
             });
             return;
         }
@@ -38,55 +44,53 @@ export class SellPropertyCommand extends Command<MonopolyRoom, { client: any; mo
         // Base sell (or mortgage) value is half the property price
         const halfPrice = Math.floor(property.price / 2);
 
-        if (data.sellEntireProperty) {
-            player.balance += halfPrice;
+        player.balance += halfPrice;
 
-            if (property.buildings > 0) {
-                player.balance +=
-                    property.buildings * property.housecost;
-                property.buildings = 0;
-            }
-
-            property.ownedby = "";
-
-            monopolyRoom.broadcast("property_sold", {
-                propertyId: data.propertyId,
-                ownerId: property.ownedby,
-                newBuildings: property.buildings,
-                newBalance: player.balance,
-            });
-
-            return;
+        if (property.buildings > 0) {
+            player.balance += property.buildings * property.housecost;
+            property.buildings = 0;
         }
 
-        // Sell buildings only
-        if (data.buildingsToSell > 0) {
-            if (property.buildings < data.buildingsToSell) {
-                client.send("sell_property_fail", {
-                    reason: `You only have ${property.buildings} buildings but tried to sell ${data.buildingsToSell}.`,
-                });
-                return;
-            }
 
-            property.buildings -= data.buildingsToSell;
 
-            const buildingRevenue =
-                data.buildingsToSell * property.housecost;
-            player.balance += buildingRevenue;
+        property.ownedby = "";
 
-            monopolyRoom.broadcast("property_sold", {
-                propertyId: data.propertyId,
-                ownerId: property.ownedby,
-                newBuildings: property.buildings,
-                newBalance: player.balance,
-            });
-
-            return;
+        // remove property from player's properties
+        const propertyIndex = player.properties.indexOf(data.propertyId);
+        if (propertyIndex > -1) {
+            player.properties.splice(propertyIndex, 1);
         }
 
-        client.send("sell_property_fail", {
-            reason: "No valid sell action specified. Either set 'sellEntireProperty' or 'buildingsToSell'.",
+        monopolyRoom.broadcast("property_sold", {
+            propertyId: data.propertyId,
+            ownerId: property.ownedby,
         });
+
+        return;
+
+        // // Sell buildings only
+        // if (data.buildingsToSell > 0) {
+        //     if (property.buildings < data.buildingsToSell) {
+        //         client.send("sell_property_fail", {
+        //             message: `You only have ${property.buildings} buildings but tried to sell ${data.buildingsToSell}.`,
+        //         });
+        //         return;
+        //     }
+
+        //     property.buildings -= data.buildingsToSell;
+
+        //     const buildingRevenue = data.buildingsToSell * property.housecost;
+        //     player.balance += buildingRevenue;
+
+        //     monopolyRoom.broadcast("property_sold", {
+        //         propertyId: data.propertyId,
+        //         ownerId: property.ownedby,
+        //         newBuildings: property.buildings,
+        //         newBalance: player.balance,
+        //     });
+
+        //     return;
+        // }
 
     }
 }

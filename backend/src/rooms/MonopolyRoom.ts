@@ -227,7 +227,7 @@ export class MonopolyRoom extends Room<RoomState> {
 
         this.onMessage(
             MessageRequestTypes.BUY_PROPERTY,
-            (client, data: { propertyId: string }) => {
+            (client, data: { propertyId: string, bidValue: number }) => {
                 this.dispatcher.dispatch(new BuyPropertyCommand(), {
                     client: client,
                     monopolyRoom: this,

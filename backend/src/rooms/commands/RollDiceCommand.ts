@@ -6,7 +6,17 @@ import { Property } from "@rooms/state/PropertyState";
 
 import monopolyJSON from "@/assets/monopoly.json";
 import { RoomState } from "../schema/RoomState";
+import { MessageResponseTypes } from "@/types/MessageResponseTypes";
 export const AuctionCallnameList = <const>["alice", "bob", "charlie", "david"];
+
+interface CommunityChestCard {
+    title: string;
+    action: string;
+    subaction?: string;
+    titleid?: string;
+    amount?: number;
+    count?: number;
+}
 
 export class RollDiceCommand extends Command<MonopolyRoom> {
     constructor(
@@ -55,6 +65,21 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         first = 2;
         second = 3;
 
+        // Set rolledDice to true
+        this.monopolyRoom.state.rolledDice = true;
+        if (first === second) {
+            if (player.isInJail) {
+                player.isInJail = false;
+                this.monopolyRoom.broadcast(MessageResponseTypes.PLAYER_RELEASED_FROM_JAIL, {
+                    playerId: player.id,
+                });
+                return;
+            }
+            // If doubles, allow another turn
+            this.monopolyRoom.state.currentTurn = this.client.sessionId;
+            this.monopolyRoom.state.rolledDice = false;
+        }
+
         let sum = first + second;
         let newPosition = player.position + sum;
         // Check pass GO
@@ -75,9 +100,6 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             position: player.position,
             turnId: this.state.currentTurn,
         });
-
-        // Set rolledDice to true
-        this.monopolyRoom.state.rolledDice = true;
     }
 
     private handleLandingOnTile(player: Player) {
@@ -90,10 +112,9 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             this.handleSpecialTile(player, tilePosition);
             return;
         }
-
-        this.handleAuctionProperties(player, tilePosition);
-
+        
         if (property.ownedby === "") {
+            this.handleAuctionProperties(player, tilePosition);
             this.monopolyRoom.broadcast("offer_buy_property", {
                 property,
                 playerId: player.id,
@@ -113,7 +134,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             // If the player is bankrupt, handle bankruptcy
             if (player.balance <= 0) {
                 player.isBankrupt = true;
-                this.monopolyRoom.broadcast("player_bankrupt", {
+                this.monopolyRoom.broadcast(MessageResponseTypes.PLAYER_BANKRUPT, {
                     playerId: player.id,
                 });
             }
@@ -148,8 +169,17 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
                 console.log(`${player.username} landed on GO!`);
                 break;
             case 4: // Income Tax
-                player.balance -= 200;
-                console.log(`${player.username} paid $200 in Income Tax.`);
+            case 38: // Luxury Tax
+                // player.balance*(1 - monopolyJSON.properties[position].amount / 100);
+                const property = monopolyJSON.properties.find(
+                    (tile) => tile.position === position
+                );
+
+                player.balance *= (1 - property.price / 100);
+
+
+                
+                console.log(`${player.username} paid ${property.price}% in Tax.`);
                 break;
             case 10: // Visiting Jail
                 console.log(`${player.username} is just visiting Jail.`);
@@ -190,36 +220,47 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         // Broadcast the drawn card to all players
 
         this.monopolyRoom.broadcast("chance_community_card", {
-            element: randomCard,
+            randomCard: randomCard,
             is_chance: isChance,
             turnId: this.state.currentTurn,
         });
     }
 
-    private applyCardEffect(player: Player, card: any) {
+    private applyCardEffect(player: Player, card: CommunityChestCard) {
         switch (card.action) {
-            case "goto":
-                if (card.tileid === "0") {
-                    player.position = 0; // Go to GO
-                    player.balance += 200;
-                } else if (card.tileid === "JAIL") {
-                    player.position = 10;
+            case "jail":
+                if (card.subaction === "goto") {
+                    player.position = 10; // Go to GO
                     player.isInJail = true;
+                } else if (card.title === "getout") {
+                    player.position = 10;
+                    player.isInJail = false;
                 }
                 break;
-            case "pay":
+            case "removefunds":
                 player.balance -= card.amount;
                 break;
-            case "collect":
+            case "addfunds":
                 player.balance += card.amount;
                 break;
             case "move":
-                player.position += card.count;
-                if (player.position >= 40) {
-                    player.position -= 40;
-                    player.balance += 200;
+                if (card.count > 0) {
+                    player.position += card.count;
+                    if (player.position >= 40) {
+                        player.position -= 40;
+                        player.balance += 200;
+                    }
+                    break;
                 }
-                break;
+                else {
+                    const titleid = card.title;
+                    const title = monopolyJSON.properties.find(
+                        (tile) => tile.name === titleid
+                    );
+                    if (title) {
+                        player.position = title.position;
+                    }
+                }
             default:
                 console.log(`Unhandled card action: ${card.action}`);
         }
