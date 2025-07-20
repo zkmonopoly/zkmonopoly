@@ -1,17 +1,17 @@
-import { shuffleEncryptV2Plaintext } from "@/libs/zkshuffle/proof/dist/src/shuffle/plaintext";
+import { shuffleEncryptV2Plaintext } from "@/libs/zkshuffle/proof/plaintext";
 import {
   dealMultiCompressedCard,
   generateDecryptProof,
   generateShuffleEncryptV2Proof,
   packToSolidityProof,
   SolidityProof,
-} from "@/libs/zkshuffle/proof/dist/src/shuffle/proof";
+} from "@/libs/zkshuffle/proof/proof";
 import {
   initDeck,
   prepareShuffleDeck,
   sampleFieldElements,
   samplePermutation,
-} from "@/libs/zkshuffle/proof/dist/src/shuffle/utilities";
+} from "@/libs/zkshuffle/proof/utilities";
 
 import { Contract, ethers, Signer } from "ethers";
 import shuffleManagerJson from "./ABI/ShuffleManager.json";
