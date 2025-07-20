@@ -7,6 +7,7 @@ import { Property } from "@rooms/state/PropertyState";
 import monopolyJSON from "@/assets/monopoly.json";
 import { RoomState } from "../schema/RoomState";
 import { MessageResponseTypes } from "@/types/MessageResponseTypes";
+import { ZKService } from "@/services/ZkService";
 export const AuctionCallnameList = <const>["alice", "bob", "charlie", "david"];
 
 interface CommunityChestCard {
@@ -50,20 +51,32 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         // Broadcast the player rolling the dice
         this.monopolyRoom.broadcast(MessageResponseTypes.PLAYER_ROLLING_DICE, {
         });
+
+        // Use the zkService to roll the dice
+        try {
+            
+            ZKService.getInstance(this.monopolyRoom.roomId).onCreateShuffleGameId((gameId: number) => {
+                console.log(`Received gameId: ${gameId}`);
+                // broadcast the gameId to all players
+                this.monopolyRoom.broadcast(MessageResponseTypes.CREATE_SHUFFLE_GAME_ID, {
+                    gameId: gameId,
+                    requestId: this.client.sessionId,
+                });
+                this.monopolyRoom.state.shuffleGameId = gameId;
+            });
+            await this.monopolyRoom.zkService.rollDice();
+            // const responseSecond = await this.monopolyRoom.zkService.rollDice();
+            // first = responseFirst.result;
+            // second = await responseSecond.result;
+        } catch (error) {
+            console.log(error);
+        }
+
         return;
 
         let first;
         let second;
 
-        // Use the zkService to roll the dice
-        // try {
-        //     const responseFirst = await this.monopolyRoom.zkService.rollDice();
-        //     const responseSecond = await this.monopolyRoom.zkService.rollDice();
-        //     first = responseFirst.result;
-        //     second = await responseSecond.result;
-        // } catch (error) {
-        //     console.log(error);
-        // }
 
         // first = Math.floor(Math.random() * 6) + 1;
         // second = Math.floor(Math.random() * 6) + 1;

@@ -19,7 +19,8 @@ export class RoomState extends Schema {
   @type("boolean")
   rolledDice: boolean = false;
 
-  @type(Auction) auction: Auction | null = null;
   @type("number")
   numberOfAuctions: number = 0;
+  @type("number")
+  shuffleGameId: number;
 }

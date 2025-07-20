@@ -34,8 +34,8 @@ export class ZKService {
       if (message.event === "DICE_ROLLED") {
         console.log(`[ZKService] Dice rolled: ${message.result} for Client ${message
           .clientId}`);
-
       }
+
       if (message.requestId && this.requestMap.has(message.requestId)) {
         const { resolve, timeout } = this.requestMap.get(message.requestId);
         clearTimeout(timeout);
@@ -78,5 +78,15 @@ export class ZKService {
   async rollDice(): Promise<any> {
     console.log(`[ZKService] Rolling dice for RoomID: ${this.currentRoomId}`);
     return this.sendRequest("ROLL_DICE", { clientId: this.currentRoomId });
+  }
+  
+  async onCreateShuffleGameId(callback: any): Promise<any> {
+    console.log(`[ZKService] Waiting for CREATE_SHUFFLE_GAME_ID event for RoomID: ${this.currentRoomId}`);
+    this.ws.on("message", (data) => {
+      const message = JSON.parse(data.toString());
+      if (message.event === "CREATE_SHUFFLE_GAME_ID") {
+        callback(message.gameId);
+      }
+    });
   }
 }

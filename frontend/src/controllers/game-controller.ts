@@ -53,6 +53,8 @@ export class GameController {
 
     private constructor() {
         this.network = new Network(this);
+
+
     }
 
     async createRoom(name: string, callback: any) {
@@ -102,12 +104,40 @@ export class GameController {
         this.onNewPlayer((message) => {});
     }
 
+    // For General Game Events
     onStartGame(callback: (message: any) => void) {
         console.log("Listening for start_game message");
         this.network.onMessage("start_game", (message) => {
             console.log("Game state start_game: ", message);
             callback(message);
         });
+
+
+        this.network.onMessage(
+            MessageResponseType.CREATE_SHUFFLE_GAME_ID,
+            async (message) => {
+                const shuffleManagerContract =
+                    "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707";
+                const provider = new ethers.providers.JsonRpcProvider(
+                    import.meta.env.VITE_HARDHAT_ENDPOINT ||
+                        "http://127.0.0.1:8545"
+                );
+
+                // get index of current player
+                const playerStates = $playerStates.get();
+                const index = playerStates.findIndex(
+                    (player) => player.id === this.network.getRoom()?.sessionId
+                );
+                const owner = provider.getSigner(index + 1);
+                const result = await playerRun(
+                    shuffleManagerContract,
+                    owner,
+                    message.gameId
+                );
+
+                console.log("Dice rolled by player:", result);
+            }
+        );
     }
 
     onYourTurn(callback: (message: any) => void) {
@@ -240,31 +270,6 @@ export class GameController {
     onRollDice() {
         console.log("Rolling dice...");
         this.network.send("roll_dice");
-
-        this.network.onMessage(
-            MessageResponseType.PLAYER_ROLLING_DICE,
-            async (message) => {
-                const shuffleManagerContract = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707";
-                const provider = new ethers.providers.JsonRpcProvider(
-                    import.meta.env.VITE_HARDHAT_ENDPOINT ||
-                        "http://127.0.0.1:8545"
-                );
-
-                // get index of current player
-                const playerStates = $playerStates.get();
-                const index = playerStates.findIndex(
-                    (player) => player.id === this.network.getRoom()?.sessionId
-                );
-                const owner = provider.getSigner(index+1);
-                const result =await playerRun(
-                    shuffleManagerContract,
-                    owner,
-                    1
-                );
-
-                console.log("Dice rolled by player:", result);
-            }
-        );
     }
 
     onAuctionResult(
