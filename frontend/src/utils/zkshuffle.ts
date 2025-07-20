@@ -9,10 +9,10 @@ export async function playerRun(shuffleManagerContract: string, owner: Signer, g
     shuffleManagerContract,
     owner,
     await ZKShuffle.generateShuffleSecret(),
-    await (await fetch("/zk/wasm/decrypt.wasm")).arrayBuffer(),
-    await (await fetch("/zk/zkey/decrypt.zkey")).arrayBuffer(),
-    await (await fetch("/zk/wasm/encrypt.wasm")).arrayBuffer(),
-    await (await fetch("/zk/zkey/encrypt.zkey")).arrayBuffer()
+    "/zk/wasm/decrypt.wasm",
+    "/zk/zkey/decrypt.zkey",
+    "/zk/wasm/encrypt.wasm",
+    "/zk/zkey/encrypt.zkey"
   );
   
   let playerIdx = await player.joinGame(gameId);
