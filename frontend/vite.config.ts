@@ -27,5 +27,8 @@ export default defineConfig({
   },
   server: {
     allowedHosts: ["zkmonopoly.trietng.ovh", "vite.trietng.ovh"]
+  },
+  build: {
+    commonjsOptions: { transformMixedEsModules: true } 
   }
 });
