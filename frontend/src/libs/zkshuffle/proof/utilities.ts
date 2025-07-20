@@ -1,7 +1,5 @@
 import { BigNumber } from "ethers";
-// @ts-ignore
-import * as ffjavascript from "ffjavascript";
-const Scalar = ffjavascript.Scalar;
+const Scalar = require("ffjavascript").Scalar;
 
 // todo
 export type BabyJub = any;
