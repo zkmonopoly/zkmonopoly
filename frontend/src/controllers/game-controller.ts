@@ -15,7 +15,7 @@ import {
 import { MessageRequestType } from "@/components/type/message-request-type";
 import { MessageResponseType } from "@/components/type/message-response-type";
 import { playerRun } from "@/utils/zkshuffle";
-// import { ethers } from "ethers";
+import { ethers } from "ethers";
 import { $isPaused } from "@/models/game";
 
 // declare global {
@@ -166,7 +166,7 @@ export class GameController {
                 // Auction config
                 this.auctionConfig = {
                     pathname: GameController.room?.roomId ?? "",
-                    selectedCommand: "alice"
+                    selectedCommand: "alice",
                 };
                 console.log("Auction config set:", this.auctionConfig);
 
@@ -175,8 +175,6 @@ export class GameController {
                     return;
                 }
                 $auctionModalOpen.set(true);
-
-
             }
         });
     }
@@ -189,8 +187,10 @@ export class GameController {
         var currentPlayer = playerStates.find(
             (player) => player.id === this.network.getRoom()?.sessionId
         );
-        $auctionIndex.set(GameController.getInstance().getNetwork().getRoomState()?.numberOfAuctions || 0);
-
+        $auctionIndex.set(
+            GameController.getInstance().getNetwork().getRoomState()
+                ?.numberOfAuctions || 0
+        );
 
         this.auctionConfig.selectedCommand =
             (currentPlayer?.aliasName as AuctionCallname) || "alice"; // Default to "alice" if not found
@@ -223,31 +223,55 @@ export class GameController {
             .then((result) => {
                 // Handle auction result (e.g., update winner, notify UI)
                 console.log("Auction result:", result);
-                
+
                 this.onAuctionResult(result, currentPlayer, bidValue);
                 const end = Date.now();
                 const executionTime = end - start;
                 $executionTime.set(Math.round(executionTime / 1000));
-
-                
             })
             .catch((err) => {
                 console.error("Auction error:", err);
-            }).finally(() => {
-                $isPaused.set(false);
             })
+            .finally(() => {
+                $isPaused.set(false);
+            });
     }
 
     onRollDice() {
         console.log("Rolling dice...");
         this.network.send("roll_dice");
-        // const shuffleManagerContract = remote.shuffleManagerContract;
-        // const provider = new ethers.providers.JsonRpcProvider(import.meta.env.VITE_HARDHAT_ENDPOINT || "http://127.0.0.1:8545");
-        // const owner = provider.getSigner(index);
-        // playerRun(shuffleManagerContract, owner, this.network.getRoom()?.roomId)
+
+        this.network.onMessage(
+            MessageResponseType.PLAYER_ROLLING_DICE,
+            async (message) => {
+                const shuffleManagerContract = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707";
+                const provider = new ethers.providers.JsonRpcProvider(
+                    import.meta.env.VITE_HARDHAT_ENDPOINT ||
+                        "http://127.0.0.1:8545"
+                );
+
+                // get index of current player
+                const playerStates = $playerStates.get();
+                const index = playerStates.findIndex(
+                    (player) => player.id === this.network.getRoom()?.sessionId
+                );
+                const owner = provider.getSigner(index+1);
+                const result =await playerRun(
+                    shuffleManagerContract,
+                    owner,
+                    1
+                );
+
+                console.log("Dice rolled by player:", result);
+            }
+        );
     }
 
-    onAuctionResult(result: any, currentPlayer?: PlayerState, bidValue?: number) {
+    onAuctionResult(
+        result: any,
+        currentPlayer?: PlayerState,
+        bidValue?: number
+    ) {
         console.log("Auction result received:", result);
         if (result.winner === 0) {
             $winner.set("No winner");
@@ -256,8 +280,7 @@ export class GameController {
         const aliasName = AuctionCallnameList[result.winner];
         const playerWinner = $playerStates.get().find((player) => {
             return player.aliasName === aliasName;
-        }
-        );
+        });
         if (playerWinner) {
             $winner.set(playerWinner.username);
             // only winner send the property to the GameController
@@ -272,7 +295,6 @@ export class GameController {
             $winner.set("Unknown Player");
         }
         // return playerWinner;
-
     }
 
     onBuyProperty(payload: any) {

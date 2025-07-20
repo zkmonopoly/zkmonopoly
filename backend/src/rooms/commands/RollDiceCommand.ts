@@ -46,6 +46,12 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             return;
         }
 
+
+        // Broadcast the player rolling the dice
+        this.monopolyRoom.broadcast(MessageResponseTypes.PLAYER_ROLLING_DICE, {
+        });
+        return;
+
         let first;
         let second;
 

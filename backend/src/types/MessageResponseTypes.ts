@@ -19,5 +19,6 @@ export enum MessageResponseTypes {
     AUCTION_START = "auction_start",
     AUCTION_BID_PLACED = "auction_bid_placed",
     AUCTION_ENDED = "auction_ended",
-    PLAYER_RELEASED_FROM_JAIL = "player_released_from_jail"
+    PLAYER_RELEASED_FROM_JAIL = "player_released_from_jail",
+    PLAYER_ROLLING_DICE = "player_rolling_dice",
 }

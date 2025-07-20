@@ -6,6 +6,7 @@ export enum MessageResponseType {
     PLAYER_LEFT = "player_left",
     PLAYER_READY = "player_ready",
     PLAYER_NOT_READY = "player_not_ready",
+    PLAYER_BANKRUPT = "player_bankrupt",
     PLAYER_FINISHED_TURN = "player_finished_turn",
     PLAYER_ROLL_DICE = "player_roll_dice",
     PLAYER_BUY_PROPERTY = "player_buy_property",
@@ -17,5 +18,7 @@ export enum MessageResponseType {
     PLAYER_GET_OUT_OF_JAIL_CARD = "player_get_out_of_jail_card",
     AUCTION_START = "auction_start",
     AUCTION_BID_PLACED = "auction_bid_placed",
-    AUCTION_ENDED = "auction_ended"
+    AUCTION_ENDED = "auction_ended",
+    PLAYER_RELEASED_FROM_JAIL = "player_released_from_jail",
+    PLAYER_ROLLING_DICE = "player_rolling_dice",
 }

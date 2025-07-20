@@ -2,13 +2,14 @@ import { Client, Room } from "colyseus.js";
 import { GameController } from "./game-controller";
 import { PlayerState } from "@/components/state/player-state";
 import { $playerStates } from "@/models/player";
+import { RoomState } from "@/components/state/room-state";
 
 // import dotenv from "dotenv";
 // dotenv.config();
 
 export class Network {
   private client: Client;
-  private room: Room<any> | undefined;
+  private room: Room<RoomState> | undefined;
   private gameController: GameController;
   private roomName: string = "my_room";
 
@@ -71,7 +72,7 @@ export class Network {
     return this.room?.state;
   }
 
-    convertToPlayerData(p: any): PlayerState {
+  convertToPlayerData(p: any): PlayerState {
       return {
         id: p.id,
         username: p.username,
