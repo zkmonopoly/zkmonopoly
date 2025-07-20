@@ -1,11 +1,11 @@
 // @ts-ignore
-import { Proof, packToSolidityProof, SolidityProof } from "@semaphore-protocol/proof";
+import { Proof, packToSolidityProof } from "@semaphore-protocol/proof";
 import { BabyJub, Deck, ecX2Delta, prepareDecryptData, prepareShuffleDeck } from "./utilities";
 import { shuffleEncryptV2Plaintext } from "./plaintext";
 import { Signer } from "ethers";
 const snarkjs = require("snarkjs");
 
-export { packToSolidityProof, SolidityProof };
+export { packToSolidityProof };
 
 type Contract = any;
 
@@ -112,7 +112,7 @@ export async function shuffle(
     shuffleEncryptV2WasmFile,
     shuffleEncryptV2ZkeyFile,
   );
-  const solidityProof: SolidityProof = packToSolidityProof(shuffleEncryptV2Output.proof);
+  const solidityProof = packToSolidityProof(shuffleEncryptV2Output.proof);
   await stateMachineContract
     .connect(gameContract)
     .shuffle(
@@ -194,7 +194,7 @@ export async function dealCompressedCard(
     cardIdx,
   );
   const decryptProof = await generateDecryptProof(Y, sk, pk, decryptWasmFile, decryptZkeyFile);
-  const solidityProof: SolidityProof = packToSolidityProof(decryptProof.proof);
+  const solidityProof = packToSolidityProof(decryptProof.proof);
   const res = await (
     await stateMachineContract.playerDealCards(
       gameId,
@@ -228,7 +228,7 @@ export async function dealUncompressedCard(
     decryptWasmFile,
     decryptZkeyFile,
   );
-  const solidityProof: SolidityProof = packToSolidityProof(decryptProof.proof);
+  const solidityProof = packToSolidityProof(decryptProof.proof);
 
   await stateMachineContract.playerDealCards(
     gameId,
@@ -273,7 +273,7 @@ export async function dealMultiCompressedCard(
       cards[i],
     );
     const decryptProof = await generateDecryptProof(Y, sk, pk, decryptWasmFile, decryptZkeyFile);
-    const solidityProof: SolidityProof = packToSolidityProof(decryptProof.proof);
+    const solidityProof = packToSolidityProof(decryptProof.proof);
 
     proofs[i] = solidityProof;
     decryptedDatas[i] = {

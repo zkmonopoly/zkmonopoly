@@ -3,8 +3,7 @@ import {
   dealMultiCompressedCard,
   generateDecryptProof,
   generateShuffleEncryptV2Proof,
-  packToSolidityProof,
-  SolidityProof,
+  packToSolidityProof
 } from "@/libs/zkshuffle/proof/proof";
 import {
   initDeck,
@@ -225,7 +224,7 @@ export class ZKShuffle implements IZKShuffle {
   private async _shuffle(gameId: number) {
     const numCards = (await this.smc.getNumCards(gameId)).toNumber();
     const shuffleFullProof = await this.generate_shuffle_proof(gameId);
-    const solidityProof: SolidityProof = packToSolidityProof(shuffleFullProof.proof);
+    const solidityProof = packToSolidityProof(shuffleFullProof.proof);
     await (
       await this.smc.playerShuffle(gameId, solidityProof, {
         config: await this.smc.cardConfig(gameId),
