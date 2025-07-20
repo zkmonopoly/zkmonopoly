@@ -3,22 +3,22 @@ import { Signer } from "ethers";
 
 export async function playerRun(shuffleManagerContract: string, owner: Signer, gameId: number) {
   const address = await owner.getAddress();
-  console.log("Player ", address.slice(0, 6).concat("..."), "init shuffle context!");
+  console.log("Player ", address, "init shuffle context!");
 
   const player = await ZKShuffle.create(
     shuffleManagerContract,
     owner,
     await ZKShuffle.generateShuffleSecret(),
-    await (await fetch("https://f005.backblazeb2.com/file/zkshuffle/wasm/decrypt.wasm")).arrayBuffer(),
-    await (await fetch("https://f005.backblazeb2.com/file/zkshuffle/zkey/decrypt.zkey")).arrayBuffer(),
-    await (await fetch("https://f005.backblazeb2.com/file/zkshuffle/wasm/encrypt.wasm")).arrayBuffer(),
-    await (await fetch("https://f005.backblazeb2.com/file/zkshuffle/zkey/encrypt.zkey")).arrayBuffer()
+    await (await fetch("/zk/wasm/decrypt.wasm")).arrayBuffer(),
+    await (await fetch("/zk/zkey/decrypt.zkey")).arrayBuffer(),
+    await (await fetch("/zk/wasm/encrypt.wasm")).arrayBuffer(),
+    await (await fetch("/zk/zkey/encrypt.zkey")).arrayBuffer()
   );
   
   let playerIdx = await player.joinGame(gameId);
   console.log(
     "Player ",
-    address.slice(0, 6).concat("..."),
+    address,
     "Join Game ",
     gameId,
     " asigned playerId ",

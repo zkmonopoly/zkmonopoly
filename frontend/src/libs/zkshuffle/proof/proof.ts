@@ -3,7 +3,7 @@ import { Proof, packToSolidityProof } from "@semaphore-protocol/proof";
 import { BabyJub, Deck, ecX2Delta, prepareDecryptData, prepareShuffleDeck } from "./utilities";
 import { shuffleEncryptV2Plaintext } from "./plaintext";
 import { Signer } from "ethers";
-const snarkjs = require("snarkjs");
+import * as snarkjs from "snarkjs";
 
 export { packToSolidityProof };
 

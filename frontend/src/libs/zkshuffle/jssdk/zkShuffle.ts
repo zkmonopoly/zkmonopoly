@@ -15,8 +15,10 @@ import {
 import { Contract, ethers, Signer } from "ethers";
 import shuffleManagerJson from "./ABI/ShuffleManager.json";
 
-const buildBabyjub = require("circomlibjs").buildBabyjub;
-const Scalar = require("ffjavascript").Scalar;
+import { buildBabyjub } from "circomlibjs";
+// @ts-ignore
+import * as ffjavascript from "ffjavascript";
+const Scalar = ffjavascript.Scalar;
 
 export type BabyJub = any;
 export type EC = any;

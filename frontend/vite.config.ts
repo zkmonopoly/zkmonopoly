@@ -9,7 +9,11 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    nodePolyfills()
+    nodePolyfills({
+      overrides: {
+        "fs": "memfs"
+      }
+    })
   ],
   resolve: {
     alias: {
