@@ -1,4 +1,5 @@
 import { atom } from "nanostores";
+import * as MapData from "@/components/game/core/assets/map_data.json";
 
 export interface PropertyInfo {
   name: string;
@@ -19,3 +20,7 @@ export const $propertyInfo = atom<PropertyInfo>({
 export interface RailroadPropertyInfo {
   name: string;
 }
+
+export const PropertiesMap = new Map(
+  MapData.properties.map((property) => [property.position, property])
+);

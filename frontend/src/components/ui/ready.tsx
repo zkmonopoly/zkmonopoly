@@ -1,8 +1,9 @@
-import { Button, Input, TooltipTrigger } from "react-aria-components";
+import { Button } from "react-aria-components";
 import { buttonStyles } from "./core/styles/button";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { GameController } from "@/controllers/game-controller";
+import { LuHand, LuThumbsUp } from "react-icons/lu";
 
 export default function Ready() {
     const context = GameController.getInstance();
@@ -40,10 +41,10 @@ export default function Ready() {
                     onPress={handleReady}
                     className={twMerge(
                         buttonStyles,
-                        "bg-green-500 pressed:bg-red-400"
+                        "bg-green-500 pressed:bg-green-400"
                     )}
                 >
-                    READY
+                    <LuHand className="inline-block mb-1"/> Ready
                 </Button>
             )}
             {started && (
@@ -52,10 +53,10 @@ export default function Ready() {
                     onPress={handleFinishTurn}
                     className={twMerge(
                         buttonStyles,
-                        "bg-green-500 pressed:bg-red-400"
+                        "bg-green-500 pressed:bg-green-400"
                     )}
                 >
-                    Finish Turn
+                    <LuThumbsUp className="inline-block mb-1"/> Finish Turn
                 </Button>
             )}
         </>

@@ -20,14 +20,11 @@ import { NodePositions } from "@/components/game/core/constants/common";
 import Dice, { $dices } from "@/components/game/dice";
 import TaxSymbolMaterial from "@/components/game/core/materials/tax-symbol-material";
 import { useGameController } from "@/contexts/game-context";
-import * as MapData from "@/components/game/core/assets/map_data.json";
 import Players from "./players";
-import { $propertyInfo } from "@/models/property";
+import { $propertyInfo, PropertiesMap } from "@/models/property";
 import JsText from "@/components/game/core/texts/js-text";
 
-const PropertiesMap = new Map(
-  MapData.properties.map((property) => [property.position, property])
-);
+
 const cameraSpecs = {
   birdview: new Vector3(17.25, 37, -17.25),
   position: new Vector3(17.25, 30, 20),

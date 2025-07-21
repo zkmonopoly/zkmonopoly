@@ -3,14 +3,10 @@ import { LuSettings, LuSpade } from "react-icons/lu";
 import { tabsStyles, tabListStyles, tabPanelStyles } from "./core/styles/tabs";
 import TooltipTriggerTab from "./tooltip-trigger-tab";
 import { twMerge } from "tailwind-merge";
-import { ColorGroupSet } from "../game/core/constants/colors";
-import ElectricCompanyCard from "./cards/electric-company-card";
-import PropertyCard from "./cards/property-card";
-import RailroadPropertyCard from "./cards/railroad-property-card";
-import WaterCompanyCard from "./cards/water-company-card";
 import { $propertyInfo } from "@/models/property";
 import { useStore } from "@nanostores/react";
 import { useState } from "react";
+import Property from "./property";
 
 export default function GameMenu() {
   const propertyInfo = useStore($propertyInfo);
@@ -36,25 +32,7 @@ export default function GameMenu() {
           tabPanelStyles,
           "h-full"
         )}>
-          {propertyInfo.group === "railroad" ?
-            <RailroadPropertyCard propertyInfo={{
-              name: propertyInfo.name
-            }}/> : (
-              propertyInfo.group === "electric" ?
-              <ElectricCompanyCard /> : (
-                propertyInfo.group === "water" ?
-                <WaterCompanyCard /> : (
-                  propertyInfo.group == null ?
-                  null : (
-                    ColorGroupSet.has(propertyInfo.group!) &&
-                    <PropertyCard
-                      propertyInfo={propertyInfo}
-                    />
-                  )
-                )
-              )
-            )
-          }
+          <Property propertyInfo={propertyInfo}/>
         </TabPanel>
         <TabPanel id="tabSettings" className={twMerge(
           tabPanelStyles,
