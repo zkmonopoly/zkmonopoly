@@ -4,7 +4,7 @@ export interface PlayerState {
     icon: number;
     position: number;
     balance: number;
-    properties: Array<any>;
+    properties: Array<string>;
     isInJail: boolean;
     jailTurnsRemaining: number;
     getoutCards: number;

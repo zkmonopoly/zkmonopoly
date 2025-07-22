@@ -1,23 +1,58 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "react-aria-components";
 import { LuChevronLeft, LuChevronRight, LuHouse, LuPlus, LuX } from "react-icons/lu";
 import { twMerge } from "tailwind-merge";
 import { buttonStyles } from "./core/styles/button";
 import { modalStyles } from "./core/styles/modal";
 import { ModalWrapper } from "./core/wrappers/modal-wrapper";
-import { PropertiesMap } from "@/models/property";
+import { IdPropertiesMap, PropertiesMap } from "@/models/property";
 import Property from "./property";
+import { $playerStates } from "@/models/player";
+import { GameController } from "@/controllers/game-controller";
+import { useStore } from "@nanostores/react";
 
 export default function PropertyManager() {
   const [open, setOpen] = useState(false);
-  // const propertyConfigs = useStore(array of PropertyConfig)
-  // interface PropertyConfig {
-  //   position: number;
-  //   houses: number;
-  // }
-  // const properties = useMemo(() => propertyConfigs.map(...), [propertyConfigs])
-  const sampleProperties = [PropertiesMap.get(1), PropertiesMap.get(5)]
+  const [building, setBuilding] = useState(0);
+
+  const playerStates = useStore($playerStates);
+  const sessionId = GameController.getInstance().getNetwork().getRoom()?.sessionId;
+
+  const player = useMemo(() => playerStates.find(player => player.id === sessionId), [playerStates]);
+
+  const properties = useMemo(() => {
+    if (!player) return [];
+    return player.properties;
+  }, [player]);
+
+  console.log("Properties:", properties);
+
+  // Loop the properties to get the sample properties
+  const sampleProperties = properties.map(propertyId => {
+    return IdPropertiesMap.get(propertyId);
+
+  });
+  // const sampleProperties = []
   const [currentProperty, setCurrentProperty] = useState(0);
+
+
+  useEffect(() => {
+    // get property id
+    if (sampleProperties.length > 0) {
+      const property = sampleProperties[currentProperty];
+      if (property) {
+        if (property.id !== undefined) {
+          const propertyInfoFromServer = GameController.getInstance().getNetwork().getRoomState()?.properties.get(property.id);
+          if (propertyInfoFromServer) {
+            setBuilding(propertyInfoFromServer.buildings);
+          } else {
+            setBuilding(0);
+          }
+        }
+      }
+    }
+  }, [currentProperty]);
+
   return (
     <>
       <Button className={twMerge(buttonStyles, "bg-yellow-500 pressed:bg-yellow-400")} onPress={() => setOpen(true)}>
@@ -53,7 +88,7 @@ export default function PropertyManager() {
               <div className="grid grid-cols-2">
                 <div className="flex gap-2 items-center">
                   <LuHouse className="inline-block mb-1" color="#00c951" fill="#00c951"/>
-                  <div>999</div>
+                  <div>{building}</div>
                 </div>
                 <Button className={buttonStyles}>
                   <LuPlus className="inline-block mb-1"/> Buy a House

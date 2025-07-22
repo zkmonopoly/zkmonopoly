@@ -3,6 +3,7 @@ import * as MapData from "@/components/game/core/assets/map_data.json";
 
 export interface PropertyInfo {
   name: string;
+  id?: string;
   position: number;
   price?: number;
   rent?: number;
@@ -14,8 +15,9 @@ export interface PropertyInfo {
 
 export const $propertyInfo = atom<PropertyInfo>({
   name: "go",
-  position: 0
+  position: 0,
 });
+
 
 export interface RailroadPropertyInfo {
   name: string;
@@ -23,4 +25,8 @@ export interface RailroadPropertyInfo {
 
 export const PropertiesMap = new Map(
   MapData.properties.map((property) => [property.position, property])
+);
+
+export const IdPropertiesMap = new Map(
+  MapData.properties.map((property) => [property.id, property])
 );

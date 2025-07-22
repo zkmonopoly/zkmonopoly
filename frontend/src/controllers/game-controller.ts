@@ -309,6 +309,16 @@ export class GameController {
             console.log("Game state property_purchased: ", payload);
             callback?.(payload);
             this.payload = payload;
+            // update property state in the UI
+            const playerStates = $playerStates.get();
+            const player = playerStates.find(
+                (player) => player.id === this.network.getRoom()?.sessionId
+            );
+            if (player) {
+                player.properties.push(payload.propertyId);
+                $playerStates.set(playerStates);
+            }
+            
         });
         this.network.onMessage(MessageResponseType.BUY_PROPERTY_FAIL, (message) => {
             console.error("Failed to buy property:", message);
