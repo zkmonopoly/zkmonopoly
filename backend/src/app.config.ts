@@ -7,6 +7,9 @@ import { exec } from "child_process";
  * Import your Room files
  */
 import { MonopolyRoom } from "./rooms/MonopolyRoom";
+import { readFileSync } from "fs";
+import path from "path";
+import { homedir } from "os";
 
 export default config({
 
@@ -56,6 +59,11 @@ export default config({
                     </html>`
                 )
             })
+        });
+
+        app.get("/shuffle_manager_contract", (_, res) => {
+            const data = readFileSync(path.join(homedir(), ".zkshuffle", "shuffle_manager_contract.txt"), { encoding: 'utf8' });
+            res.send(data);
         });
     },
 
