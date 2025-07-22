@@ -302,12 +302,17 @@ export class GameController {
         // return playerWinner;
     }
 
-    onBuyProperty(payload: any) {
+    onBuyProperty(payload: any, callback?: (message: any) => void) {
         this.network.send("buy_property", payload);
         console.log("Buying property with payload:", payload);
-        this.network.onMessage("property_purchased", (payload) => {
+        this.network.onMessage(MessageResponseType.BUY_PROPERTY_SUCCESS, (payload) => {
             console.log("Game state property_purchased: ", payload);
+            callback?.(payload);
             this.payload = payload;
+        });
+        this.network.onMessage(MessageResponseType.BUY_PROPERTY_FAIL, (message) => {
+            console.error("Failed to buy property:", message);
+            callback?.(message);
         });
     }
 

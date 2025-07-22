@@ -21,6 +21,10 @@ export default function PropertyCard(props: PropertyCardProps) {
           <span className="text-monopoly-m font-bold break-word text-center">{props.propertyInfo.name}</span>
         </div>
         <div className="text-black space-y-[2px] my-[7.5px] text-monopoly-s">
+            <div className="flex justify-between">
+            <div>Price</div>
+            <div>${props.propertyInfo.price}</div>
+          </div>
           <div className="flex justify-between">
             <div>Rent</div>
             <div>${props.propertyInfo.rent}</div>

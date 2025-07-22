@@ -8,6 +8,7 @@ import { GameController } from "@/controllers/game-controller";
 import Auction from "./auction";
 import Ready from "./ready";
 import PropertyManager from "./property-manager";
+import BuyProperty from "./buy-property";
 
 export default function Control() {
   const context = GameController.getInstance();
@@ -24,6 +25,7 @@ export default function Control() {
       <PropertyManager/>
       <Inviter/>
       <Auction />
+      <BuyProperty />
     </div>
   )
 }
