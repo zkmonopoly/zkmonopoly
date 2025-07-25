@@ -4,10 +4,15 @@ import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 
+interface ResultDiceRolledResponse {
+  result: number;
+}
+
 export class ZKService {
   private static instance: ZKService;
   private ws: WebSocket;
   private currentRoomId: string;
+  public resultDiceRolled: Array<number> = [];
   private requestMap: Map<string, { resolve: (response: any) => void, timeout: NodeJS.Timeout }>;
 
   private constructor(currentRoomId: string) {
@@ -60,6 +65,19 @@ export class ZKService {
     return ZKService.instance;
   }
 
+  public onResultDiceRolled(callback: (resultDiceRolled: Array<number>) => void): void {
+    this.ws.on("message", (data) => {
+      const message = JSON.parse(data.toString());
+      if (message.event === "RESULT_DICE_ROLLED") {
+        this.resultDiceRolled.push(message.result);
+        if (this.resultDiceRolled.length === 2) {
+          callback(this.resultDiceRolled);
+          this.resultDiceRolled = [];
+        }
+      }
+    });
+  }
+
   private async sendRequest(action: string, data: any = {}): Promise<any> {
     return new Promise((resolve, reject) => {
       const requestId = uuidv4();
@@ -75,9 +93,9 @@ export class ZKService {
 
 
 
-  async rollDice(): Promise<any> {
+  async rollDice(numberOfPlayers: number): Promise<any> {
     console.log(`[ZKService] Rolling dice for RoomID: ${this.currentRoomId}`);
-    return this.sendRequest("ROLL_DICE", { clientId: this.currentRoomId });
+    return this.sendRequest("ROLL_DICE", { clientId: this.currentRoomId, numberOfPlayers:numberOfPlayers });
   }
   
   async onCreateShuffleGameId(callback: any): Promise<any> {
@@ -86,6 +104,7 @@ export class ZKService {
       const message = JSON.parse(data.toString());
       if (message.event === "CREATE_SHUFFLE_GAME_ID") {
         callback(message.gameId);
+        this.resultDiceRolled = [];
       }
     });
   }

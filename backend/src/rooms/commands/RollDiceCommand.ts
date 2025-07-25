@@ -34,6 +34,14 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         );
         var isGameReady = true;
 
+        // number of players that are ready
+        let numberOfPlayersReady = 0;
+        for (const p of this.monopolyRoom.state.players.values()) {
+            if (p.ready && !p.isBankrupt) {
+                numberOfPlayersReady++;
+            }
+        }
+
         this.monopolyRoom.state.players.forEach((p) => {
             if (!p.ready) {
                 isGameReady = false;
@@ -49,8 +57,8 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
 
 
         // Broadcast the player rolling the dice
-        this.monopolyRoom.broadcast(MessageResponseTypes.PLAYER_ROLLING_DICE, {
-        });
+        // this.monopolyRoom.broadcast(MessageResponseTypes.PLAYER_ROLLING_DICE, {
+        // });
 
         // Use the zkService to roll the dice
         try {
@@ -61,10 +69,16 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
                 this.monopolyRoom.broadcast(MessageResponseTypes.CREATE_SHUFFLE_GAME_ID, {
                     gameId: gameId,
                     requestId: this.client.sessionId,
+                    numberOfPlayers: numberOfPlayersReady,
                 });
                 this.monopolyRoom.state.shuffleGameId = gameId;
             });
-            await this.monopolyRoom.zkService.rollDice();
+            await this.monopolyRoom.zkService.rollDice(numberOfPlayersReady);
+            this.monopolyRoom.zkService.onResultDiceRolled((result: Array<number>) => {
+                console.log(`Received dice roll result: ${result}`);
+                this.handleRollDiceWhenCompleted(result[0], result[1]);
+            });
+
             // const responseSecond = await this.monopolyRoom.zkService.rollDice();
             // first = responseFirst.result;
             // second = await responseSecond.result;
@@ -74,15 +88,73 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
 
         return;
 
-        let first;
-        let second;
+        // let first;
+        // let second;
 
 
         // first = Math.floor(Math.random() * 6) + 1;
         // second = Math.floor(Math.random() * 6) + 1;
 
-        first = 2;
-        second = 3;
+        // // first = 1;
+        // // second = 2;
+
+        // // Set rolledDice to true
+        // this.monopolyRoom.state.rolledDice = true;
+        // if (first === second) {
+        //     if (player.isInJail) {
+        //         player.isInJail = false;
+        //         this.monopolyRoom.broadcast(MessageResponseTypes.PLAYER_RELEASED_FROM_JAIL, {
+        //             playerId: player.id,
+        //         });
+        //         return;
+        //     }
+        //     // If doubles, allow another turn
+        //     this.monopolyRoom.state.currentTurn = this.client.sessionId;
+        //     this.monopolyRoom.state.rolledDice = false;
+        // }
+
+        // let sum = first + second;
+        // let newPosition = player.position + sum;
+        // // Check pass GO
+        // if (newPosition >= 40) {
+        //     newPosition = newPosition % 40;
+        //     // Give them money for passing GO
+        //     player.balance += 200;
+        // }
+        // player.position = newPosition;
+
+        // // Check tile
+        // this.handleLandingOnTile(player);
+
+        // // broadcast dice roll result
+        // this.monopolyRoom.broadcast("dice_roll_result", {
+        //     first,
+        //     second,
+        //     position: player.position,
+        //     turnId: this.state.currentTurn,
+        // });
+    }
+
+    public handleRollDiceWhenCompleted(
+        first: number,
+        second: number,
+    ){
+        first += 1;
+        second += 1;
+
+        if (first < 1 || first > 6) {
+            first = Math.floor(Math.random() * 6) + 1;
+        }
+        
+        if (second < 1 || second > 6) {
+            second = Math.floor(Math.random() * 6) + 1;
+        }
+
+        const player = this.monopolyRoom.state.players.get(
+            this.client.sessionId
+        );
+
+        // first = 1;
 
         // Set rolledDice to true
         this.monopolyRoom.state.rolledDice = true;
@@ -119,7 +191,8 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             position: player.position,
             turnId: this.state.currentTurn,
         });
-    }
+
+    } 
 
     private handleLandingOnTile(player: Player) {
         const tilePosition = player.position;
@@ -132,13 +205,13 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             return;
         }
         
-        if (property.ownedby === "") {
+        if (property.ownedby === "" || property.ownedby === player.id) {
             this.handleAuctionProperties(player, tilePosition);
-            this.monopolyRoom.broadcast("offer_buy_property", {
-                property,
+            this.monopolyRoom.broadcast(MessageResponseTypes.OFFER_BUY_PROPERTY, {
+                propertyId: property.id,
                 playerId: player.id,
             });
-        } else if (property.ownedby !== player.id && !property.mortgaged) {
+        } else if (property.ownedby !== player.id) {
             const rentAmount = this.calculateRent(property);
             player.balance -= rentAmount;
 

@@ -43,9 +43,9 @@ export class BuyPropertyCommand extends Command<MonopolyRoom, { client: Client; 
                 property.buildings++;
                 player.balance -= property.housecost;
 
-                monopolyRoom.broadcast("buy_property", {
+                monopolyRoom.broadcast("buy_property_success", {
                     propertyId,
-                    newBuildings: property.buildings,
+                    ownerId: client.sessionId,
                 });
                 return;
             } else {
@@ -74,10 +74,9 @@ export class BuyPropertyCommand extends Command<MonopolyRoom, { client: Client; 
         property.ownedby = client.sessionId;
         player.properties.push(propertyId);
 
-        monopolyRoom.broadcast("property_purchased", {
+        monopolyRoom.broadcast("buy_property_success", {
             propertyId: propertyId,
             ownerId: client.sessionId,
-            newBalance: player.balance,
         });
 
         console.log(
