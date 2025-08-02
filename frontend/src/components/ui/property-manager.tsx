@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 import { buttonStyles } from "./core/styles/button";
 import { modalStyles } from "./core/styles/modal";
 import { ModalWrapper } from "./core/wrappers/modal-wrapper";
-import { IdPropertiesMap, PropertiesMap } from "@/models/property";
+import { $house, IdPropertiesMap } from "@/models/property";
 import Property from "./property";
 import { $playerStates } from "@/models/player";
 import { GameController } from "@/controllers/game-controller";
@@ -44,6 +44,10 @@ export default function PropertyManager() {
         if (property.id !== undefined) {
           const propertyInfoFromServer = GameController.getInstance().getNetwork().getRoomState()?.properties.get(property.id);
           if (propertyInfoFromServer) {
+            $house.set({
+              position: propertyInfoFromServer.position,
+              building: propertyInfoFromServer.buildings
+            });
             setBuilding(propertyInfoFromServer.buildings);
           } else {
             setBuilding(0);
