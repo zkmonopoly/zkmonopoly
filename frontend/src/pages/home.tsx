@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm, Controller, set } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import {
   Tabs,
   TabList,
@@ -11,11 +11,10 @@ import {
   Label,
   TextField,
   TabsContext,
-  Key,
-  Select,
+  Key
 } from "react-aria-components";
 import { twJoin } from "tailwind-merge";
-import { LuDoorOpen, LuGlobe, LuNetwork, LuPlus } from "react-icons/lu";
+import { LuArrowDownUp, LuDoorOpen, LuGlobe, LuNetwork, LuPlus } from "react-icons/lu";
 import {
   tabListStyles,
   tabPanelStyles,
@@ -43,6 +42,7 @@ interface JoinFormData {
 
 interface CreateFormData {
     name: string;
+    turns: number;
     mode: GameMode;
 }
 
@@ -52,16 +52,18 @@ export default function Home() {
 
   const gameController = GameController.getInstance();
 
-  const onSubmitJoinOrCreateRoom= (formData: CreateFormData) => {
-    gameController.joinOrCreateRoom(formData.name, () => {
-      gameController.onInitialGameMessage((payload: any) => {
-        console.log("Initial joinOrCreateRoom received:", payload);
-        navigate("/game/" + gameController.getNetwork().getRoom()?.roomId);
-      });
-    });
-  };
+  // const onSubmitJoinOrCreateRoom= (formData: CreateFormData) => {
+  //   gameController.joinOrCreateRoom(formData.name, () => {
+  //     gameController.onInitialGameMessage((payload: any) => {
+  //       console.log("Initial joinOrCreateRoom received:", payload);
+  //       navigate("/game/" + gameController.getNetwork().getRoom()?.roomId);
+  //     });
+  //   });
+  // };
 
   const onSubmitCreateRoom = (formData: CreateFormData) => {
+    console.log(formData);
+    return;
     gameController.createRoom(formData.name, () => {
       gameController.onInitialGameMessage((payload: any) => {
         console.log("Initial createRoom received:", payload);
@@ -199,6 +201,23 @@ export default function Home() {
                   <Input ref={ref} />
                   <FieldError>{error?.message}</FieldError>
                 </TextField>
+              )}
+            />
+            <Controller
+              control={createForm.control}
+              name="turns"
+              rules={{ required: "Turns is required." }}
+              render={({
+                field: { onChange },
+                fieldState: { error },
+              }) => (
+                <>
+                  <Label>Turns</Label>
+                  <SelectWrapper onSelectionChange={(key) => onChange(Number.parseInt(key.toString()))} className="pt-1 border rounded-md w-[200px] h-[38px] border-neutral-500">
+                    <SelectItem id="5"><LuArrowDownUp className="mb-1"/> 5</SelectItem>
+                  </SelectWrapper>
+                  <FieldError>{error?.message}</FieldError>
+                </>
               )}
             />
             <Controller
