@@ -121,7 +121,6 @@ export class MonopolyRoom extends Room<RoomState> {
         });
 
         // Message: "roll_dice" – roll dice, update player position, and broadcast the result.
-        // Temporary random dice roll implementation, will be replaced with ZK-Shuffle.
         this.onMessage(MessageRequestTypes.ROLL_DICE, (client) => {
             this.dispatcher.dispatch(new RollDiceCommand(this, client));
         });

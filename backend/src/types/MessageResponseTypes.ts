@@ -22,4 +22,7 @@ export enum MessageResponseTypes {
     PLAYER_RELEASED_FROM_JAIL = "player_released_from_jail",
     PLAYER_ROLLING_DICE = "player_rolling_dice",
     CREATE_SHUFFLE_GAME_ID = "create_shuffle_game_id",
+    OFFER_BUY_PROPERTY = "offer_buy_property",
+    BUY_PROPERTY_SUCCESS = "buy_property_success",
+    BUY_PROPERTY_FAIL = "buy_property_fail",
 }
