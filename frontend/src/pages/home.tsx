@@ -63,7 +63,6 @@ export default function Home() {
 
   const onSubmitCreateRoom = (formData: CreateFormData) => {
     console.log(formData);
-    return;
     gameController.createRoom(formData.name, () => {
       gameController.onInitialGameMessage((payload: any) => {
         console.log("Initial createRoom received:", payload);
