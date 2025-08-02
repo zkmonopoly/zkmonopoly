@@ -23,6 +23,7 @@ import { useGameController } from "@/contexts/game-context";
 import Players from "./players";
 import { $propertyInfo, PropertiesMap } from "@/models/property";
 import JsText from "@/components/game/core/texts/js-text";
+import House from "@/components/game/house";
 
 
 const cameraSpecs = {
@@ -414,6 +415,7 @@ export default function GameScene() {
                 />
                 <Players />
                 <Dice />
+                <House/>
               </Suspense>
             </shadowGenerator>
           </directionalLight>
