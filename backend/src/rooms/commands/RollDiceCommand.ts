@@ -34,8 +34,8 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         );
         var isGameReady = true;
 
-        // number of players that are ready
-        let numberOfPlayersReady = 0;
+        // number of players that are ready (include the dealer)
+        let numberOfPlayersReady = 1;
         for (const p of this.monopolyRoom.state.players.values()) {
             if (p.ready && !p.isBankrupt) {
                 numberOfPlayersReady++;
@@ -55,106 +55,32 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             return;
         }
 
+        // // Use the zkService to roll the dice
+        // try {
+        //     ZKService.getInstance(this.monopolyRoom.roomId).removeResultDiceRolledListener();
+        //     ZKService.getInstance(this.monopolyRoom.roomId).onResultDiceRolled(async (result: Array<number>) => {
+        //         console.log(`Received dice roll result: ${result}`);
+        //         if (result.length < 2) {
+        //             await this.handleRollDiceInZkShuffle(numberOfPlayersReady);
+        //         } else {
+        //             this.handleRollDiceWhenCompleted(result[0], result[1]);
+        //             // Clean up listener after handling the complete roll
+        //             ZKService.getInstance(this.monopolyRoom.roomId).removeResultDiceRolledListener();
+        //         }
+        //     });
 
-        // Broadcast the player rolling the dice
-        // this.monopolyRoom.broadcast(MessageResponseTypes.PLAYER_ROLLING_DICE, {
-        // });
-
-        // Use the zkService to roll the dice
-        try {
-            
-            ZKService.getInstance(this.monopolyRoom.roomId).onCreateShuffleGameId((gameId: number) => {
-                console.log(`Received gameId: ${gameId}`);
-                // broadcast the gameId to all players
-                this.monopolyRoom.broadcast(MessageResponseTypes.CREATE_SHUFFLE_GAME_ID, {
-                    gameId: gameId,
-                    requestId: this.client.sessionId,
-                    numberOfPlayers: numberOfPlayersReady,
-                });
-                this.monopolyRoom.state.shuffleGameId = gameId;
-            });
-            await this.monopolyRoom.zkService.rollDice(numberOfPlayersReady);
-            this.monopolyRoom.zkService.onResultDiceRolled((result: Array<number>) => {
-                console.log(`Received dice roll result: ${result}`);
-                this.handleRollDiceWhenCompleted(result[0], result[1]);
-            });
-
-            // const responseSecond = await this.monopolyRoom.zkService.rollDice();
-            // first = responseFirst.result;
-            // second = await responseSecond.result;
-        } catch (error) {
-            console.log(error);
-        }
-
-        return;
-
-        // let first;
-        // let second;
-
+        //     await this.handleRollDiceInZkShuffle(numberOfPlayersReady);
+        // } catch (error) {
+        //     console.log(error);
+        // }
+        let first;
+        let second;
 
         // first = Math.floor(Math.random() * 6) + 1;
         // second = Math.floor(Math.random() * 6) + 1;
 
-        // // first = 1;
-        // // second = 2;
-
-        // // Set rolledDice to true
-        // this.monopolyRoom.state.rolledDice = true;
-        // if (first === second) {
-        //     if (player.isInJail) {
-        //         player.isInJail = false;
-        //         this.monopolyRoom.broadcast(MessageResponseTypes.PLAYER_RELEASED_FROM_JAIL, {
-        //             playerId: player.id,
-        //         });
-        //         return;
-        //     }
-        //     // If doubles, allow another turn
-        //     this.monopolyRoom.state.currentTurn = this.client.sessionId;
-        //     this.monopolyRoom.state.rolledDice = false;
-        // }
-
-        // let sum = first + second;
-        // let newPosition = player.position + sum;
-        // // Check pass GO
-        // if (newPosition >= 40) {
-        //     newPosition = newPosition % 40;
-        //     // Give them money for passing GO
-        //     player.balance += 200;
-        // }
-        // player.position = newPosition;
-
-        // // Check tile
-        // this.handleLandingOnTile(player);
-
-        // // broadcast dice roll result
-        // this.monopolyRoom.broadcast("dice_roll_result", {
-        //     first,
-        //     second,
-        //     position: player.position,
-        //     turnId: this.state.currentTurn,
-        // });
-    }
-
-    public handleRollDiceWhenCompleted(
-        first: number,
-        second: number,
-    ){
-        first += 1;
-        second += 1;
-
-        if (first < 1 || first > 6) {
-            first = Math.floor(Math.random() * 6) + 1;
-        }
-        
-        if (second < 1 || second > 6) {
-            second = Math.floor(Math.random() * 6) + 1;
-        }
-
-        const player = this.monopolyRoom.state.players.get(
-            this.client.sessionId
-        );
-
-        // first = 1;
+        first = 2;
+        second = 3;
 
         // Set rolledDice to true
         this.monopolyRoom.state.rolledDice = true;
@@ -191,8 +117,89 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             position: player.position,
             turnId: this.state.currentTurn,
         });
+    }
 
-    } 
+    private async handleRollDiceInZkShuffle(numberOfPlayersReady: number) {
+        const zkService = ZKService.getInstance(this.monopolyRoom.roomId);
+        // Remove any existing listeners
+        zkService.removeShuffleGameIdListener();
+        
+        await zkService.onCreateShuffleGameId((gameId: number) => {
+            console.log(`Received gameId: ${gameId}`);
+            // broadcast the gameId to all players
+            this.monopolyRoom.broadcast(
+                MessageResponseTypes.CREATE_SHUFFLE_GAME_ID,
+                {
+                    gameId: gameId,
+                    requestId: this.client.sessionId,
+                    numberOfPlayers: numberOfPlayersReady,
+                }
+            );
+            this.monopolyRoom.state.shuffleGameId = gameId;
+            // Clean up the listener after use
+            zkService.removeShuffleGameIdListener();
+        });
+        
+        await zkService.rollDice(numberOfPlayersReady);
+    }
+
+    public handleRollDiceWhenCompleted(first: number, second: number) {
+        first += 1;
+        second += 1;
+        // make first and second to natural number
+        first = Math.floor(first);
+        second = Math.floor(second);
+        if (first < 1 || first > 6) {
+            first = Math.floor(Math.random() * 6) + 1;
+        }
+
+        if (second < 1 || second > 6) {
+            second = Math.floor(Math.random() * 6) + 1;
+        }
+
+        const player = this.monopolyRoom.state.players.get(
+            this.client.sessionId
+        );
+
+        // Set rolledDice to true
+        this.monopolyRoom.state.rolledDice = true;
+        if (first === second) {
+            if (player.isInJail) {
+                player.isInJail = false;
+                this.monopolyRoom.broadcast(
+                    MessageResponseTypes.PLAYER_RELEASED_FROM_JAIL,
+                    {
+                        playerId: player.id,
+                    }
+                );
+                return;
+            }
+            // If doubles, allow another turn
+            this.monopolyRoom.state.currentTurn = this.client.sessionId;
+            this.monopolyRoom.state.rolledDice = false;
+        }
+
+        let sum = first + second;
+        let newPosition = player.position + sum;
+        // Check pass GO
+        if (newPosition >= 40) {
+            newPosition = newPosition % 40;
+            // Give them money for passing GO
+            player.balance += 200;
+        }
+        player.position = newPosition;
+
+        // Check tile
+        this.handleLandingOnTile(player);
+
+        // broadcast dice roll result
+        this.monopolyRoom.broadcast("dice_roll_result", {
+            first,
+            second,
+            position: player.position,
+            turnId: this.state.currentTurn,
+        });
+    }
 
     private handleLandingOnTile(player: Player) {
         const tilePosition = player.position;
@@ -204,13 +211,17 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             this.handleSpecialTile(player, tilePosition);
             return;
         }
-        
+
         if (property.ownedby === "" || property.ownedby === player.id) {
             this.handleAuctionProperties(player, tilePosition);
-            this.monopolyRoom.broadcast(MessageResponseTypes.OFFER_BUY_PROPERTY, {
-                propertyId: property.id,
-                playerId: player.id,
-            });
+            this.monopolyRoom.broadcast(
+                MessageResponseTypes.OFFER_BUY_PROPERTY,
+                {
+                    propertyId: property.id,
+                    playerId: player.id,
+                    property: property,
+                }
+            );
         } else if (property.ownedby !== player.id) {
             const rentAmount = this.calculateRent(property);
             player.balance -= rentAmount;
@@ -226,9 +237,12 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             // If the player is bankrupt, handle bankruptcy
             if (player.balance <= 0) {
                 player.isBankrupt = true;
-                this.monopolyRoom.broadcast(MessageResponseTypes.PLAYER_BANKRUPT, {
-                    playerId: player.id,
-                });
+                this.monopolyRoom.broadcast(
+                    MessageResponseTypes.PLAYER_BANKRUPT,
+                    {
+                        playerId: player.id,
+                    }
+                );
             }
         }
     }
@@ -267,11 +281,11 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
                     (tile) => tile.position === position
                 );
 
-                player.balance *= (1 - property.price / 100);
+                player.balance *= 1 - property.price / 100;
 
-
-                
-                console.log(`${player.username} paid ${property.price}% in Tax.`);
+                console.log(
+                    `${player.username} paid ${property.price}% in Tax.`
+                );
                 break;
             case 10: // Visiting Jail
                 console.log(`${player.username} is just visiting Jail.`);
@@ -343,8 +357,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
                         player.balance += 200;
                     }
                     break;
-                }
-                else {
+                } else {
                     const titleid = card.title;
                     const title = monopolyJSON.properties.find(
                         (tile) => tile.name === titleid

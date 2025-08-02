@@ -3,7 +3,6 @@ import { Signer } from "ethers";
 
 export async function playerRun(shuffleManagerContract: string, owner: Signer, gameId: number) {
   const address = await owner.getAddress();
-  console.log("Player ", address, "init shuffle context!");
 
   const player = await ZKShuffle.create(
     shuffleManagerContract,
@@ -14,6 +13,7 @@ export async function playerRun(shuffleManagerContract: string, owner: Signer, g
     "/zk/wasm/encrypt.wasm",
     "/zk/zkey/encrypt.zkey"
   );
+  console.log("Player ", address, "init shuffle context!");
   
   let playerIdx = await player.joinGame(gameId);
   console.log(
