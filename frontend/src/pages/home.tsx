@@ -213,7 +213,7 @@ export default function Home() {
                 <>
                   <Label>Turns</Label>
                   <SelectWrapper onSelectionChange={(key) => onChange(Number.parseInt(key.toString()))} className="pt-1 border rounded-md w-[200px] h-[38px] border-neutral-500">
-                    <SelectItem id="5"><LuArrowDownUp className="mb-1"/> 5</SelectItem>
+                    <SelectItem id="10"><LuArrowDownUp className="mb-1"/> 10</SelectItem>
                   </SelectWrapper>
                   <FieldError>{error?.message}</FieldError>
                 </>

@@ -287,7 +287,9 @@ export class GameController {
 
     onRollDice() {
         console.log("Rolling dice...");
-        this.network.send("roll_dice");
+        this.network.send("roll_dice", {
+            position: 5
+            });
     }
 
     onAuctionResult(

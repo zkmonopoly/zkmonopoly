@@ -26,7 +26,7 @@ export default function InteractiveConsole(props: InteractiveConsoleProps) {
 
   function runCommand(command: string) {
     switch (command) {
-    case "roll-dice":
+    case "auction":
       context.onRollDice();
       break;
     case "item-2":
@@ -99,7 +99,7 @@ export default function InteractiveConsole(props: InteractiveConsoleProps) {
             setSelectedCommand(key as string)
           }
         >
-          <SelectItem id="roll-dice">Roll Dice</SelectItem>
+          <SelectItem id="auction">Auction (5)</SelectItem>
         </SelectWrapper>
         <Button
           className={twMerge(
