@@ -181,7 +181,7 @@ export class MonopolyRoom extends Room<RoomState> {
                 }
 
                 if (playerIds.length === 1) {
-                    this.broadcast("end-game", {
+                    this.broadcast("end_game", {
                         winner: this.state.players.get(playerIds[0]),
                     });
                     return;

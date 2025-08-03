@@ -14,7 +14,7 @@ import { useStore } from "@nanostores/react";
 export default function PropertyManager() {
   const [open, setOpen] = useState(false);
   const [building, setBuilding] = useState(0);
-
+  
   const playerStates = useStore($playerStates);
   const sessionId = GameController.getInstance().getNetwork().getRoom()?.sessionId;
 
@@ -40,9 +40,11 @@ export default function PropertyManager() {
     // get property id
     if (sampleProperties.length > 0) {
       const property = sampleProperties[currentProperty];
+      console.log("Current Property:", property);
       if (property) {
         if (property.id !== undefined) {
           const propertyInfoFromServer = GameController.getInstance().getNetwork().getRoomState()?.properties.get(property.id);
+          console.log("Property Info from Server:", propertyInfoFromServer);
           if (propertyInfoFromServer) {
             $house.set({
               position: propertyInfoFromServer.position,
@@ -50,12 +52,12 @@ export default function PropertyManager() {
             });
             setBuilding(propertyInfoFromServer.buildings);
           } else {
-            setBuilding(0);
+            setBuilding(5);
           }
         }
       }
     }
-  }, [currentProperty]);
+  }, [player]);
 
   return (
     <>

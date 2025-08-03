@@ -51,6 +51,7 @@ export default function GameScene() {
         ref.current?.setTarget(cameraSpecs.target);
         setTimeout(() => {
           const property = PropertiesMap.get(message.position);
+          console.log("Property Info:", property);
           if (property) {
             $propertyInfo.set(property);
           }

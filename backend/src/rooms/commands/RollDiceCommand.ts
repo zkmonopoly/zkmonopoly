@@ -55,68 +55,70 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             return;
         }
 
-        // // Use the zkService to roll the dice
-        // try {
-        //     ZKService.getInstance(this.monopolyRoom.roomId).removeResultDiceRolledListener();
-        //     ZKService.getInstance(this.monopolyRoom.roomId).onResultDiceRolled(async (result: Array<number>) => {
-        //         console.log(`Received dice roll result: ${result}`);
-        //         if (result.length < 2) {
-        //             await this.handleRollDiceInZkShuffle(numberOfPlayersReady);
-        //         } else {
-        //             this.handleRollDiceWhenCompleted(result[0], result[1]);
-        //             // Clean up listener after handling the complete roll
-        //             ZKService.getInstance(this.monopolyRoom.roomId).removeResultDiceRolledListener();
-        //         }
-        //     });
+        // Use the zkService to roll the dice
+        try {
+            ZKService.getInstance(this.monopolyRoom.roomId).removeResultDiceRolledListener();
+            ZKService.getInstance(this.monopolyRoom.roomId).onResultDiceRolled(async (result: Array<number>) => {
+                console.log(`Received dice roll result: ${result}`);
+                if (result.length < 2) {
+                    await this.handleRollDiceInZkShuffle(numberOfPlayersReady);
+                } else {
+                    this.handleRollDiceWhenCompleted(result[0], result[1]);
+                    // Clean up listener after handling the complete roll
+                    ZKService.getInstance(this.monopolyRoom.roomId).removeResultDiceRolledListener();
+                }
+            });
 
-        //     await this.handleRollDiceInZkShuffle(numberOfPlayersReady);
-        // } catch (error) {
-        //     console.log(error);
+            await this.handleRollDiceInZkShuffle(numberOfPlayersReady);
+        } catch (error) {
+            console.log(error);
+        }
+
+        // Open it for testing purposes
+        // let first;
+        // let second;
+
+        // // first = Math.floor(Math.random() * 6) + 1;
+        // // second = Math.floor(Math.random() * 6) + 1;
+
+        // first = 2;
+        // second = 4;
+
+        // // Set rolledDice to true
+        // this.monopolyRoom.state.rolledDice = true;
+        // if (first === second) {
+        //     if (player.isInJail) {
+        //         player.isInJail = false;
+        //         this.monopolyRoom.broadcast(MessageResponseTypes.PLAYER_RELEASED_FROM_JAIL, {
+        //             playerId: player.id,
+        //         });
+        //         return;
+        //     }
+        //     // If doubles, allow another turn
+        //     this.monopolyRoom.state.currentTurn = this.client.sessionId;
+        //     this.monopolyRoom.state.rolledDice = false;
         // }
-        let first;
-        let second;
 
-        // first = Math.floor(Math.random() * 6) + 1;
-        // second = Math.floor(Math.random() * 6) + 1;
+        // let sum = first + second;
+        // let newPosition = player.position + sum;
+        // // Check pass GO
+        // if (newPosition >= 40) {
+        //     newPosition = newPosition % 40;
+        //     // Give them money for passing GO
+        //     player.balance += 200;
+        // }
+        // player.position = newPosition;
 
-        first = 2;
-        second = 3;
+        // // Check tile
+        // this.handleLandingOnTile(player);
 
-        // Set rolledDice to true
-        this.monopolyRoom.state.rolledDice = true;
-        if (first === second) {
-            if (player.isInJail) {
-                player.isInJail = false;
-                this.monopolyRoom.broadcast(MessageResponseTypes.PLAYER_RELEASED_FROM_JAIL, {
-                    playerId: player.id,
-                });
-                return;
-            }
-            // If doubles, allow another turn
-            this.monopolyRoom.state.currentTurn = this.client.sessionId;
-            this.monopolyRoom.state.rolledDice = false;
-        }
-
-        let sum = first + second;
-        let newPosition = player.position + sum;
-        // Check pass GO
-        if (newPosition >= 40) {
-            newPosition = newPosition % 40;
-            // Give them money for passing GO
-            player.balance += 200;
-        }
-        player.position = newPosition;
-
-        // Check tile
-        this.handleLandingOnTile(player);
-
-        // broadcast dice roll result
-        this.monopolyRoom.broadcast("dice_roll_result", {
-            first,
-            second,
-            position: player.position,
-            turnId: this.state.currentTurn,
-        });
+        // // broadcast dice roll result
+        // this.monopolyRoom.broadcast("dice_roll_result", {
+        //     first,
+        //     second,
+        //     position: player.position,
+        //     turnId: this.state.currentTurn,
+        // });
     }
 
     private async handleRollDiceInZkShuffle(numberOfPlayersReady: number) {
@@ -206,7 +208,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         const idTitle = monopolyJSON.tiles[tilePosition].id;
         const property = this.state.properties.get(idTitle);
 
-        if (!property || property.group === "Special") {
+        if (!property || property.group === "Special" || property.group === "tax") {
             // Special tiles like Chance, Jail, Free Parking, etc.
             this.handleSpecialTile(player, tilePosition);
             return;
@@ -313,7 +315,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         }
     }
 
-    private drawChanceOrChestCard(player: Player, isChance: boolean) {
+    private async drawChanceOrChestCard(player: Player, isChance: boolean) {
         const cardArray = isChance
             ? monopolyJSON.chance
             : monopolyJSON.communitychest;
@@ -321,7 +323,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             cardArray[Math.floor(Math.random() * cardArray.length)];
 
         // Apply the effect of the drawn card
-        this.applyCardEffect(player, randomCard);
+        await this.applyCardEffect(player, randomCard);
 
         // Broadcast the drawn card to all players
 
@@ -332,7 +334,9 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         });
     }
 
-    private applyCardEffect(player: Player, card: CommunityChestCard) {
+    private async applyCardEffect(player: Player, card: CommunityChestCard) {
+        console.log(`Applying card effect: ${card}`);
+        await new Promise(resolve => setTimeout(resolve, 5000)); // Simulate delay for card effect application
         switch (card.action) {
             case "jail":
                 if (card.subaction === "goto") {
@@ -350,22 +354,24 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
                 player.balance += card.amount;
                 break;
             case "move":
-                if (card.count > 0) {
+                if (card?.count) {
                     player.position += card.count;
                     if (player.position >= 40) {
                         player.position -= 40;
                         player.balance += 200;
                     }
-                    break;
                 } else {
-                    const titleid = card.title;
+                    const titleid = card?.titleid;
                     const title = monopolyJSON.properties.find(
-                        (tile) => tile.name === titleid
+                        (tile) => tile.id === titleid
                     );
+                    console.log(`Moving player to position: ${card.titleid}, ${title}`);
+                    // If title exists, move player to that position
                     if (title) {
                         player.position = title.position;
                     }
                 }
+                break;
             default:
                 console.log(`Unhandled card action: ${card.action}`);
         }

@@ -1,7 +1,12 @@
-import EventCard, { EventCardWithoutNameProps } from "./shared/event-card";
+import EventCard from "./shared/event-card";
 
-export default function CommunityChestCard(props: EventCardWithoutNameProps) {
+interface CommunityChestCardProps {
+  name: string;
+  body: string[];
+}
+
+export default function CommunityChestCard({ name, body }: CommunityChestCardProps) {
   return (
-    <EventCard name="COMMUNITY CHEST" {...props}/>
+    <EventCard name={name} body={body} />
   );
 }

@@ -4,8 +4,13 @@ import { Outlet } from "react-router";
 import Censored from "@/components/ui/core/debug/censored";
 import Control from "@/components/ui/control";
 import PlayerInfo from "@/components/ui/player-info";
+import { $isEndedGame } from "@/models/game";
+import EndGame from "@/components/ui/end-game";
+import { useStore } from "@nanostores/react";
 
 export default function GameLayout() {
+  const endedGame = useStore($isEndedGame);
+
   return (
     <div className='flex flex-col min-h-screen antialiased'>
       <div className='flex flex-grow'>
@@ -14,6 +19,7 @@ export default function GameLayout() {
             <div className="w-[272px] h-full flex flex-col justify-start">
               <GameMenu />
               <Control />
+              {endedGame && <EndGame />}
             </div>
           </div>
           <div className="relative">

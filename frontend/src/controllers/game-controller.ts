@@ -16,8 +16,8 @@ import { MessageRequestType } from "@/components/type/message-request-type";
 import { MessageResponseType } from "@/components/type/message-response-type";
 import { playerRun } from "@/utils/zkshuffle";
 import { ethers } from "ethers";
-import { $isPaused } from "@/models/game";
-
+import { $isEndedGame, $isPaused } from "@/models/game";
+import { $chanceCommunityState, chanceCommunityCard } from "@/models/chance-community";
 // declare global {
 //     interface Window {
 //         ethereum?: any;
@@ -25,6 +25,8 @@ import { $isPaused } from "@/models/game";
 // }
 
 import { PlayerState } from "@/components/state/player-state";
+import { set } from "react-hook-form";
+import { NavigateFunction, useNavigate } from "react-router";
 type StateListener = (roomState: any, payload: any) => void;
 
 interface AuctionConfig {
@@ -43,6 +45,7 @@ export class GameController {
     private listeners: StateListener[] = [];
     // private gameState: any = {}
     private payload: any = {};
+
 
     public static getInstance(): GameController {
         if (!GameController.instance) {
@@ -110,6 +113,21 @@ export class GameController {
         this.network.onMessage("start_game", (message) => {
             console.log("Game state start_game: ", message);
             callback(message);
+        });
+        
+        this.network.onMessage(MessageResponseType.CHANCE_COMMUNITY_CARD, (message) => {
+            $chanceCommunityState.set({
+                title: message.randomCard.title,
+            } as chanceCommunityCard);
+            console.log("Chance Community Card:", message.randomCard.title);
+        });
+
+        this.network.onMessage(MessageResponseType.END_GAME, (message) => {
+            console.log("Game state end_game: ", message); 
+            $isEndedGame.set(true); 
+            // setTimeout(() => {
+            //     this.navigate("/");
+            // }, 5000); // Delay to ensure all messages are processed before ending the game
         });
 
 
