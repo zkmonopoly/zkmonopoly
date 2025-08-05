@@ -121,8 +121,8 @@ export class MonopolyRoom extends Room<RoomState> {
         });
 
         // Message: "roll_dice" – roll dice, update player position, and broadcast the result.
-        this.onMessage(MessageRequestTypes.ROLL_DICE, (client) => {
-            this.dispatcher.dispatch(new RollDiceCommand(this, client));
+        this.onMessage(MessageRequestTypes.ROLL_DICE, (client, data:{ position: number }) => {
+            this.dispatcher.dispatch(new RollDiceCommand(this, client, data));
         });
 
         this.onMessage(
@@ -168,6 +168,12 @@ export class MonopolyRoom extends Room<RoomState> {
 
         this.onMessage(MessageRequestTypes.FINISH_TURN, (client) => {
             this.state.rolledDice = false;
+            if (this.state.turns >= this.state.maxTurns ) {
+                this.broadcast(MessageResponseTypes.END_GAME, {
+                    message: "Game Over! Maximum turns reached.",
+                });
+                return;
+            }
             const player = this.state.players.get(client.sessionId);
             if (player) {
                 const playerIds = [];
@@ -181,8 +187,8 @@ export class MonopolyRoom extends Room<RoomState> {
                 }
 
                 if (playerIds.length === 1) {
-                    this.broadcast("end_game", {
-                        winner: this.state.players.get(playerIds[0]),
+                    this.broadcast(MessageResponseTypes.END_GAME, {
+                        message: `Player ${player.username} has won the game!`,
                     });
                     return;
                 }
@@ -226,7 +232,7 @@ export class MonopolyRoom extends Room<RoomState> {
 
         this.onMessage(
             MessageRequestTypes.BUY_PROPERTY,
-            (client, data: { propertyId: string, bidValue: number }) => {
+            (client, data: { propertyId: string; bidValue: number }) => {
                 this.dispatcher.dispatch(new BuyPropertyCommand(), {
                     client: client,
                     monopolyRoom: this,
@@ -278,7 +284,7 @@ export class MonopolyRoom extends Room<RoomState> {
                     this.state.currentTurn = playerIds[index];
                 }
             }
-            this.broadcast("disconnected-player", {
+            this.broadcast("disconnected_player", {
                 id: client.sessionId,
                 turn: this.state.currentTurn,
             });

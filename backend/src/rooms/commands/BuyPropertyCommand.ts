@@ -4,7 +4,7 @@ import { Client } from "colyseus";
 
 interface Data {
     propertyId: string;
-    bidValue: number;
+    bidValue?: number;
 }
 
 export class BuyPropertyCommand extends Command<MonopolyRoom, { client: Client; monopolyRoom: MonopolyRoom; data: Data }> {

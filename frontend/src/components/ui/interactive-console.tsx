@@ -27,7 +27,7 @@ export default function InteractiveConsole(props: InteractiveConsoleProps) {
   function runCommand(command: string) {
     switch (command) {
     case "auction":
-      context.onRollDice();
+      context.onRollDice(5);
       break;
     case "item-2":
       console.log("Item 2 executed!");

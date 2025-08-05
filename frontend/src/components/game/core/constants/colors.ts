@@ -10,11 +10,12 @@ export const MonopolyColors = {
   Blue: Color3.Blue(),
   Brown: Color3.FromHexString("#8B4513"),
   LightBlue: Color3.FromHexString("#ADD8E6"),
-  CommunityChest: Color3.FromHexString("#00B3F1")
+  CommunityChest: Color3.FromHexString("#00B3F1"),
+  Violet: Color3.FromHexString("#EE82EE"),
 };
 
 export const ColorGroupSet = new Set<string>(
-  ["orange", "lightblue", "green", "magenta", "red", "yellow", "blue"]
+  ["orange", "lightblue", "green", "magenta", "red", "yellow", "blue", "violet"]
 );
 
 export function fromString(str: string | undefined | null) {
@@ -33,6 +34,8 @@ export function fromString(str: string | undefined | null) {
       return MonopolyColors.Yellow;
     case "blue":
       return MonopolyColors.Blue;
+      case "violet":
+      return MonopolyColors.Violet;
     default:
       throw new Error("No such color");
   }

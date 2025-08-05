@@ -25,4 +25,5 @@ export enum MessageResponseTypes {
     OFFER_BUY_PROPERTY = "offer_buy_property",
     BUY_PROPERTY_SUCCESS = "buy_property_success",
     BUY_PROPERTY_FAIL = "buy_property_fail",
+    END_GAME = "end_game",
 }

@@ -17,7 +17,10 @@ import { MessageResponseType } from "@/components/type/message-response-type";
 import { playerRun } from "@/utils/zkshuffle";
 import { ethers } from "ethers";
 import { $isEndedGame, $isPaused } from "@/models/game";
-import { $chanceCommunityState, chanceCommunityCard } from "@/models/chance-community";
+import {
+    $chanceCommunityState,
+    chanceCommunityCard,
+} from "@/models/chance-community";
 // declare global {
 //     interface Window {
 //         ethereum?: any;
@@ -46,7 +49,6 @@ export class GameController {
     // private gameState: any = {}
     private payload: any = {};
 
-
     public static getInstance(): GameController {
         if (!GameController.instance) {
             GameController.instance = new GameController();
@@ -56,8 +58,6 @@ export class GameController {
 
     private constructor() {
         this.network = new Network(this);
-
-
     }
 
     async createRoom(name: string, callback: any) {
@@ -105,6 +105,10 @@ export class GameController {
         });
 
         this.onNewPlayer((message) => {});
+        // this.network.onMessage("disconnected_player", (message) => {
+        //     console.log("Game state disconnected_player: ", message);
+        //     this.network.updatePlayerState(this.network.getRoomState());
+        // });
     }
 
     // For General Game Events
@@ -114,22 +118,31 @@ export class GameController {
             console.log("Game state start_game: ", message);
             callback(message);
         });
-        
-        this.network.onMessage(MessageResponseType.CHANCE_COMMUNITY_CARD, (message) => {
-            $chanceCommunityState.set({
-                title: message.randomCard.title,
-            } as chanceCommunityCard);
-            console.log("Chance Community Card:", message.randomCard.title);
-        });
+
+        this.network.onMessage(
+            MessageResponseType.CHANCE_COMMUNITY_CARD,
+            (message) => {
+                $chanceCommunityState.set({
+                    title: message.randomCard.title,
+                } as chanceCommunityCard);
+                console.log("Chance Community Card:", message.randomCard.title);
+            }
+        );
 
         this.network.onMessage(MessageResponseType.END_GAME, (message) => {
-            console.log("Game state end_game: ", message); 
-            $isEndedGame.set(true); 
+            console.log("Game state end_game: ", message);
+            $isEndedGame.set(true);
             // setTimeout(() => {
             //     this.navigate("/");
             // }, 5000); // Delay to ensure all messages are processed before ending the game
         });
 
+        this.network.onMessage(
+            MessageResponseType.PLAYER_MOVE_TO_JAIL,
+            (message) => {
+                console.log("Player moved to jail:", message);
+            }
+        );
 
         this.network.onMessage(
             MessageResponseType.CREATE_SHUFFLE_GAME_ID,
@@ -285,11 +298,11 @@ export class GameController {
             });
     }
 
-    onRollDice() {
+    onRollDice(position?: number) {
         console.log("Rolling dice...");
         this.network.send("roll_dice", {
-            position: 5
-            });
+            position,
+        });
     }
 
     onAuctionResult(
@@ -325,25 +338,30 @@ export class GameController {
     onBuyProperty(payload: any, callback?: (message: any) => void) {
         this.network.send("buy_property", payload);
         console.log("Buying property with payload:", payload);
-        this.network.onMessage(MessageResponseType.BUY_PROPERTY_SUCCESS, (payload) => {
-            console.log("Game state property_purchased: ", payload);
-            callback?.(payload);
-            this.payload = payload;
-            // update property state in the UI
-            const playerStates = $playerStates.get();
-            const player = playerStates.find(
-                (player) => player.id === this.network.getRoom()?.sessionId
-            );
-            if (player) {
-                player.properties.push(payload.propertyId);
-                $playerStates.set(playerStates);
+        this.network.onMessage(
+            MessageResponseType.BUY_PROPERTY_SUCCESS,
+            (payload) => {
+                console.log("Game state property_purchased: ", payload);
+                callback?.(payload);
+                this.payload = payload;
+                // update property state in the UI
+                const playerStates = $playerStates.get();
+                const player = playerStates.find(
+                    (player) => player.id === this.network.getRoom()?.sessionId
+                );
+                if (player) {
+                    player.properties.push(payload.propertyId);
+                    $playerStates.set(playerStates);
+                }
             }
-            
-        });
-        this.network.onMessage(MessageResponseType.BUY_PROPERTY_FAIL, (message) => {
-            console.error("Failed to buy property:", message);
-            callback?.(message);
-        });
+        );
+        this.network.onMessage(
+            MessageResponseType.BUY_PROPERTY_FAIL,
+            (message) => {
+                console.error("Failed to buy property:", message);
+                callback?.(message);
+            }
+        );
     }
 
     onStateUpdate(callback: StateListener) {

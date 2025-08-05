@@ -22,7 +22,8 @@ interface CommunityChestCard {
 export class RollDiceCommand extends Command<MonopolyRoom> {
     constructor(
         private readonly monopolyRoom: MonopolyRoom,
-        private readonly client: Client<any, any>
+        private readonly client: Client<any, any>,
+        private readonly data?: { position: number }
     ) {
         super();
     }
@@ -32,6 +33,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         const player = this.monopolyRoom.state.players.get(
             this.client.sessionId
         );
+
         var isGameReady = true;
 
         // number of players that are ready (include the dealer)
@@ -48,10 +50,19 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             }
         });
         if (!player) return;
+
         if (
             this.monopolyRoom.state.currentTurn !== this.client.sessionId ||
             !isGameReady
         ) {
+            return;
+        }
+        this.monopolyRoom.state.turns++;
+
+        // For testing purposes, we can set the position directly
+        if (this.data && this.data.position > 0) {
+            player.position = this.data.position;
+            this.handleLandingOnTile(player);
             return;
         }
 
@@ -78,25 +89,41 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         // let first;
         // let second;
 
-        // // first = Math.floor(Math.random() * 6) + 1;
-        // // second = Math.floor(Math.random() * 6) + 1;
+        // first = Math.floor(Math.random() * 6) + 1;
+        // second = Math.floor(Math.random() * 6) + 1;
 
-        // first = 2;
-        // second = 4;
+        // // first = 2;
+        // // second = 3;
 
         // // Set rolledDice to true
         // this.monopolyRoom.state.rolledDice = true;
         // if (first === second) {
         //     if (player.isInJail) {
         //         player.isInJail = false;
-        //         this.monopolyRoom.broadcast(MessageResponseTypes.PLAYER_RELEASED_FROM_JAIL, {
-        //             playerId: player.id,
-        //         });
+        //         this.monopolyRoom.broadcast(
+        //             MessageResponseTypes.PLAYER_RELEASED_FROM_JAIL,
+        //             {
+        //                 playerId: player.id,
+        //             }
+        //         );
         //         return;
         //     }
         //     // If doubles, allow another turn
         //     this.monopolyRoom.state.currentTurn = this.client.sessionId;
         //     this.monopolyRoom.state.rolledDice = false;
+        // } else {
+        //     if (player.isInJail && player.getoutCards == 0) {
+        //         this.monopolyRoom.broadcast("dice_roll_result", {
+        //             first,
+        //             second,
+        //             position: player.position,
+        //             turnId: this.state.currentTurn,
+        //         });
+        //         return;
+        //     } else if (player.isInJail && player.getoutCards > 0) {
+        //         player.getoutCards--;
+        //         player.isInJail = false;
+        //     }
         // }
 
         // let sum = first + second;
@@ -125,7 +152,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         const zkService = ZKService.getInstance(this.monopolyRoom.roomId);
         // Remove any existing listeners
         zkService.removeShuffleGameIdListener();
-        
+
         await zkService.onCreateShuffleGameId((gameId: number) => {
             console.log(`Received gameId: ${gameId}`);
             // broadcast the gameId to all players
@@ -141,7 +168,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             // Clean up the listener after use
             zkService.removeShuffleGameIdListener();
         });
-        
+
         await zkService.rollDice(numberOfPlayersReady);
     }
 
@@ -179,6 +206,15 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             // If doubles, allow another turn
             this.monopolyRoom.state.currentTurn = this.client.sessionId;
             this.monopolyRoom.state.rolledDice = false;
+        } else {
+            if (player.isInJail) {
+                this.monopolyRoom.broadcast("dice_roll_result", {
+                    first,
+                    second,
+                    position: player.position,
+                    turnId: this.state.currentTurn,
+                });
+            }
         }
 
         let sum = first + second;
@@ -208,7 +244,11 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         const idTitle = monopolyJSON.tiles[tilePosition].id;
         const property = this.state.properties.get(idTitle);
 
-        if (!property || property.group === "Special" || property.group === "tax") {
+        if (
+            !property ||
+            property.group === "Special" ||
+            property.group === "tax"
+        ) {
             // Special tiles like Chance, Jail, Free Parking, etc.
             this.handleSpecialTile(player, tilePosition);
             return;
@@ -296,11 +336,18 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
                 player.position = 10;
                 player.isInJail = true;
                 console.log(`${player.username} was sent to Jail!`);
+                this.monopolyRoom.broadcast(
+                    MessageResponseTypes.PLAYER_MOVE_TO_JAIL,
+                    {
+                        playerId: player.id,
+                    }
+                );
                 break;
             case 2:
             case 17:
             case 33: // Community Chest
                 this.drawChanceOrChestCard(player, false);
+
                 break;
             case 7:
             case 22:
@@ -336,15 +383,21 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
 
     private async applyCardEffect(player: Player, card: CommunityChestCard) {
         console.log(`Applying card effect: ${card}`);
-        await new Promise(resolve => setTimeout(resolve, 5000)); // Simulate delay for card effect application
+        await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulate delay for card effect application
         switch (card.action) {
             case "jail":
                 if (card.subaction === "goto") {
                     player.position = 10; // Go to GO
                     player.isInJail = true;
+                    console.log(`${player.username} was sent to Jail!`);
+                    this.monopolyRoom.broadcast(
+                        MessageResponseTypes.PLAYER_MOVE_TO_JAIL,
+                        {
+                            playerId: player.id,
+                        }
+                    );
                 } else if (card.title === "getout") {
-                    player.position = 10;
-                    player.isInJail = false;
+                    player.getoutCards++;
                 }
                 break;
             case "removefunds":
@@ -365,7 +418,9 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
                     const title = monopolyJSON.properties.find(
                         (tile) => tile.id === titleid
                     );
-                    console.log(`Moving player to position: ${card.titleid}, ${title}`);
+                    console.log(
+                        `Moving player to position: ${card.titleid}, ${title}`
+                    );
                     // If title exists, move player to that position
                     if (title) {
                         player.position = title.position;

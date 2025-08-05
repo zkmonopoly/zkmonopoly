@@ -23,4 +23,8 @@ export class RoomState extends Schema {
   numberOfAuctions: number = 0;
   @type("number")
   shuffleGameId: number;
+  @type("number")
+  turns: number = 0;
+  @type("number")
+  maxTurns: number = 10;
 }
