@@ -160,13 +160,11 @@ export class GameController {
                     (player) => player.id === this.network.getRoom()?.sessionId
                 );
                 const owner = provider.getSigner(index + 1);
-                const result = await playerRun(
+                await playerRun(
                     shuffleManagerContract,
                     owner,
                     message.gameId
                 );
-
-                console.log("Dice rolled by player:", result);
             }
         );
     }
