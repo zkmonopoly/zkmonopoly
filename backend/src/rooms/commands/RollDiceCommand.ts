@@ -85,7 +85,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
             console.log(error);
         }
 
-        // Open it for testing purposes
+        // // Open it for testing purposes
         // let first;
         // let second;
 
@@ -255,15 +255,7 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         }
 
         if (property.ownedby === "" || property.ownedby === player.id) {
-            this.handleAuctionProperties(player, tilePosition);
-            this.monopolyRoom.broadcast(
-                MessageResponseTypes.OFFER_BUY_PROPERTY,
-                {
-                    propertyId: property.id,
-                    playerId: player.id,
-                    property: property,
-                }
-            );
+            this.handleAuctionProperties(player, tilePosition, property);
         } else if (property.ownedby !== player.id) {
             const rentAmount = this.calculateRent(property);
             player.balance -= rentAmount;
@@ -289,7 +281,11 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         }
     }
 
-    private handleAuctionProperties(player: Player, position: number) {
+    private handleAuctionProperties(
+        player: Player,
+        position: number,
+        property: Property
+    ) {
         switch (position) {
             case 12:
             case 28:
@@ -308,6 +304,23 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
                         currentPlayer++;
                     }
                 }
+                this.monopolyRoom.broadcast(
+                    MessageResponseTypes.OFFER_BUY_PROPERTY,
+                    {
+                        propertyId: property.id,
+                        playerId: player.id,
+                        property: property,
+                    }
+                );
+            default:
+                this.client.send(
+                    MessageResponseTypes.OFFER_BUY_PROPERTY,
+                    {
+                        propertyId: property.id,
+                        playerId: player.id,
+                        property: property,
+                    }
+                );
         }
     }
 
