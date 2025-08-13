@@ -27,7 +27,7 @@
         "earcut": "^3.0.1",
         "emp-wasm-engine": "^0.5.3",
         "ethers": "^5.7.2",
-        "ffjavascript": "^0.3.1",
+        "ffjavascript": "0.2.59",
         "memfs": "^4.17.2",
         "mpc-framework": "^0.3.0",
         "nanostores": "^0.11.4",

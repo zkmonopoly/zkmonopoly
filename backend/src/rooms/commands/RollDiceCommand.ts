@@ -8,6 +8,7 @@ import monopolyJSON from "@/assets/monopoly.json";
 import { RoomState } from "../schema/RoomState";
 import { MessageResponseTypes } from "@/types/MessageResponseTypes";
 import { ZKService } from "@/services/ZkService";
+import { FeatureFlagService } from "@/services/FeatureFlagService";
 export const AuctionCallnameList = <const>["alice", "bob", "charlie", "david"];
 
 interface CommunityChestCard {
@@ -67,24 +68,28 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
         }
 
         // Use the zkService to roll the dice
-        try {
-            ZKService.getInstance(this.monopolyRoom.roomId).removeResultDiceRolledListener();
-            ZKService.getInstance(this.monopolyRoom.roomId).onResultDiceRolled(async (result: Array<number>) => {
-                console.log(`Received dice roll result: ${result}`);
-                if (result.length < 2) {
-                    await this.handleRollDiceInZkShuffle(numberOfPlayersReady);
-                } else {
-                    this.handleRollDiceWhenCompleted(result[0], result[1]);
-                    // Clean up listener after handling the complete roll
-                    ZKService.getInstance(this.monopolyRoom.roomId).removeResultDiceRolledListener();
-                }
-            });
+        if (FeatureFlagService.isDisabled("ZKSHUFFLE")) {
+            // make first and second to natural number
+            this.handleRollDiceWhenCompleted(Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1);
+        } else {
+            try {
+                ZKService.getInstance(this.monopolyRoom.roomId).removeResultDiceRolledListener();
+                ZKService.getInstance(this.monopolyRoom.roomId).onResultDiceRolled(async (result: Array<number>) => {
+                    console.log(`Received dice roll result: ${result}`);
+                    if (result.length < 2) {
+                        await this.handleRollDiceInZkShuffle(numberOfPlayersReady);
+                    } else {
+                        this.handleRollDiceWhenCompleted(result[0], result[1]);
+                        // Clean up listener after handling the complete roll
+                        ZKService.getInstance(this.monopolyRoom.roomId).removeResultDiceRolledListener();
+                    }
+                });
 
-            await this.handleRollDiceInZkShuffle(numberOfPlayersReady);
-        } catch (error) {
-            console.log(error);
+                await this.handleRollDiceInZkShuffle(numberOfPlayersReady);
+            } catch (error) {
+                console.log(error);
+            }
         }
-
         // Open it for testing purposes
         // let first;
         // let second;
@@ -173,18 +178,9 @@ export class RollDiceCommand extends Command<MonopolyRoom> {
     }
 
     public handleRollDiceWhenCompleted(first: number, second: number) {
-        first += 1;
-        second += 1;
-        // make first and second to natural number
-        first = Math.floor(first);
-        second = Math.floor(second);
-        if (first < 1 || first > 6) {
-            first = Math.floor(Math.random() * 6) + 1;
-        }
-
-        if (second < 1 || second > 6) {
-            second = Math.floor(Math.random() * 6) + 1;
-        }
+        first = (first % 6) + 1;
+        second = (second % 6) + 1;
+        
 
         const player = this.monopolyRoom.state.players.get(
             this.client.sessionId
